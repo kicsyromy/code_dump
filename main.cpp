@@ -32,7 +32,7 @@ constexpr const auto mapWidth  { 600 };
 constexpr const auto mapHeight { 800 };
 
 constexpr const auto pFOV { PI / 3 };
-constexpr const auto pAngle { -(PI / 2) };
+constexpr const auto pAngle { 0 };
 constexpr const point initialPlayerPos {
     mapWidth >> 1,
     (mapWidth >> 1) / std::tan(pFOV / 2)
@@ -73,16 +73,16 @@ void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
 
     const line rotatedWall {
         {
-            p.coords.x - (translatedWall.start.x * sine   - translatedWall.start.y * cosine),
-            p.coords.y - (translatedWall.start.x * cosine + translatedWall.start.y * sine)
+            (translatedWall.start.x * cosine + translatedWall.start.y * sine) + p.coords.x,
+            (translatedWall.start.y * cosine - translatedWall.start.x * sine) + p.coords.y
         },
         {
-            p.coords.x - (translatedWall.end.x * sine   - translatedWall.end.y * cosine),
-            p.coords.y - (translatedWall.end.x * cosine + translatedWall.end.y * sine)
+            (translatedWall.end.x * cosine + translatedWall.end.y * sine) + p.coords.x,
+            (translatedWall.end.y * cosine - translatedWall.end.x * sine) + p.coords.y
         }
     };
-    cairo_move_to(context, rotatedWall.start.x, rotatedWall.start.y);
-    cairo_line_to(context, rotatedWall.end.x, rotatedWall.end.y);
+    cairo_move_to(context, rotatedWall.start.x + p.coords.x, rotatedWall.start.y + p.coords.y);
+    cairo_line_to(context, rotatedWall.end.x + p.coords.x, rotatedWall.end.y + p.coords.y);
     cairo_stroke(context);
 
     // Draw view angle ray
@@ -114,18 +114,18 @@ void handleMouseEvent(const MouseEvent &e, void *w)
 void handleKeyPressEvent(const KeyEvent &e, void *w)
 {
     static constexpr const int velocity = 20;
-    static constexpr const double rotationVelocity = 0.3;
+    static constexpr const double rotationVelocity = 0.05;
     switch (e.key)
     {
     default:
         break;
     case KeyEvent::Key::Up:
-        p.coords.x += std::cos(p.angle) * velocity;
-        p.coords.y += std::sin(p.angle) * velocity;
-        break;
-    case KeyEvent::Key::Down:
         p.coords.x -= std::cos(p.angle) * velocity;
         p.coords.y -= std::sin(p.angle) * velocity;
+        break;
+    case KeyEvent::Key::Down:
+        p.coords.x += std::cos(p.angle) * velocity;
+        p.coords.y += std::sin(p.angle) * velocity;
         break;
     case KeyEvent::Key::Left:
         p.angle -= rotationVelocity;
