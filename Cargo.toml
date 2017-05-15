@@ -1,0 +1,6 @@
+[package]
+name = "gulp"
+version = "0.1.0"
+authors = ["Romeo Calota <kicsyromy@gmail.com>"]
+
+[dependencies]
