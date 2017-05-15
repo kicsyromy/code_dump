@@ -1,0 +1,2 @@
+http://permadi.com/1996/05/ray-casting-tutorial-4/
+http://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/implementing-the-raytracing-algorithm
