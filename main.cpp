@@ -81,8 +81,8 @@ void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
             (translatedWall.end.y * cosine - translatedWall.end.x * sine) + p.coords.y
         }
     };
-    cairo_move_to(context, rotatedWall.start.x + p.coords.x, rotatedWall.start.y + p.coords.y);
-    cairo_line_to(context, rotatedWall.end.x + p.coords.x, rotatedWall.end.y + p.coords.y);
+    cairo_move_to(context, rotatedWall.start.x, rotatedWall.start.y);
+    cairo_line_to(context, rotatedWall.end.x, rotatedWall.end.y);
     cairo_stroke(context);
 
     // Draw view angle ray
