@@ -4,6 +4,7 @@
 
 #include "application.h"
 #include "window.h"
+#include "matrix.h"
 
 using namespace ui;
 
@@ -141,6 +142,7 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
 
 int main(int argc, char *argv[])
 {
+    f();
     Application app;
     Window w("", mapWidth, mapHeight);
     w.setPaintHandler(&paint, &w);

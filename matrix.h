@@ -2,6 +2,8 @@
 #define ENGINE_MATRIX_H
 
 #include <array>
+#include <initializer_list>
+#include <cassert>
 
 int f();
 
@@ -13,6 +15,27 @@ namespace engine
         using this_t = matrix<rowCount, columnCount>;
 
     public:
+        constexpr matrix()
+            : data_()
+        {}
+
+        matrix(std::initializer_list<std::initializer_list<double>> data)
+            : matrix()
+        {
+            assert(data.size() == rowCount);
+
+            std::size_t pos = 0;
+            for (auto it = data.begin(); it != data.end(); ++it)
+            {
+                const auto &row = *it;
+                assert(row.size() == columnCount);
+                for (auto jt = row.begin(); jt != row.end(); ++jt)
+                {
+                    data_[pos++] = *jt;
+                }
+            }
+        }
+
         this_t &&operator +(const this_t &other)
         {
             this_t result;
@@ -51,6 +74,11 @@ namespace engine
             }
 
             return std::move(result);
+        }
+
+        double operator ()(int x, int y)
+        {
+            return x * columnCount + y;
         }
 
     private:
