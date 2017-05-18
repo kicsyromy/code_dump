@@ -3,6 +3,8 @@
 
 #include <array>
 
+int f();
+
 namespace engine
 {
     template<std::size_t rowCount, std::size_t columnCount = rowCount>
@@ -37,11 +39,26 @@ namespace engine
         matrix<rowCount, otherColumnCount> &&operator *(const matrix<columnCount, otherColumnCount> &other)
         {
             matrix<rowCount, otherColumnCount> result;
+            for (std::size_t it = 0; it < rowCount; ++it)
+            {
+                for (std::size_t jt = 0; jt < otherColumnCount; ++jt)
+                {
+                    for (std::size_t kt = 0; kt < columnCount; ++kt)
+                    {
+                        result.data_[it * otherColumnCount + jt] += data_[it * columnCount + kt] * other.data_[kt * otherColumnCount + jt];
+                    }
+                }
+            }
+
             return std::move(result);
         }
 
     private:
         std::array<double, rowCount * columnCount> data_;
+
+    private:
+        template<std::size_t r, std::size_t c>
+        friend class matrix;
     };
 }
 
