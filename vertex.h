@@ -5,11 +5,9 @@
 
 namespace engine
 {
-    struct vertex
+    class vertex
     {
-        double x;
-        double y;
-
+    public:
         constexpr vertex()
             : x(0.0)
             , y(0.0)
@@ -19,20 +17,12 @@ namespace engine
             , y(yarg)
         {}
 
-        template<std::size_t columnCount>
-        vertex operator *(const matrix<3, columnCount> &m)
-        {
-            matrix<1, 3> helper {
-                { x, y, 1 }
-            };
+    public:
+        vertex transform(const matrix<3, 3> &m);
 
-            auto r = helper * m;
-
-            return {
-                r(0, 0),
-                r(0, 1)
-            };
-        }
+    public:
+        double x;
+        double y;
     };
 
     using point = vertex;

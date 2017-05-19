@@ -4,12 +4,11 @@
 int f()
 {
     engine::matrix<3, 3> m {
-        { 1, 2, 3 },
-        { 4, 5, 6 },
-        { 7, 8, 9 }
+        { 1, 0, 4 },
+        { 0, 1, 2 },
+        { 0, 0, 1 }
     };
     engine::vertex v { 2, 4 };
 
-    auto r = v * m;
-    r * m;
+    auto r = v.transform(m);
 }

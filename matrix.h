@@ -47,19 +47,50 @@ namespace engine
             return std::move(result);
         }
 
-        this_t &&operator *(const double scalar)
+        this_t &&operator *(const double scalar) const
         {
             this_t result;
             for (std::size_t it = 0; it < data_.size(); ++it)
             {
-                result[it] = scalar * data_[it];
+                result[it] = data_[it] * scalar;
             }
 
             return std::move(result);
         }
 
+        this_t &operator *=(const double scalar)
+        {
+            for (std::size_t it = 0; it < data_.size(); ++it)
+            {
+                data_[it] *= scalar;
+            }
+
+            return *this;
+        }
+
+        this_t &&operator /(const double scalar) const
+        {
+            this_t result;
+            for (std::size_t it = 0; it < data_.size(); ++it)
+            {
+                result[it] = data_[it] / scalar;
+            }
+
+            return std::move(result);
+        }
+
+        this_t &operator /=(const double scalar)
+        {
+            for (std::size_t it = 0; it < data_.size(); ++it)
+            {
+                data_[it] /= scalar;
+            }
+
+            return *this;
+        }
+
         template<std::size_t otherColumnCount>
-        matrix<rowCount, otherColumnCount> &&operator *(const matrix<columnCount, otherColumnCount> &other)
+        matrix<rowCount, otherColumnCount> &&operator *(const matrix<columnCount, otherColumnCount> &other) const
         {
             matrix<rowCount, otherColumnCount> result;
             for (std::size_t it = 0; it < rowCount; ++it)
@@ -78,7 +109,7 @@ namespace engine
 
         double operator ()(int x, int y)
         {
-            return x * columnCount + y;
+            return data_[x * columnCount + y];
         }
 
     private:
