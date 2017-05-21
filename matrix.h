@@ -36,6 +36,9 @@ namespace engine
             }
         }
 
+    public:
+
+    public:
         this_t &&operator +(const this_t &other)
         {
             this_t result;
@@ -107,7 +110,7 @@ namespace engine
             return std::move(result);
         }
 
-        double operator ()(int x, int y)
+        constexpr double operator ()(int x, int y)
         {
             return data_[x * columnCount + y];
         }
@@ -118,6 +121,82 @@ namespace engine
     private:
         template<std::size_t r, std::size_t c>
         friend class matrix;
+        friend struct math;
+    };
+
+    using matrix3d = matrix<3, 3>;
+
+    struct math
+    {
+        template<std::size_t rc, std::size_t cc>
+        static matrix<rc, cc> identity()
+        {
+            static_assert(rc == cc, "only square matrices can have an identity matrix");
+
+            matrix<rc, cc> result;
+            for (std::size_t it = 0, column = 0; it < rc; ++it)
+            {
+                result.data_[column] = 1;
+                column += rc + 1;
+            }
+
+            return result;
+        }
+
+        template<std::size_t rc, std::size_t cc>
+        static constexpr matrix<rc - 1, cc -1> mminor(const matrix<rc, cc> &m, std::size_t row, std::size_t column)
+        {
+            static_assert((rc > 1) && (cc > 1), "the matrix is to small to have a minor");
+
+            matrix<rc - 1, cc -1> result;
+
+            std::size_t index = 0;
+            for (std::size_t it = 0; it < rc; ++it)
+            {
+                for (std::size_t jt = 0; jt < rc; ++jt)
+                {
+                    if ((it != row) && (jt != column))
+                    {
+                        result.data_[index] = m.data_[it * cc + jt];
+                        ++index;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        template<std::size_t rc, std::size_t cc>
+        static constexpr typename std::enable_if<(rc > 2), double>::type determinant(const matrix<rc, cc> &m)
+        {
+            static_assert(rc == cc, "only square matrices can have a determinant");
+
+            double result = 0;
+            int sign = 1;
+
+            for (std::size_t it = 0; it < cc; ++it)
+            {
+                result += sign * (m.data_[it] * determinant(mminor(m, 0, it)));
+                sign *= -1;
+            }
+
+            return result;
+        }
+
+        template<std::size_t rc, std::size_t cc>
+        static constexpr typename std::enable_if<(rc == 2), double>::type determinant(const matrix<rc, cc> &m)
+        {
+            static_assert(rc == cc, "only square matrices can have a determinant");
+
+            return m.data_[0] * m.data_[3] - m.data_[1] * m.data_[2];
+        }
+
+        template<std::size_t rc, std::size_t cc>
+        static constexpr typename std::enable_if<(rc < 2), double>::type determinant(const matrix<rc, cc> &m)
+        {
+            static_assert(rc == cc, "only square matrices can have a determinant");
+            return 0;
+        }
     };
 }
 

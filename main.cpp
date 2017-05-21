@@ -5,24 +5,22 @@
 #include "application.h"
 #include "window.h"
 #include "matrix.h"
+#include "vertex.h"
 
 using namespace ui;
 
-struct point
-{
-    double x;
-    double y;
-};
+using engine::vertex;
+using engine::matrix3d;
 
 struct line
 {
-    point start;
-    point end;
+    vertex start;
+    vertex end;
 };
 
 struct player
 {
-    point coords;
+    vertex coords;
     double angle;
     double fov;
 };
@@ -34,7 +32,7 @@ constexpr const auto mapHeight { 800 };
 
 constexpr const auto pFOV { PI / 3 };
 constexpr const auto pAngle { 0 };
-constexpr const point initialPlayerPos {
+constexpr const vertex initialPlayerPos {
     mapWidth >> 1,
     (mapWidth >> 1) / std::tan(pFOV / 2)
 };
@@ -44,6 +42,8 @@ const static line wall { { 100, 100 }, { 500, 100 } };
 // the whole witdth of the projection plane fits into it (FOV). This is the funky calculation
 // below for the player's y coordinate
 static player p { initialPlayerPos, pAngle, pFOV };
+
+matrix3d transformationMatrix = engine::math::identity<3,3>();
 
 void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
 {
@@ -63,23 +63,12 @@ void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
 //        (wall.start.y + wall.end.y) / 2
 //    };
 
-    const auto sine = std::sin(p.angle);
-    const auto cosine = std::cos(p.angle);;
-
-    // Move the wall so that it's center is (playerX, playerY)
-    line translatedWall {
-        { (wall.start.x - p.coords.x), (wall.start.y - p.coords.y) },
-        { (wall.end.x   - p.coords.x), (wall.end.y   - p.coords.y) }
-    };
-
     const line rotatedWall {
         {
-            (translatedWall.start.x * cosine + translatedWall.start.y * sine) + p.coords.x,
-            (translatedWall.start.y * cosine - translatedWall.start.x * sine) + p.coords.y
+            wall.start.transform(transformationMatrix)
         },
         {
-            (translatedWall.end.x * cosine + translatedWall.end.y * sine) + p.coords.x,
-            (translatedWall.end.y * cosine - translatedWall.end.x * sine) + p.coords.y
+            wall.end.transform(transformationMatrix)
         }
     };
     cairo_move_to(context, rotatedWall.start.x, rotatedWall.start.y);
@@ -116,17 +105,21 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
 {
     static constexpr const int velocity = 20;
     static constexpr const double rotationVelocity = 0.05;
+
+    const auto sine = std::sin(p.angle);
+    const auto cosine = std::cos(p.angle);;
+
     switch (e.key)
     {
     default:
         break;
     case KeyEvent::Key::Up:
-        p.coords.x -= std::cos(p.angle) * velocity;
-        p.coords.y -= std::sin(p.angle) * velocity;
+        p.coords.x -= cosine * velocity;
+        p.coords.y -= sine * velocity;
         break;
     case KeyEvent::Key::Down:
-        p.coords.x += std::cos(p.angle) * velocity;
-        p.coords.y += std::sin(p.angle) * velocity;
+        p.coords.x += cosine * velocity;
+        p.coords.y += sine * velocity;
         break;
     case KeyEvent::Key::Left:
         p.angle -= rotationVelocity;
@@ -135,6 +128,27 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
         p.angle += rotationVelocity;
         break;
     }
+
+    // https://en.wikipedia.org/wiki/Transformation_matrix#Composing_and_inverting_transformations
+    matrix3d translateToPlayer {
+        { 1, 0, p.coords.x },
+        { 0, 1, p.coords.y },
+        { 0, 0,      1     }
+    };
+
+    matrix3d rotate {
+        { cosine,   sine, 0 },
+        {  -sine, cosine, 0 },
+        {      0,      0, 1 }
+    };
+
+    matrix3d translateToOrigin {
+        { 1, 0, -p.coords.x },
+        { 0, 1, -p.coords.y },
+        { 0, 0,      1     }
+    };
+
+    transformationMatrix = (translateToPlayer * rotate) * translateToOrigin;
 
     auto window = static_cast<Window *>(w);
     window->repaint();

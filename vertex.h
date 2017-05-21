@@ -18,7 +18,7 @@ namespace engine
         {}
 
     public:
-        vertex transform(const matrix<3, 3> &m);
+        vertex transform(const matrix3d &m) const;
 
     public:
         double x;

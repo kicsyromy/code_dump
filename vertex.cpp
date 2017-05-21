@@ -2,7 +2,7 @@
 
 using namespace engine;
 
-vertex vertex::transform(const matrix<3, 3> &m)
+vertex vertex::transform(const matrix3d &m) const
 {
     matrix<3, 1> helper {
         { x },
