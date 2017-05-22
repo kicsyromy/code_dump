@@ -32,15 +32,16 @@ constexpr const auto mapHeight { 800 };
 
 constexpr const auto pFOV { PI / 3 };
 constexpr const auto pAngle { 0 };
+
+// In order to maintain the proper FOV we need to position the player in such a way that
+// the whole witdth of the projection plane fits into it (FOV). This is the funky calculation
+// below for the player's y coordinate
 constexpr const vertex initialPlayerPos {
     mapWidth >> 1,
     (mapWidth >> 1) / std::tan(pFOV / 2)
 };
 
-const static line wall { { 100, 100 }, { 500, 100 } };
-// In order to maintain the proper FOV we need to position the player in such a way that
-// the whole witdth of the projection plane fits into it (FOV). This is the funky calculation
-// below for the player's y coordinate
+static line wall { { 100, 100 }, { 500, 100 } };
 static player p { initialPlayerPos, pAngle, pFOV };
 
 matrix3d transformationMatrix = engine::math::identity<3,3>();
@@ -57,11 +58,6 @@ void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
     // are translate -> rotate -> translate
     cairo_set_line_width(context, 3.0);
     cairo_set_source_rgb(context, 1.0, 1.0, 0);
-    // Calculate the middle of the segment for the translation
-//    const point midPoint  {
-//        (wall.start.x + wall.end.x) / 2,
-//        (wall.start.y + wall.end.y) / 2
-//    };
 
     const line rotatedWall {
         {
@@ -112,27 +108,19 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
     auto deltaX = cosine * velocity;
     auto deltaY = sine * velocity;
 
-    matrix3d translationMatrix {
-        { 1, 0, deltaX },
-        { 0, 1, deltaY },
-        { 0, 0,    1   }
-    };
-
-    bool translated = false;
+    static auto globalDeltaX = deltaX;
+    static auto globalDeltaY = deltaY;
 
     switch (e.key)
     {
     default:
         break;
     case KeyEvent::Key::Up:
-        p.coords.x -= deltaX;
-        p.coords.y -= deltaY;
-        translated = true;
-        break;
+        deltaX *= -1;
+        deltaY *= -1;
     case KeyEvent::Key::Down:
-        p.coords.x += deltaX;
-        p.coords.y += deltaY;
-        translated = true;
+        globalDeltaX += deltaX;
+        globalDeltaY += deltaY;
         break;
     case KeyEvent::Key::Left:
         p.angle -= rotationVelocity;
@@ -159,6 +147,12 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
         { 1, 0, -p.coords.x },
         { 0, 1, -p.coords.y },
         { 0, 0,      1     }
+    };
+
+    matrix3d translationMatrix {
+        { 1, 0, globalDeltaX },
+        { 0, 1, globalDeltaY },
+        { 0, 0,    1   }
     };
 
     transformationMatrix = translationMatrix * translateToPlayer * rotate * translateToOrigin;
