@@ -38,7 +38,7 @@ constexpr const auto pAngle { 0 };
 // below for the player's y coordinate
 constexpr const vertex initialPlayerPos {
     mapWidth >> 1,
-    (mapWidth >> 1) / std::tan(pFOV / 2)
+    mapWidth >> 1
 };
 
 static line wall { { 100, 100 }, { 500, 100 } };
@@ -131,28 +131,29 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
     }
 
     // https://en.wikipedia.org/wiki/Transformation_matrix#Composing_and_inverting_transformations
+    // https://github.com/ssloy/tinyrenderer/wiki/Lesson-4:-Perspective-projection
     matrix3d translateToPlayer {
         { 1, 0, p.coords.x },
+        { 0, 0,      1     },
         { 0, 1, p.coords.y },
-        { 0, 0,      1     }
     };
 
     matrix3d rotate {
         { cosine,   sine, 0 },
+        {      0,      0, 1 },
         {  -sine, cosine, 0 },
-        {      0,      0, 1 }
     };
 
     matrix3d translateToOrigin {
         { 1, 0, -p.coords.x },
+        { 0, 0,       1     },
         { 0, 1, -p.coords.y },
-        { 0, 0,      1     }
     };
 
     matrix3d translationMatrix {
         { 1, 0, globalDeltaX },
+        { 0, 0,       1      },
         { 0, 1, globalDeltaY },
-        { 0, 0,    1   }
     };
 
     transformationMatrix = translationMatrix * translateToPlayer * rotate * translateToOrigin;

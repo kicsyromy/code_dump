@@ -7,7 +7,7 @@ vertex vertex::transform(const matrix3d &m) const
     matrix<3, 1> helper {
         { x },
         { y },
-        { 1 }
+        { 1 },
     };
 
     auto r = std::move(m * helper);
