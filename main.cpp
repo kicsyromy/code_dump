@@ -89,7 +89,7 @@ void paint(cairo_t *context, std::size_t width, std::size_t height, void *)
     cairo_set_line_width(context, 0.0);
     cairo_set_source_rgb(context, 1.0, 1.0, 1.0);
 //    cairo_rectangle(context, p.coords.x - 5, p.coords.y - 5, 10, 10);
-    cairo_rectangle(context,  (mapWidth >> 1) - 5, ((mapWidth >> 1) / std::tan(p.fov / 2)) - 5, 10, 10);
+    cairo_rectangle(context,  initialPlayerPos.x - 5, initialPlayerPos.y - 5, 10, 10);
     cairo_fill(context);
 }
 
@@ -107,19 +107,32 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
     static constexpr const double rotationVelocity = 0.05;
 
     const auto sine = std::sin(p.angle);
-    const auto cosine = std::cos(p.angle);;
+    const auto cosine = std::cos(p.angle);
+
+    auto deltaX = cosine * velocity;
+    auto deltaY = sine * velocity;
+
+    matrix3d translationMatrix {
+        { 1, 0, deltaX },
+        { 0, 1, deltaY },
+        { 0, 0,    1   }
+    };
+
+    bool translated = false;
 
     switch (e.key)
     {
     default:
         break;
     case KeyEvent::Key::Up:
-        p.coords.x -= cosine * velocity;
-        p.coords.y -= sine * velocity;
+        p.coords.x -= deltaX;
+        p.coords.y -= deltaY;
+        translated = true;
         break;
     case KeyEvent::Key::Down:
-        p.coords.x += cosine * velocity;
-        p.coords.y += sine * velocity;
+        p.coords.x += deltaX;
+        p.coords.y += deltaY;
+        translated = true;
         break;
     case KeyEvent::Key::Left:
         p.angle -= rotationVelocity;
@@ -148,7 +161,7 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
         { 0, 0,      1     }
     };
 
-    transformationMatrix = (translateToPlayer * rotate) * translateToOrigin;
+    transformationMatrix = translationMatrix * translateToPlayer * rotate * translateToOrigin;
 
     auto window = static_cast<Window *>(w);
     window->repaint();

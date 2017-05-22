@@ -39,7 +39,7 @@ namespace engine
     public:
 
     public:
-        this_t &&operator +(const this_t &other)
+        this_t operator +(const this_t &other)
         {
             this_t result;
             for (std::size_t it = 0; it < data_.size(); ++it)
@@ -50,7 +50,7 @@ namespace engine
             return std::move(result);
         }
 
-        this_t &&operator *(const double scalar) const
+        this_t operator *(const double scalar) const
         {
             this_t result;
             for (std::size_t it = 0; it < data_.size(); ++it)
@@ -71,7 +71,7 @@ namespace engine
             return *this;
         }
 
-        this_t &&operator /(const double scalar) const
+        this_t operator /(const double scalar) const
         {
             this_t result;
             for (std::size_t it = 0; it < data_.size(); ++it)
@@ -93,7 +93,7 @@ namespace engine
         }
 
         template<std::size_t otherColumnCount>
-        matrix<rowCount, otherColumnCount> &&operator *(const matrix<columnCount, otherColumnCount> &other) const
+        matrix<rowCount, otherColumnCount> operator *(const matrix<columnCount, otherColumnCount> &other) const
         {
             matrix<rowCount, otherColumnCount> result;
             for (std::size_t it = 0; it < rowCount; ++it)
@@ -110,7 +110,12 @@ namespace engine
             return std::move(result);
         }
 
-        constexpr double operator ()(int x, int y)
+        constexpr double operator ()(int x, int y) const
+        {
+            return data_[x * columnCount + y];
+        }
+
+        double &operator ()(int x, int y)
         {
             return data_[x * columnCount + y];
         }
