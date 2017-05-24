@@ -37,8 +37,8 @@ constexpr const auto pAngle { 0 };
 // the whole witdth of the projection plane fits into it (FOV). This is the funky calculation
 // below for the player's y coordinate
 constexpr const vertex initialPlayerPos {
-    mapWidth >> 1,
-    mapWidth >> 1
+    mapWidth  >> 1,
+    mapHeight >> 1
 };
 
 static line wall { { 100, 100 }, { 500, 100 } };
@@ -102,6 +102,18 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
     static constexpr const int velocity = 20;
     static constexpr const double rotationVelocity = 0.05;
 
+    switch (e.key)
+    {
+    default:
+        break;
+    case KeyEvent::Key::Left:
+        p.angle -= rotationVelocity;
+        break;
+    case KeyEvent::Key::Right:
+        p.angle += rotationVelocity;
+        break;
+    }
+
     const auto sine = std::sin(p.angle);
     const auto cosine = std::cos(p.angle);
 
@@ -122,38 +134,33 @@ void handleKeyPressEvent(const KeyEvent &e, void *w)
         globalDeltaX += deltaX;
         globalDeltaY += deltaY;
         break;
-    case KeyEvent::Key::Left:
-        p.angle -= rotationVelocity;
-        break;
-    case KeyEvent::Key::Right:
-        p.angle += rotationVelocity;
-        break;
     }
+
 
     // https://en.wikipedia.org/wiki/Transformation_matrix#Composing_and_inverting_transformations
     // https://github.com/ssloy/tinyrenderer/wiki/Lesson-4:-Perspective-projection
     matrix3d translateToPlayer {
         { 1, 0, p.coords.x },
-        { 0, 0,      1     },
         { 0, 1, p.coords.y },
+        { 0, 0,      1     },
     };
 
     matrix3d rotate {
         { cosine,   sine, 0 },
-        {      0,      0, 1 },
         {  -sine, cosine, 0 },
+        {      0,      0, 1 },
     };
 
     matrix3d translateToOrigin {
         { 1, 0, -p.coords.x },
-        { 0, 0,       1     },
         { 0, 1, -p.coords.y },
+        { 0, 0,       1     },
     };
 
     matrix3d translationMatrix {
         { 1, 0, globalDeltaX },
-        { 0, 0,       1      },
         { 0, 1, globalDeltaY },
+        { 0, 0,       1      },
     };
 
     transformationMatrix = translationMatrix * translateToPlayer * rotate * translateToOrigin;
