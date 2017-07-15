@@ -7,15 +7,18 @@
 
 namespace gulp
 {
-    class WindowPrivate;
+    class PlatformWindow;
 
     class GULP_API Window
     {
     public:
         Window();
 
+    public:
+        void show();
+
     private:
-        std::unique_ptr<WindowPrivate> priv_;
+        std::unique_ptr<PlatformWindow> priv_;
 
     private:
         DISABLE_COPY(Window)

@@ -25,6 +25,8 @@
 #define GULP_API
 #endif
 
+#define UNUSED(d) static_cast<void>(d)
+
 #define DISABLE_COPY(klass)                       \
     klass(const klass &other) = delete;           \
     klass &operator=(const klass &other) = delete;

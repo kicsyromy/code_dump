@@ -3,8 +3,19 @@
 
 namespace gulp
 {
-    struct ApplicationPrivate
+    class Platform;
+
+    class ApplicationPrivate
     {
+    public:
+        ApplicationPrivate(int argc, char *argv[]);
+        ~ApplicationPrivate() = default;
+
+    public:
+        int run();
+
+    private:
+        Platform &platform_;
     };
 }
 
