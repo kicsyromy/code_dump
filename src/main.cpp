@@ -4,7 +4,7 @@
 #include "logger.h"
 #include "vga.h"
 
-using word = std::uint16_t;
+#include <iostream>
 
 int main()
 {
@@ -21,16 +21,16 @@ int main()
     getch();
 
     VGA vga;
-    vga.put_pixel(1, 1, Color<255, 0, 0>());
-    vga.put_pixel(1, 2, Color<255, 0, 0>());
-    vga.put_pixel(1, 3, Color<255, 0, 0>());
-    vga.put_pixel(1, 4, Color<255, 0, 0>());
-    vga.put_pixel(1, 5, Color<255, 0, 0>());
-    vga.put_pixel(2, 1, Color<255, 0, 0>());
-    vga.put_pixel(2, 2, Color<255, 0, 0>());
-    vga.put_pixel(2, 3, Color<255, 0, 0>());
-    vga.put_pixel(2, 4, Color<255, 0, 0>());
-    vga.put_pixel(2, 5, Color<255, 0, 0>());
+    vga.put_pixel(1, 1, Color<15, 68, 51>());
+    vga.put_pixel(1, 2, Color<15, 68, 51>());
+    vga.put_pixel(1, 3, Color<15, 68, 51>());
+    vga.put_pixel(1, 4, Color<15, 68, 51>());
+    vga.put_pixel(1, 5, Color<15, 68, 51>());
+    vga.put_pixel(2, 1, Color<15, 68, 51>());
+    vga.put_pixel(2, 2, Color<15, 68, 51>());
+    vga.put_pixel(2, 3, Color<15, 68, 51>());
+    vga.put_pixel(2, 4, Color<15, 68, 51>());
+    vga.put_pixel(2, 5, Color<15, 68, 51>());
 
     getch();
 

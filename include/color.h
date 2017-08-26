@@ -173,11 +173,11 @@ private:
         return std::min_element(std::begin(colors), std::end(colors), &compare_colors<r,g,b>) - std::begin(colors);
     }
 
-private:
+public:
     Color(const Color &) = delete;
-    Color(Color &&) = delete;
+    Color(Color &&) = default;
     Color &operator =(const Color) = delete;
-    Color &operator =(Color &&) = delete;
+    Color &operator =(Color &&) = default;
 };
 
 #endif // COLOR_H
