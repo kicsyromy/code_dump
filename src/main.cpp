@@ -3,6 +3,7 @@
 
 #include "logger.h"
 #include "vga.h"
+#include "sound.h"
 
 #include <iostream>
 
@@ -17,6 +18,9 @@ int main()
     }
     LOG_INFO("Press any key to enter the wonderfull world of graphics...");
     LOG_INFO("Size of pointer: %x, size of int %x", sizeof(std::intptr_t), sizeof(int));
+
+    SoundBlaster sb;
+    sb.test();
 
     getch();
 
