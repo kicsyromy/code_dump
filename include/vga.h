@@ -49,10 +49,10 @@ public:
     }
 
 private:
-    byte_t vga_memory_buffer_;
+    byte_t *vga_memory_buffer_;
 
 private:
-    static constexpr const auto multiply_by_320(int value) { return (value << 8) + (value << 6); }
+    static constexpr auto multiply_by_320(int value) { return (value << 8) + (value << 6); }
 
 public:
     VGA(const VGA &) = delete;
