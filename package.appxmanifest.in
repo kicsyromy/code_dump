@@ -7,7 +7,7 @@
 
     <Identity
         Name="com.@ORGANIZATION_SANE@.@PROJECT_NAME@"
-        Publisher="@ORGANIZATION@"
+        Publisher="CN=@ORGANIZATION_SANE@"
         Version="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_BUILD@" />
 
     <mp:PhoneIdentity
