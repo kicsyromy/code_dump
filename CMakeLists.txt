@@ -15,7 +15,22 @@ file (GLOB RESOURCES "${PROJECT_SOURCE_DIR}/resources/*")
 source_group("Assets" FILES ${RESOURCES})
 
 ## APPLICATION MANIFEST ##
-list (APPEND RESOURCES "${PROJECT_SOURCE_DIR}/package.appxmanifest")
+set (APPLICATION_TITLE "Template Application")
+set (APPLICATION_DESCRIPTION "Universal Windows Platform Application CMake Template")
+set (ORGANIZATION "Small Team Inc.")
+string (REPLACE " " "" ORGANIZATION_SANE ${ORGANIZATION})
+string (TOLOWER ${ORGANIZATION_SANE} ORGANIZATION_SANE)
+set (VERSION_MAJOR 0)
+set (VERSION_MINOR 0)
+set (VERSION_PATCH 1)
+set (VERSION_BUILD 134)
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/package.appxmanifest.in"
+    "${PROJECT_BINARY_DIR}/package.appxmanifest"
+    @ONLY
+)
+list (APPEND RESOURCES "${PROJECT_BINARY_DIR}/package.appxmanifest")
 
 set_property (SOURCE ${RESOURCES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 set_property (SOURCE ${RESOURCES} PROPERTY VS_DEPLOYMENT_LOCATION "resources")
