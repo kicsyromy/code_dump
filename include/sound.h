@@ -29,8 +29,8 @@ struct SoundBlaster
     void test()
     {
         LOG_INFO("BLASTER = %s", getenv("BLASTER"));
-        LOG_INFO("Reset port: %x\nRead port: %x\nWrite port: %x\nPoll port: %x\ni16bit_port: %x\n"
-                 "IRQ: %x\nDMA: %x\n", ports_.reset_port(), ports_.read_port(), ports_.write_port(),
+        LOG_INFO("Reset port: %d\nRead port: %d\nWrite port: %d\nPoll port: %d\ni16bit_port: %d\n"
+                 "IRQ: %d\nDMA: %d\n", ports_.reset_port(), ports_.read_port(), ports_.write_port(),
                  ports_.poll_port(), ports_.i16bit_port(), irq_, dma_channel_);
     }
 
@@ -162,11 +162,12 @@ private:
     public:
         inline void reset()
         {
+            write(ports_.reset_port(), 1);
             usleep(1000);
         }
 
     private:
-        inline byte_t read()
+        byte_t __attribute__((noinline)) read()
         {
             __asm__ __volatile__(
                 "mov %0,%%dx\n"
@@ -178,22 +179,22 @@ private:
                 "in %%dx,%%al\n"
                 "ret\n"
                 : : "r"(ports_.poll_port()), "r"(ports_.read_port())
-                : "ax", "dx"
+                : "eax", "edx"
             );
         }
 
-        inline void write(std::uint16_t port, byte_t value)
+        void __attribute__((noinline)) write(std::uint16_t port, byte_t value)
         {
             __asm__ __volatile__(
                 "mov %0,%%dx\n"
-                "read_value:\n"
+                "write_value:\n"
                 "in %%dx, %%al\n"
                 "and 128,%%al\n"
-                "jnz read_value\n"
+                "jnz write_value\n"
                 "mov %1,%%al\n"
                 "out %%al,%%dx\n"
                 : : "r"(port), "r"(value)
-                : "ax", "dx"
+                : "eax", "edx"
             );
         }
     private:

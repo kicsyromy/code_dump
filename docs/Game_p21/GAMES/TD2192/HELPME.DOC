@@ -1,0 +1,222 @@
+=============================================================================
+Traffic Department 2192 ver. 1.0 * Instructions/Troubleshooting Info *
+=============================================================================
+
+
+Traffic Department 2192 Requires:
+  * A 286 or faster IBM-compatible PC
+  * VGA graphics
+  * Hard disk
+
+Also supports:
+  * Sound Blaster, SB Pro, and compatible music cards
+  * Gravis PC GamePad and Joystick control
+
+To start Traffic Department 2192:
+
+1. Switch to the drive where the game is installed (C:)
+2. Switch to the subdirectory where the game is installed (CD \TD)
+3. Type "TD1"
+
+*****************************************************************************
+*  WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING  *
+*****************************************************************************
+*                                                                           *
+*         THE ORIGINAL SCRIPT IS NOT INTENDED FOR YOUNG CHILDEREN           *
+*                                                                           *
+*         This game contains coarse language and sexually suggestive        *
+*         elements throughout the game. If you would like to avoid          *
+*         these elements, we have included an alternate version of the      *
+*         text that can be chosen before the game begins.                   *
+*                                                                           * 
+*         Parents of young childeren can delete the potentially offensive   *
+*         text by removing the file DIALOGUE.DAT from the game directory.   *
+*         This is acheive by changing to the directory where the game       *
+*         is installed (CD \TD), then type "DEL DIALOGUE.DAT".              *
+*         We do request that the original TD2192.ZIP file is distributed    *
+*         in its original form. Deleting DIALOGUE.DAT and distributing      *
+*         the game without this file intact is considered a copyright       *
+*         infringement.                                                     *
+*                                                                           * 
+*         Thank you for your consideration.                                 *
+*                                                                           *
+*                                                                           *  
+*****************************************************************************
+
+
+=============================================================================
+        Configuring Traffic Department 2192
+=============================================================================
+
+The first time you run Traffic Department 2192, a self-explanatory
+configuration menu will come up asking for the type of controller and
+sound card you want to use. The information you give in this configuration
+is stored and used every time you run T.D.
+
+To reconfigure Traffic Department 2192, type "TD1 /config" at the "C:" prompt.
+
+If you would like to temporarily change your configuration, type in
+the command you want to use after typing "TD1".
+
+For example, typing "TD1 /?"  gives you a list the available commands.
+        
+        /?       : displays this list.
+
+        /sb      : plays music and sound effects through your Sound Blaster.        
+
+        /nosound : turns off all music and sound effects.
+
+        /pc      : plays sound effects through your PC speaker.
+
+        /a       : gives you AdLib music with PC speaker sound effects.
+
+        /config  : brings up the configuration menu.
+
+        
+=============================================================================
+        Common problems and solutions
+=============================================================================
+
+
+RUNNING WITH WINDOWS AND OS/2
+=============================
+
+This game should work properly under Windows and OS/2 if you turn all
+sound card support OFF when configuring the game.  However, if you want 
+to hear music or sound through your Sound Blaster, or compatible music 
+card, you must run T.D. 2192 through DOS.
+
+More Windows and OS/2 tips:
+
+1. Even though T.D. 2192 will work under Windows with sound card support
+   turned OFF,  the graphics will run more smoothly under plain DOS.
+
+2. If you try to run T.D. 2192 through Windows or OS/2 with sound card
+   support ON,  you'll get unpredictable results - T.D. 2192 will not
+   run properly.
+
+3. If you encounter any problems running through Windows or OS/2, exit and
+   run T.D. 2192 through plain DOS instead!  This will likely solve any
+   problems you are encountering.
+
+4. Running T.D. 2192 through the "MS-DOS Shell" in Windows (or the
+   OS/2 DOS box) is NOT the same as running it straight from DOS.  For
+   best results, you need to completely exit from Windows or OS/2 and run
+   T.D. 2192 from the DOS prompt.
+
+
+NOT ENOUGH FREE MEMORY
+======================
+
+Problem:  When I run T.D. 2192, the game refuses to start and gives
+   me the message "You need (amount) of free memory to run this program".
+
+Solution:  You need to free up more main (conventional) memory before
+   starting T.D. 2192.  Here are some solutions:
+
+1. If you are trying to run T.D. 2192 from Windows, completely exit
+   Windows and try running it from DOS.
+
+2. If you are trying to run T.D. 2192 from "DOSSHELL" or any other
+   menu program,  please exit from the menu program.  Then, run T.D. 2192
+   from the DOS prompt.  Menu programs often occupy enough memory that
+   there won't be enough left for T.D. 2192.
+
+If neither #1 or #2 solves the problem,  do the following:
+
+1. From the DOS prompt,  type "MEM" and press Enter.
+
+2. You'll see a lot of information about your computer's memory.  Look at
+   the number after the words "Largest Executable Program Size".  This is
+   the amount of memory you currently have available.
+
+Now you need to free up more main memory.  Here are some tips:
+
+
+1. You may need to modify your AUTOEXEC.BAT and CONFIG.SYS files
+   in your root directory.  This can be done in any version of DOS.
+
+   Rewrite your CONFIG.SYS file to contain the lines:
+
+           HIMEM.SYS
+           EMM386.EXE NOEMS HIGHSCAN
+           DOS=HIGH,UMB
+
+2. We also recommend that you clean out all other TSR's and memory
+   managers from CONFIG.SYS by either removing the line, or by typing
+   "REM" before the command.
+   
+3. Once your CONFIG.SYS and AUTOEXEC.BAT files have been changed, you must
+   restart your computer for the changes to take effect. Do this by
+   pressing the CTRL-ALT-DEL keys simultaneously.
+
+4. A handy program for MS-DOS 6.0+ users is MEMMAKER.  This file will 
+   help you optimize your CONFIG.SYS and AUTOEXEC.BAT files to allow 
+   you optimal memory conservation.
+
+5. Please read the manual that came with DOS for more information about
+   configuring memory.
+
+OTHER PROBLEMS
+==============
+
+Problem:
+   When I run T.D. 2192, I don't hear sound.
+
+Solution:
+   Traffic Department will only play music if you have a Sound Blaster or
+   100% compatible sound card. If you have a Sound Blaster or 100% compatible
+   sound card, and you still can't hear music, try one of the following.
+
+1. Make sure Traffic Department 2192 is configured to play sound by typing
+   "TD1 /config" at the "C:" prompt.
+
+2. Check your sound card and speaker connections.
+
+3. Make sure your sound card has no address conflicts with other cards in 
+   your system! If your sound card works properly with other games, you can 
+   assume that there are no conflicts.  However, if your sound card does not 
+   work with other games,  you have a conflict.  See your sound card manual 
+   for details on resolving these conflicts.
+
+
+CONTACTING Safari's TECH SUPPORT
+================================
+
+If you need further assistance, please call our tech support department
+at 301-738-2349 between 9AM and 5PM Eastern Standard Time,  or fax us
+at 301-738-0230.  You can also contact us online:
+
+COMPUSERVE:
+   Mail:  70007,1631
+   Messages & Files:  GO EPIC
+
+Safari's BBS:
+   Exec-PC
+   Phone: (414)789-4360
+
+THE SHAREWARE SUPPORT BBS (Herts, England):
+   Contact: Safari Software
+   2400-14.4K Baud: +44 (0) 442-891-109
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

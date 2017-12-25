@@ -1,0 +1,119 @@
+                            Argo Checkers    
+
+                        
+                        SYSTEM REQUIREMENTS
+
+    To play Argo Checkers, you need:
+        o A system with a 286 or better processor.
+        o A VGA compatible display card.
+        o At least 640k RAM, with about 540k free (553000 bytes) 
+         from the DOS prompt.
+
+    We recommend:
+        o A Microsoft(TM) compatible mouse.
+        o A SoundBlaster(TM) or compatible sound card.
+
+
+
+                              THE GAME
+
+    Argo Checkers contains complete help online. To get to it, simply 
+start the game, and press the F1 key when the first graphics screen comes
+up. If you're having difficulty starting the game, try starting it by typing:
+
+CHECKERS /NOSOUNDBLASTER /GRAPHICS /NOMOUSE
+
+    This will prevent Argo Checkers from looking for certain devices at
+startup time. When you get into the game, go into the help for more detailed
+instructions on command line switches.
+
+
+
+                               CREDITS
+
+    Program written by:
+        Jason Blochowiak
+        Abraham Edlin
+    Illustration & animation by:
+        Don Glassford
+    Digital and PC sound effects by:
+        Robert Prince
+    Producer:
+        Jason Blochowiak
+
+
+
+                          TECH-WEENIE STUFF
+
+    If you're not a programmer familiar with how games are written, 
+most (or all) of what follows won't make any sense.  
+
+    Hi, this is Jason again. This section is for those folks who
+are curious about some of the technical aspects of game production.
+I discussed some of the basics in a similar section in the docs for
+HEXXAGON. If you want background for the rest of this, get HEXXAGON
+(it's available on the Software Creations BBS - the number for the
+BBS is on the end text screen of the program).
+
+    As I mentioned in the HEXXAGON docs, I was using VGRAB's compiled
+sprites for Hexx. Compiled sprites are nice & quick, but they are
+pretty space-consumptive. It was our goal for the registered version
+of Argo Checkers to fit onto a 720k disk - with the compiled sprites,
+this wasn't going to be possible. So, I added what I call "RLI" grabbing
+to VGRAB. RLI stands for "Run Length Indicated", and basically it
+means that for each line of a sprite, there's data indicating horizontal
+spans of background & horizontal spans of foreground (these spans
+also contain the actual data for the foreground). I've heard other
+people call this RLE (Run Length Encoding), but I use the term RLI
+to distinguish this storage method from the RLE compression method.
+Once the graphics were switched over from compiled sprites to RLIs,
+the amount of disk space required dropped substantially. 
+
+    Although RLIs aren't as fast as compiled sprites, they're certainly 
+a LOT faster to draw than sprites with no explicit mask. This represents
+one of the fundamentals of optimization: Figure out as much as you can
+BEFORE the program gets run, so that it has less to figure out WHILE it's
+running. Compiled sprites represent the extreme form of this: Everything,
+down to the CPU instructions, is figured out before the program is run.
+Block sprites with one color (usually color $00) used as a transparent
+color are the opposite extreme: Nothing is determined beforehand, so the
+program has to figure out, at runtime, what to draw and what to skip. RLIs
+are a middle ground: They indicate what should be drawn and what should
+be skipped, but they leave a few things that the program needs to figure
+out at runtime.
+
+    One of the nice things about RLIs is that they tend to actually be
+smaller than the equivilent block sprites - this is because the blank
+areas are encoded in a single byte. So, RLIs are both faster and (almost
+always) smaller than a block sprite.
+
+
+    One other "big" technical thing in Checkers that's different from
+HEXXAGON v1.x is the brain. Hexx used a minimax search, whereas Checkers 
+uses a sorted alpha-beta search. Although I can't go into the details here
+(any decent book on game programming should cover this subject, and some
+data structure/algorithm books cover it), I can say that the difference
+is quite impressive. Hexx v1.x used a search depth of 3 (on "Hard"), whereas
+Checkers can go up to 9 base ply, and extend that up to 20 ply when things
+get messy. Checkers takes roughly the same amount of time to think as
+Hexx. Although this can partly be attributed to a smaller branching factor
+(each piece in Hexx can potentially move to 18 different spots, whereas
+each piece in Checkers can only potentially move to 4 different spots),
+the alpha-beta cutoffs can be quite helpful. This particularly helps when 
+there's an "obvious" move. 
+
+    The sorted alpha-beta has been incorporated into HEXXAGON II v2.0, 
+which is now a MUCH stronger player than the v1.x series. The fundamentals
+in Hexx were also improved - v2.0 can beat v1.x with the same search depth.
+The difference is rather dramatic - v2.0's easiest setting ("Tough") can
+soundly beat v1.x's most difficult setting ("Hard"), and it only takes a 
+fraction of a second to think. Nifty stuff.
+
+
+    Well, that's it for this installment. We're continuing to work hard
+here at Argo Games, so please be sure to look for our products in the
+future! If you have any questions or comments, I can be reached on the
+Software Creations BBS (write to Jason Blochowiak) - although I can't
+guarantee that I'll be able to answer every question you have, I'll 
+try... :)
+

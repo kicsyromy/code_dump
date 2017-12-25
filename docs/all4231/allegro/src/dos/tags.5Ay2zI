@@ -1,0 +1,1705 @@
+LPT1_BASE	psxpad.c	111;"	d	file:
+LPT2_BASE	psxpad.c	112;"	d	file:
+LPT3_BASE	psxpad.c	113;"	d	file:
+LPT_D0	psxpad.c	115;"	d	file:
+LPT_D1	psxpad.c	116;"	d	file:
+LPT_D2	psxpad.c	117;"	d	file:
+LPT_D3	psxpad.c	118;"	d	file:
+LPT_D4	psxpad.c	119;"	d	file:
+LPT_D5	psxpad.c	120;"	d	file:
+LPT_D6	psxpad.c	121;"	d	file:
+LPT_D7	psxpad.c	122;"	d	file:
+LPT_AUT	psxpad.c	123;"	d	file:
+LPT_SEL	psxpad.c	124;"	d	file:
+LPT_PAP	psxpad.c	125;"	d	file:
+LPT_ACK	psxpad.c	126;"	d	file:
+PSX_MAX_DATA	psxpad.c	130;"	d	file:
+PSX_MAX_DETECT	psxpad.c	131;"	d	file:
+PSX_DELAY	psxpad.c	132;"	d	file:
+PSX_MOUSE	psxpad.c	136;"	d	file:
+PSX_NEGCON	psxpad.c	137;"	d	file:
+PSX_KONAMIGUN	psxpad.c	141;"	d	file:
+PSX_DIGITAL	psxpad.c	142;"	d	file:
+PSX_ANALOG_GREEN	psxpad.c	147;"	d	file:
+PSX_GUNCON	psxpad.c	149;"	d	file:
+PSX_ANALOG_RED	psxpad.c	150;"	d	file:
+PSX_JOGCON	psxpad.c	151;"	d	file:
+psx1_init	psxpad.c	/^static int psx1_init(void);$/;"	p	file:
+psx2_init	psxpad.c	/^static int psx2_init(void);$/;"	p	file:
+psx3_init	psxpad.c	/^static int psx3_init(void);$/;"	p	file:
+psx_exit	psxpad.c	/^static void psx_exit(int base);$/;"	p	file:
+psx1_exit	psxpad.c	/^static void psx1_exit(void);$/;"	p	file:
+psx2_exit	psxpad.c	/^static void psx2_exit(void);$/;"	p	file:
+psx3_exit	psxpad.c	/^static void psx3_exit(void);$/;"	p	file:
+psx1_poll	psxpad.c	/^static int psx1_poll(void);$/;"	p	file:
+psx2_poll	psxpad.c	/^static int psx2_poll(void);$/;"	p	file:
+psx3_poll	psxpad.c	/^static int psx3_poll(void);$/;"	p	file:
+psx_detect	psxpad.c	/^static int psx_detect(int base, int conport, int tap);$/;"	p	file:
+joystick_psx1	psxpad.c	/^JOYSTICK_DRIVER joystick_psx1 =$/;"	v
+joystick_psx2	psxpad.c	/^JOYSTICK_DRIVER joystick_psx2 =$/;"	v
+joystick_psx3	psxpad.c	/^JOYSTICK_DRIVER joystick_psx3 =$/;"	v
+psx_parallel_out	psxpad.c	/^static unsigned char psx_parallel_out = 0xff;$/;"	v	file:
+psx_first_poll	psxpad.c	/^static int psx_first_poll = 1;$/;"	v	file:
+conport	psxpad.c	/^   int conport;$/;"	m	struct:__anon1	file:
+tap	psxpad.c	/^   int tap;$/;"	m	struct:__anon1	file:
+type	psxpad.c	/^   int type;$/;"	m	struct:__anon1	file:
+PSX_INFO	psxpad.c	/^} PSX_INFO;$/;"	t	typeref:struct:__anon1	file:
+psx_detected	psxpad.c	/^static PSX_INFO psx_detected[PSX_MAX_DETECT];$/;"	v	file:
+psx_init	psxpad.c	/^static int psx_init(int base)$/;"	f	file:
+psx1_init	psxpad.c	/^static int psx1_init(void)$/;"	f	file:
+psx2_init	psxpad.c	/^static int psx2_init(void)$/;"	f	file:
+psx3_init	psxpad.c	/^static int psx3_init(void)$/;"	f	file:
+psx1_exit	psxpad.c	/^static void psx1_exit(void)$/;"	f	file:
+psx2_exit	psxpad.c	/^static void psx2_exit(void)$/;"	f	file:
+psx3_exit	psxpad.c	/^static void psx3_exit(void)$/;"	f	file:
+psx_clk	psxpad.c	/^static void psx_clk(int base, int on)$/;"	f	file:
+psx_sel	psxpad.c	/^static void psx_sel(int base, int conport, int on)$/;"	f	file:
+psx_cmd	psxpad.c	/^static void psx_cmd(int base, int on)$/;"	f	file:
+psx_dat	psxpad.c	/^static int psx_dat(int base, int conport)$/;"	f	file:
+psx_ack	psxpad.c	/^static int psx_ack(int base, int conport)$/;"	f	file:
+psx_delay	psxpad.c	/^static void psx_delay(int base)$/;"	f	file:
+psx_sendbyte	psxpad.c	/^static unsigned char psx_sendbyte(int base, int conport, unsigned char byte, int wait)$/;"	f	file:
+psx_sendinit	psxpad.c	/^static void psx_sendinit(int base, int conport)$/;"	f	file:
+psx_sendclose	psxpad.c	/^static void psx_sendclose(int base, int conport)$/;"	f	file:
+psx_sendstring	psxpad.c	/^static void psx_sendstring(int base, int conport, int string[])$/;"	f	file:
+psx_vibrate_init	psxpad.c	/^static void psx_vibrate_init(int base, int conport, int tap)$/;"	f	file:
+psx_detect	psxpad.c	/^static int psx_detect(int base, int conport, int tap)$/;"	f	file:
+psx_poll	psxpad.c	/^static void psx_poll(int base, int conport, int tap, int type, int joynum)$/;"	f	file:
+psx1_poll	psxpad.c	/^static int psx1_poll(void)$/;"	f	file:
+psx2_poll	psxpad.c	/^static int psx2_poll(void)$/;"	f	file:
+psx3_poll	psxpad.c	/^static int psx3_poll(void)$/;"	f	file:
+_sg_pci_init	ifsega2p.c	/^int _sg_pci_init(void);$/;"	p	file:
+_sg_pci_exit	ifsega2p.c	/^void _sg_pci_exit(void);$/;"	p	file:
+_sg_pci_ioin	ifsega2p.c	/^unsigned long _sg_pci_ioin(unsigned long offset);$/;"	p	file:
+_sg_pci_ioout	ifsega2p.c	/^void _sg_pci_ioout(unsigned long offset, unsigned long data);$/;"	p	file:
+sg_pci_poll	ifsega2p.c	/^static int sg_pci_poll(void);$/;"	p	file:
+sg_pci_poll1	ifsega2p.c	/^static int sg_pci_poll1(void);$/;"	p	file:
+sg_pci_poll_sub	ifsega2p.c	/^static int sg_pci_poll_sub(int num, int base);$/;"	p	file:
+sg_pci_poll_sub2	ifsega2p.c	/^static int sg_pci_poll_sub2(int base);$/;"	p	file:
+sg_pci_poll_sub3	ifsega2p.c	/^static int sg_pci_poll_sub3(int num, int count, int base);$/;"	p	file:
+sg_pci_button_init	ifsega2p.c	/^static void sg_pci_button_init(int num);$/;"	p	file:
+PowerVR_Physical_Address	ifsega2p.c	/^static unsigned long PowerVR_Physical_Address;$/;"	v	file:
+PowerVR_Linear_Address	ifsega2p.c	/^static unsigned long PowerVR_Linear_Address;$/;"	v	file:
+PowerVR_Linear_Selector	ifsega2p.c	/^static int PowerVR_Linear_Selector;$/;"	v	file:
+joystick_sg2	ifsega2p.c	/^JOYSTICK_DRIVER joystick_sg2 =$/;"	v
+_sg_pci_init	ifsega2p.c	/^int _sg_pci_init(void)$/;"	f
+_sg_pci_exit	ifsega2p.c	/^void _sg_pci_exit(void)$/;"	f
+sg_pci_poll	ifsega2p.c	/^static int sg_pci_poll(void)$/;"	f	file:
+sg_pci_poll_sub	ifsega2p.c	/^static int sg_pci_poll_sub(int num, int base)$/;"	f	file:
+sg_pci_poll_sub2	ifsega2p.c	/^static int sg_pci_poll_sub2(int base)$/;"	f	file:
+sg_pci_poll_sub3	ifsega2p.c	/^static int sg_pci_poll_sub3(int num, int count, int base)$/;"	f	file:
+sg_pci_button_init	ifsega2p.c	/^static void sg_pci_button_init(int num)$/;"	f	file:
+sg_pci_poll1	ifsega2p.c	/^static int sg_pci_poll1(void)$/;"	f	file:
+_sg_pci_ioin	ifsega2p.c	/^unsigned long _sg_pci_ioin(unsigned long offset)$/;"	f
+_sg_pci_ioout	ifsega2p.c	/^void _sg_pci_ioout(unsigned long offset, unsigned long data)$/;"	f
+GRIP_Thunk	grip.c	/^GRIP_THUNK GRIP_Thunk;$/;"	v
+GRIP_Thunked	grip.c	/^static int GRIP_Thunked = 0;$/;"	v	file:
+GRIP_CS	grip.c	/^static int GRIP_CS;$/;"	v	file:
+GRIP_DS	grip.c	/^static int GRIP_DS;$/;"	v	file:
+GRIP_ES	grip.c	/^static short GRIP_ES;$/;"	v	file:
+_farpokew	grip.c	54;"	d	file:
+DPMI_AllocDOS	grip.c	57;"	d	file:
+DPMI_FreeDOS	grip.c	58;"	d	file:
+DPMI_AllocSel	grip.c	59;"	d	file:
+DPMI_FreeSel	grip.c	60;"	d	file:
+_DPMI_SetCodeAR	grip.c	/^   unsigned char _DPMI_SetCodeAR(unsigned short sel);$/;"	p	file:
+_DPMI_SetDataAR	grip.c	/^   unsigned char _DPMI_SetDataAR(unsigned short sel);$/;"	p	file:
+DPMI_SetBounds	grip.c	/^   static unsigned char DPMI_SetBounds(unsigned short sel, unsigned long base, unsigned short lm) {$/;"	f	file:
+_GrLink	grip.c	/^   GRIP_BOOL _GrLink(GRIP_BUF image, GRIP_VALUE size) {$/;"	f
+_GrUnlink	grip.c	/^   GRIP_BOOL _GrUnlink(void) {$/;"	f
+BANK_SWITCHER	vesas.s	/^#define BANK_SWITCHER(name, cache, code)                                     \\$/;"	d
+SET_VESA_BANK_RM	vesas.s	/^#define SET_VESA_BANK_RM(window)                                             \\$/;"	d
+SET_VESA_BANK_PM	vesas.s	/^#define SET_VESA_BANK_PM(window)                                             \\$/;"	d
+SET_VESA_BANK_PM_ES	vesas.s	/^#define SET_VESA_BANK_PM_ES(window)                                          \\$/;"	d
+sb_detect	sb.c	/^static int sb_detect(int input);$/;"	p	file:
+sb_init	sb.c	/^static int sb_init(int input, int voices);$/;"	p	file:
+sb_exit	sb.c	/^static void sb_exit(int input);$/;"	p	file:
+sb_set_mixer_volume	sb.c	/^static int sb_set_mixer_volume(int volume);$/;"	p	file:
+sb_buffer_size	sb.c	/^static int sb_buffer_size(void);$/;"	p	file:
+sb_rec_cap_rate	sb.c	/^static int sb_rec_cap_rate(int bits, int stereo);$/;"	p	file:
+sb_rec_cap_parm	sb.c	/^static int sb_rec_cap_parm(int rate, int bits, int stereo);$/;"	p	file:
+sb_rec_source	sb.c	/^static int sb_rec_source(int source);$/;"	p	file:
+sb_rec_start	sb.c	/^static int sb_rec_start(int rate, int bits, int stereo);$/;"	p	file:
+sb_rec_stop	sb.c	/^static void sb_rec_stop(void);$/;"	p	file:
+sb_rec_read	sb.c	/^static int sb_rec_read(void *buf);$/;"	p	file:
+sb_desc	sb.c	/^static char sb_desc[256] = EMPTY_STRING;$/;"	v	file:
+SB_DRIVER_CONTENTS	sb.c	52;"	d	file:
+digi_sb10	sb.c	/^DIGI_DRIVER digi_sb10 =$/;"	v
+digi_sb15	sb.c	/^DIGI_DRIVER digi_sb15 =$/;"	v
+digi_sb20	sb.c	/^DIGI_DRIVER digi_sb20 =$/;"	v
+digi_sbpro	sb.c	/^DIGI_DRIVER digi_sbpro =$/;"	v
+digi_sb16	sb.c	/^DIGI_DRIVER digi_sb16=$/;"	v
+sb_midi_detect	sb.c	/^static int sb_midi_detect(int input);$/;"	p	file:
+sb_midi_init	sb.c	/^static int sb_midi_init(int input, int voices);$/;"	p	file:
+sb_midi_exit	sb.c	/^static void sb_midi_exit(int input);$/;"	p	file:
+sb_midi_output	sb.c	/^static void sb_midi_output(int data);$/;"	p	file:
+sb_midi_desc	sb.c	/^static char sb_midi_desc[256] = EMPTY_STRING;$/;"	v	file:
+midi_sb_out	sb.c	/^MIDI_DRIVER midi_sb_out =$/;"	v
+sb_in_use	sb.c	/^static int sb_in_use = FALSE;             \/* is SB being used? *\/$/;"	v	file:
+sb_stereo	sb.c	/^static int sb_stereo = FALSE;             \/* in stereo mode? *\/$/;"	v	file:
+sb_recording	sb.c	/^static int sb_recording = FALSE;          \/* in input mode? *\/$/;"	v	file:
+sb_16bit	sb.c	/^static int sb_16bit = FALSE;              \/* in 16 bit mode? *\/$/;"	v	file:
+sb_midi_out_mode	sb.c	/^static int sb_midi_out_mode = FALSE;      \/* active for MIDI output? *\/$/;"	v	file:
+sb_midi_in_mode	sb.c	/^static int sb_midi_in_mode = FALSE;       \/* active for MIDI input? *\/$/;"	v	file:
+sb_int	sb.c	/^static int sb_int = -1;                   \/* interrupt vector *\/$/;"	v	file:
+sb_dsp_ver	sb.c	/^static int sb_dsp_ver = -1;               \/* SB DSP version *\/$/;"	v	file:
+sb_dma8	sb.c	/^static int sb_dma8 = -1;                  \/* 8-bit DMA channel (SB16) *\/$/;"	v	file:
+sb_dma16	sb.c	/^static int sb_dma16 = -1;                 \/* 16-bit DMA channel (SB16) *\/$/;"	v	file:
+sb_hw_dsp_ver	sb.c	/^static int sb_hw_dsp_ver = -1;            \/* as reported by autodetect *\/$/;"	v	file:
+sb_dma_size	sb.c	/^static int sb_dma_size = -1;              \/* size of dma transfer in bytes *\/$/;"	v	file:
+sb_dma_mix_size	sb.c	/^static int sb_dma_mix_size = -1;          \/* number of samples to mix *\/$/;"	v	file:
+sb_dma_count	sb.c	/^static int sb_dma_count = 0;              \/* need to resync with dma? *\/$/;"	v	file:
+sb_semaphore	sb.c	/^static volatile int sb_semaphore = FALSE; \/* reentrant interrupt? *\/$/;"	v	file:
+sb_sel	sb.c	/^static int sb_sel[2];                     \/* selectors for the buffers *\/$/;"	v	file:
+sb_buf	sb.c	/^static unsigned long sb_buf[2];           \/* pointers to the two buffers *\/$/;"	v	file:
+sb_bufnum	sb.c	/^static int sb_bufnum = 0;                 \/* the one currently in use *\/$/;"	v	file:
+sb_recbufnum	sb.c	/^static int sb_recbufnum = 0;              \/* the one to be returned *\/$/;"	v	file:
+sb_master_vol	sb.c	/^static int sb_master_vol = -1;            \/* stored mixer settings *\/$/;"	v	file:
+sb_digi_vol	sb.c	/^static int sb_digi_vol = -1;$/;"	v	file:
+sb_fm_vol	sb.c	/^static int sb_fm_vol = -1;$/;"	v	file:
+sb_detecting_midi	sb.c	/^static int sb_detecting_midi = FALSE;$/;"	v	file:
+sb_lock_mem	sb.c	/^static void sb_lock_mem(void);$/;"	p	file:
+sb_read_dsp	sb.c	/^static INLINE RET_VOLATILE int sb_read_dsp(void)$/;"	f	file:
+sb_write_dsp	sb.c	/^static INLINE RET_VOLATILE int sb_write_dsp(unsigned char byte)$/;"	f	file:
+_sb_voice	sb.c	/^void _sb_voice(int state)$/;"	f
+_sb_set_mixer	sb.c	/^int _sb_set_mixer(int digi_volume, int midi_volume)$/;"	f
+sb_set_mixer_volume	sb.c	/^static int sb_set_mixer_volume(int volume)$/;"	f	file:
+sb_stereo_mode	sb.c	/^static void sb_stereo_mode(int enable)$/;"	f	file:
+sb_input_stereo_mode	sb.c	/^static void sb_input_stereo_mode(int enable)$/;"	f	file:
+sb_set_sample_rate	sb.c	/^static void sb_set_sample_rate(unsigned int rate)$/;"	f	file:
+sb_set_input_sample_rate	sb.c	/^static void sb_set_input_sample_rate(unsigned int rate, int stereo)$/;"	f	file:
+_sb_reset_dsp	sb.c	/^int _sb_reset_dsp(int data)$/;"	f
+_sb_read_dsp_version	sb.c	/^int _sb_read_dsp_version(void)$/;"	f
+sb_buffer_size	sb.c	/^static int sb_buffer_size(void)$/;"	f	file:
+sb_play_buffer	sb.c	/^static void sb_play_buffer(int size)$/;"	f	file:
+sb_play_buffer	sb.c	/^END_OF_STATIC_FUNCTION(sb_play_buffer);$/;"	v
+sb_record_buffer	sb.c	/^static void sb_record_buffer(int size, int stereo, int bits)$/;"	f	file:
+sb_record_buffer	sb.c	/^END_OF_STATIC_FUNCTION(sb_record_buffer);$/;"	v
+sb_interrupt	sb.c	/^static int sb_interrupt(void)$/;"	f	file:
+sb_interrupt	sb.c	/^END_OF_STATIC_FUNCTION(sb_interrupt);$/;"	v
+sb_start	sb.c	/^static void sb_start(void)$/;"	f	file:
+sb_stop	sb.c	/^static void sb_stop(void)$/;"	f	file:
+sb_detect	sb.c	/^static int sb_detect(int input)$/;"	f	file:
+sb_init	sb.c	/^static int sb_init(int input, int voices)$/;"	f	file:
+sb_exit	sb.c	/^static void sb_exit(int input)$/;"	f	file:
+sb_rec_cap_rate	sb.c	/^static int sb_rec_cap_rate(int bits, int stereo)$/;"	f	file:
+sb_rec_cap_parm	sb.c	/^static int sb_rec_cap_parm(int rate, int bits, int stereo)$/;"	f	file:
+sb_rec_source	sb.c	/^static int sb_rec_source(int source)$/;"	f	file:
+sb_rec_start	sb.c	/^static int sb_rec_start(int rate, int bits, int stereo)$/;"	f	file:
+sb_rec_stop	sb.c	/^static void sb_rec_stop(void)$/;"	f	file:
+sb_rec_read	sb.c	/^static int sb_rec_read(void *buf)$/;"	f	file:
+sb_rec_read	sb.c	/^END_OF_STATIC_FUNCTION(sb_rec_read);$/;"	v
+sb_midi_interrupt	sb.c	/^static int sb_midi_interrupt(void)$/;"	f	file:
+sb_midi_interrupt	sb.c	/^END_OF_STATIC_FUNCTION(sb_midi_interrupt);$/;"	v
+sb_midi_output	sb.c	/^static void sb_midi_output(int data)$/;"	f	file:
+sb_midi_output	sb.c	/^END_OF_STATIC_FUNCTION(sb_midi_output);$/;"	v
+sb_midi_detect	sb.c	/^static int sb_midi_detect(int input)$/;"	f	file:
+sb_midi_init	sb.c	/^static int sb_midi_init(int input, int voices)$/;"	f	file:
+sb_midi_exit	sb.c	/^static void sb_midi_exit(int input)$/;"	f	file:
+sb_lock_mem	sb.c	/^static void sb_lock_mem(void)$/;"	f	file:
+ALLEGRO_DOS_GRIP_H	grip.h	40;"	d
+GRIP_SLOT	grip.h	/^   typedef unsigned char GRIP_SLOT;$/;"	t
+GRIP_CLASS	grip.h	/^   typedef unsigned char GRIP_CLASS;$/;"	t
+GRIP_INDEX	grip.h	/^   typedef unsigned char GRIP_INDEX;$/;"	t
+GRIP_VALUE	grip.h	/^   typedef unsigned short GRIP_VALUE;$/;"	t
+GRIP_BITFIELD	grip.h	/^   typedef unsigned long GRIP_BITFIELD;$/;"	t
+GRIP_BOOL	grip.h	/^   typedef unsigned short GRIP_BOOL;$/;"	t
+GRIP_STRING	grip.h	/^   typedef char *GRIP_STRING;$/;"	t
+GRIP_BUF	grip.h	/^   typedef void *GRIP_BUF;$/;"	t
+GRIP_BUF_C	grip.h	/^   typedef unsigned char *GRIP_BUF_C;$/;"	t
+GRIP_BUF_S	grip.h	/^   typedef unsigned short *GRIP_BUF_S;$/;"	t
+GRIP_BUF_L	grip.h	/^   typedef unsigned long *GRIP_BUF_L;$/;"	t
+GRIP_CLASS_BUTTON	grip.h	56;"	d
+GRIP_CLASS_AXIS	grip.h	57;"	d
+GRIP_CLASS_POV_HAT	grip.h	58;"	d
+GRIP_CLASS_VELOCITY	grip.h	59;"	d
+GRIP_CLASS_THROTTLE	grip.h	60;"	d
+GRIP_CLASS_ANALOG	grip.h	61;"	d
+GRIP_CLASS_MIN	grip.h	62;"	d
+GRIP_CLASS_MAX	grip.h	63;"	d
+GRIP_REFRESH_COMPLETE	grip.h	66;"	d
+GRIP_REFRESH_PARTIAL	grip.h	67;"	d
+GRIP_REFRESH_TRANSMIT	grip.h	68;"	d
+GRIP_REFRESH_NOTRANSMIT	grip.h	69;"	d
+_GrInitialize	grip.h	/^   GRIP_BOOL _GrInitialize(void);$/;"	p
+_GrShutdown	grip.h	/^   void _GrShutdown(void);$/;"	p
+_GrRefresh	grip.h	/^   GRIP_BITFIELD _GrRefresh(GRIP_BITFIELD flags);$/;"	p
+_GrGetSlotMap	grip.h	/^   GRIP_BITFIELD _GrGetSlotMap(void);$/;"	p
+_GrGetClassMap	grip.h	/^   GRIP_BITFIELD _GrGetClassMap(GRIP_SLOT s);$/;"	p
+_GrGetOEMClassMap	grip.h	/^   GRIP_BITFIELD _GrGetOEMClassMap(GRIP_SLOT s);$/;"	p
+_GrGetMaxIndex	grip.h	/^   GRIP_INDEX _GrGetMaxIndex(GRIP_SLOT s, GRIP_CLASS c);$/;"	p
+_GrGetMaxValue	grip.h	/^   GRIP_VALUE _GrGetMaxValue(GRIP_SLOT s, GRIP_CLASS c);$/;"	p
+_GrGetValue	grip.h	/^   GRIP_VALUE _GrGetValue(GRIP_SLOT s, GRIP_CLASS c, GRIP_INDEX i);$/;"	p
+_GrGetPackedValues	grip.h	/^   GRIP_BITFIELD _GrGetPackedValues(GRIP_SLOT s, GRIP_CLASS c, GRIP_INDEX start, GRIP_INDEX end);$/;"	p
+_GrSetValue	grip.h	/^   void _GrSetValue(GRIP_SLOT s, GRIP_CLASS c, GRIP_INDEX i, GRIP_VALUE v);$/;"	p
+_GrGetVendorName	grip.h	/^   void _GrGetVendorName(GRIP_SLOT s, GRIP_STRING name);$/;"	p
+_GrGetProductName	grip.h	/^   GRIP_VALUE _GrGetProductName(GRIP_SLOT s, GRIP_STRING name);$/;"	p
+_GrGetControlName	grip.h	/^   void _GrGetControlName(GRIP_SLOT s, GRIP_CLASS c, GRIP_INDEX i, GRIP_STRING name);$/;"	p
+_GrGetCaps	grip.h	/^   GRIP_BITFIELD _GrGetCaps(GRIP_SLOT s, GRIP_CLASS c, GRIP_INDEX i);$/;"	p
+_GrLink	grip.h	/^   GRIP_BOOL _GrLink(GRIP_BUF image, GRIP_VALUE size);$/;"	p
+_GrUnlink	grip.h	/^   GRIP_BOOL _GrUnlink(void);$/;"	p
+_Gr__Link	grip.h	/^   GRIP_BOOL _Gr__Link(void);$/;"	p
+_Gr__Unlink	grip.h	/^   void _Gr__Unlink(void);$/;"	p
+_GrGetSWVer	grip.h	/^   GRIP_VALUE _GrGetSWVer(void);$/;"	p
+_GrGetHWVer	grip.h	/^   GRIP_VALUE _GrGetHWVer(void);$/;"	p
+_GrGetDiagCnt	grip.h	/^   GRIP_VALUE _GrGetDiagCnt(void);$/;"	p
+_GrGetDiagReg	grip.h	/^   unsigned long _GrGetDiagReg(GRIP_INDEX reg);$/;"	p
+GRIP_THUNK	grip.h	/^   typedef unsigned char GRIP_THUNK[14];$/;"	t
+_GRIP_Thunk	grip.h	/^   extern GRIP_THUNK _GRIP_Thunk;$/;"	x
+_awe_sf_defaults	awedata.c	/^short int _awe_sf_defaults[] = {$/;"	v
+_awe_sf_num_presets	awedata.c	/^int _awe_sf_num_presets = 129;$/;"	v
+_awe_sf_presets	awedata.c	/^short int _awe_sf_presets[] = {$/;"	v
+_awe_sf_splits	awedata.c	/^short int _awe_sf_splits[] = {$/;"	v
+_awe_sf_gens	awedata.c	/^short int _awe_sf_gens[] = {$/;"	v
+_awe_sf_sample_data	awedata.c	/^int _awe_sf_sample_data[] = {$/;"	v
+GRIP_CALL	gripfnc.s	/^#define GRIP_CALL             lcall *GLOBL(GRIP_Thunk) + 8$/;"	d
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+ret	gripfnc.s	/^ret$/;"	l
+joy_init	joystd.c	/^static int joy_init(void); $/;"	p	file:
+joy_exit	joystd.c	/^static void joy_exit(void); $/;"	p	file:
+joy_poll	joystd.c	/^static int joy_poll(void);$/;"	p	file:
+joy_save_data	joystd.c	/^static int joy_save_data(void);$/;"	p	file:
+joy_load_data	joystd.c	/^static int joy_load_data(void);$/;"	p	file:
+joy_calibrate_name	joystd.c	/^static AL_CONST char *joy_calibrate_name(int n);$/;"	p	file:
+joy_calibrate	joystd.c	/^static int joy_calibrate(int n);$/;"	p	file:
+poll	joystd.c	/^static int poll(int *x, int *y, int *x2, int *y2, int poll_mask);$/;"	p	file:
+JOYSTICK_DRIVER_CONTENTS	joystd.c	53;"	d	file:
+joystick_standard	joystd.c	/^JOYSTICK_DRIVER joystick_standard =$/;"	v
+joystick_2pads	joystd.c	/^JOYSTICK_DRIVER joystick_2pads =$/;"	v
+joystick_4button	joystd.c	/^JOYSTICK_DRIVER joystick_4button =$/;"	v
+joystick_6button	joystd.c	/^JOYSTICK_DRIVER joystick_6button =$/;"	v
+joystick_8button	joystd.c	/^JOYSTICK_DRIVER joystick_8button =$/;"	v
+joystick_fspro	joystd.c	/^JOYSTICK_DRIVER joystick_fspro =$/;"	v
+joystick_wingex	joystd.c	/^JOYSTICK_DRIVER joystick_wingex =$/;"	v
+JDESC_STICK2	joystd.c	142;"	d	file:
+JDESC_4BUTTON	joystd.c	143;"	d	file:
+JDESC_6BUTTON	joystd.c	144;"	d	file:
+JDESC_8BUTTON	joystd.c	145;"	d	file:
+JDESC_Y2_THROTTLE	joystd.c	146;"	d	file:
+JDESC_Y2_HAT	joystd.c	147;"	d	file:
+JDESC_FSPRO_HAT	joystd.c	148;"	d	file:
+JOYSTICK_CALIB_TL1	joystd.c	153;"	d	file:
+JOYSTICK_CALIB_BR1	joystd.c	154;"	d	file:
+JOYSTICK_CALIB_TL2	joystd.c	155;"	d	file:
+JOYSTICK_CALIB_BR2	joystd.c	156;"	d	file:
+JOYSTICK_CALIB_THRTL_MIN	joystd.c	157;"	d	file:
+JOYSTICK_CALIB_THRTL_MAX	joystd.c	158;"	d	file:
+JOYSTICK_CALIB_HAT_CENTRE	joystd.c	159;"	d	file:
+JOYSTICK_CALIB_HAT_LEFT	joystd.c	160;"	d	file:
+JOYSTICK_CALIB_HAT_DOWN	joystd.c	161;"	d	file:
+JOYSTICK_CALIB_HAT_RIGHT	joystd.c	162;"	d	file:
+JOYSTICK_CALIB_HAT_UP	joystd.c	163;"	d	file:
+JOYSTICK_CALIB_HAT	joystd.c	165;"	d	file:
+joystick_flags	joystd.c	/^static int joystick_flags = 0;$/;"	v	file:
+joycentre_x	joystd.c	/^static int joycentre_x, joycentre_y;$/;"	v	file:
+joycentre_y	joystd.c	/^static int joycentre_x, joycentre_y;$/;"	v	file:
+joyx_min	joystd.c	/^static int joyx_min, joyx_low_margin, joyx_high_margin, joyx_max;$/;"	v	file:
+joyx_low_margin	joystd.c	/^static int joyx_min, joyx_low_margin, joyx_high_margin, joyx_max;$/;"	v	file:
+joyx_high_margin	joystd.c	/^static int joyx_min, joyx_low_margin, joyx_high_margin, joyx_max;$/;"	v	file:
+joyx_max	joystd.c	/^static int joyx_min, joyx_low_margin, joyx_high_margin, joyx_max;$/;"	v	file:
+joyy_min	joystd.c	/^static int joyy_min, joyy_low_margin, joyy_high_margin, joyy_max;$/;"	v	file:
+joyy_low_margin	joystd.c	/^static int joyy_min, joyy_low_margin, joyy_high_margin, joyy_max;$/;"	v	file:
+joyy_high_margin	joystd.c	/^static int joyy_min, joyy_low_margin, joyy_high_margin, joyy_max;$/;"	v	file:
+joyy_max	joystd.c	/^static int joyy_min, joyy_low_margin, joyy_high_margin, joyy_max;$/;"	v	file:
+joycentre2_x	joystd.c	/^static int joycentre2_x, joycentre2_y;$/;"	v	file:
+joycentre2_y	joystd.c	/^static int joycentre2_x, joycentre2_y;$/;"	v	file:
+joyx2_min	joystd.c	/^static int joyx2_min, joyx2_low_margin, joyx2_high_margin, joyx2_max;$/;"	v	file:
+joyx2_low_margin	joystd.c	/^static int joyx2_min, joyx2_low_margin, joyx2_high_margin, joyx2_max;$/;"	v	file:
+joyx2_high_margin	joystd.c	/^static int joyx2_min, joyx2_low_margin, joyx2_high_margin, joyx2_max;$/;"	v	file:
+joyx2_max	joystd.c	/^static int joyx2_min, joyx2_low_margin, joyx2_high_margin, joyx2_max;$/;"	v	file:
+joyy2_min	joystd.c	/^static int joyy2_min, joyy2_low_margin, joyy2_high_margin, joyy2_max;$/;"	v	file:
+joyy2_low_margin	joystd.c	/^static int joyy2_min, joyy2_low_margin, joyy2_high_margin, joyy2_max;$/;"	v	file:
+joyy2_high_margin	joystd.c	/^static int joyy2_min, joyy2_low_margin, joyy2_high_margin, joyy2_max;$/;"	v	file:
+joyy2_max	joystd.c	/^static int joyy2_min, joyy2_low_margin, joyy2_high_margin, joyy2_max;$/;"	v	file:
+joy_thr_min	joystd.c	/^static int joy_thr_min, joy_thr_max;$/;"	v	file:
+joy_thr_max	joystd.c	/^static int joy_thr_min, joy_thr_max;$/;"	v	file:
+joy_hat_pos	joystd.c	/^static int joy_hat_pos[5], joy_hat_threshold[4];$/;"	v	file:
+joy_hat_threshold	joystd.c	/^static int joy_hat_pos[5], joy_hat_threshold[4];$/;"	v	file:
+joy_old_x	joystd.c	/^static int joy_old_x, joy_old_y;$/;"	v	file:
+joy_old_y	joystd.c	/^static int joy_old_x, joy_old_y;$/;"	v	file:
+joy2_old_x	joystd.c	/^static int joy2_old_x, joy2_old_y;$/;"	v	file:
+joy2_old_y	joystd.c	/^static int joy2_old_x, joy2_old_y;$/;"	v	file:
+MASK_1X	joystd.c	194;"	d	file:
+MASK_1Y	joystd.c	195;"	d	file:
+MASK_2X	joystd.c	196;"	d	file:
+MASK_2Y	joystd.c	197;"	d	file:
+poll_mask	joystd.c	/^static int poll_mask(void)$/;"	f	file:
+averaged_poll	joystd.c	/^static int averaged_poll(int *x, int *y, int *x2, int *y2, int mask)$/;"	f	file:
+AVERAGE_COUNT	joystd.c	229;"	d	file:
+recalc_calibration_flags	joystd.c	/^static void recalc_calibration_flags(void)$/;"	f	file:
+FLAG_SET	joystd.c	259;"	d	file:
+joy_init	joystd.c	/^static int joy_init(void)$/;"	f	file:
+joy_exit	joystd.c	/^static void joy_exit(void)$/;"	f	file:
+sort_out_middle_values	joystd.c	/^static void sort_out_middle_values(int n)$/;"	f	file:
+calibrate_corner	joystd.c	/^static int calibrate_corner(int stick, int corner)$/;"	f	file:
+calibrate_joystick_tl	joystd.c	/^int calibrate_joystick_tl(void)$/;"	f
+calibrate_joystick_br	joystd.c	/^int calibrate_joystick_br(void)$/;"	f
+calibrate_joystick_throttle_min	joystd.c	/^int calibrate_joystick_throttle_min(void)$/;"	f
+calibrate_joystick_throttle_max	joystd.c	/^int calibrate_joystick_throttle_max(void)$/;"	f
+calibrate_joystick_hat	joystd.c	/^int calibrate_joystick_hat(int direction)$/;"	f
+sort_out_analogue	joystd.c	/^static int sort_out_analogue(int x, int min, int low_margin, int high_margin, int max)$/;"	f	file:
+joy_poll	joystd.c	/^static int joy_poll(void)$/;"	f	file:
+poll	joystd.c	/^static int poll(int *x, int *y, int *x2, int *y2, int poll_mask)$/;"	f	file:
+joy_save_data	joystd.c	/^static int joy_save_data(void)$/;"	f	file:
+joy_load_data	joystd.c	/^static int joy_load_data(void)$/;"	f	file:
+next_calib_action	joystd.c	/^static int next_calib_action(int stick)$/;"	f	file:
+joy_calibrate_name	joystd.c	/^static AL_CONST char *joy_calibrate_name(int n)$/;"	f	file:
+joy_calibrate	joystd.c	/^static int joy_calibrate(int n)$/;"	f	file:
+IADDR	wss.c	44;"	d	file:
+IDATA	wss.c	45;"	d	file:
+STATUS	wss.c	46;"	d	file:
+PIO	wss.c	47;"	d	file:
+INIT	wss.c	50;"	d	file:
+MCE	wss.c	51;"	d	file:
+TRD	wss.c	52;"	d	file:
+INT	wss.c	55;"	d	file:
+PRDY	wss.c	56;"	d	file:
+PLR	wss.c	57;"	d	file:
+PUL	wss.c	58;"	d	file:
+SER	wss.c	59;"	d	file:
+CRDY	wss.c	60;"	d	file:
+CLR	wss.c	61;"	d	file:
+CUL	wss.c	62;"	d	file:
+LADC	wss.c	65;"	d	file:
+RADC	wss.c	66;"	d	file:
+LAUX1	wss.c	67;"	d	file:
+RAUX1	wss.c	68;"	d	file:
+LAUX2	wss.c	69;"	d	file:
+RAUX2	wss.c	70;"	d	file:
+LDAC	wss.c	71;"	d	file:
+RDAC	wss.c	72;"	d	file:
+FS	wss.c	73;"	d	file:
+INTCON	wss.c	74;"	d	file:
+PINCON	wss.c	75;"	d	file:
+ERRSTAT	wss.c	76;"	d	file:
+MODE_ID	wss.c	77;"	d	file:
+LOOPBCK	wss.c	78;"	d	file:
+PB_UCNT	wss.c	79;"	d	file:
+PB_LCNT	wss.c	80;"	d	file:
+NUMCODECRATES	wss.c	82;"	d	file:
+BLOCKLEN	wss.c	85;"	d	file:
+WSSOUT	wss.c	88;"	d	file:
+wss_detect	wss.c	/^static int wss_detect(int input);$/;"	p	file:
+wss_init	wss.c	/^static int wss_init(int input, int voices);$/;"	p	file:
+wss_exit	wss.c	/^static void wss_exit(int input);$/;"	p	file:
+wss_set_mixer_volume	wss.c	/^static int wss_set_mixer_volume(int volume);$/;"	p	file:
+wss_buffer_size	wss.c	/^static int wss_buffer_size(void);$/;"	p	file:
+wss_desc	wss.c	/^static char wss_desc[256] = EMPTY_STRING;$/;"	v	file:
+digi_wss	wss.c	/^DIGI_DRIVER digi_wss =$/;"	v
+wss_usedrate	wss.c	/^static int wss_usedrate = 0;$/;"	v	file:
+wss_stereo	wss.c	/^static int wss_stereo = TRUE;$/;"	v	file:
+wss_16bits	wss.c	/^static int wss_16bits = TRUE;$/;"	v	file:
+wss_dma_sel	wss.c	/^static int wss_dma_sel;$/;"	v	file:
+wss_dma_addr	wss.c	/^static unsigned long wss_dma_addr;$/;"	v	file:
+wss_dma_block	wss.c	/^static int wss_dma_block;$/;"	v	file:
+wss_in_use	wss.c	/^static int wss_in_use = FALSE;$/;"	v	file:
+wss_detected	wss.c	/^static int wss_detected = FALSE;$/;"	v	file:
+codec_rate_struct	wss.c	/^struct codec_rate_struct$/;"	s	file:
+freq	wss.c	/^   int freq;$/;"	m	struct:codec_rate_struct	file:
+divider	wss.c	/^   int divider;$/;"	m	struct:codec_rate_struct	file:
+codec_rates	wss.c	/^static struct codec_rate_struct codec_rates[NUMCODECRATES] =$/;"	v	typeref:struct:codec_rate_struct	file:
+wss_buffer_size	wss.c	/^static int wss_buffer_size(void)$/;"	f	file:
+wss_wait	wss.c	/^static void wss_wait(void)$/;"	f	file:
+wss_irq_handler	wss.c	/^static int wss_irq_handler(void)$/;"	f	file:
+wss_irq_handler	wss.c	/^END_OF_STATIC_FUNCTION(wss_irq_handler);$/;"	v
+wss_detect	wss.c	/^static int wss_detect(int input)$/;"	f	file:
+wss_init	wss.c	/^static int wss_init(int input, int voices)$/;"	f	file:
+wss_exit	wss.c	/^static void wss_exit(int input)$/;"	f	file:
+wss_set_mixer_volume	wss.c	/^static int wss_set_mixer_volume(int volume)$/;"	f	file:
+_al_file_isok	dfile.c	/^int _al_file_isok(AL_CONST char *filename)$/;"	f
+_al_file_size_ex	dfile.c	/^uint64_t _al_file_size_ex(AL_CONST char *filename)$/;"	f
+_al_file_time	dfile.c	/^time_t _al_file_time(AL_CONST char *filename)$/;"	f
+FF_DATA	dfile.c	/^struct FF_DATA$/;"	s	file:
+data	dfile.c	/^   struct ffblk data;$/;"	m	struct:FF_DATA	typeref:struct:FF_DATA::ffblk	file:
+attrib	dfile.c	/^   int attrib;$/;"	m	struct:FF_DATA	file:
+fill_ffblk	dfile.c	/^static void fill_ffblk(struct al_ffblk *info)$/;"	f	file:
+al_findfirst	dfile.c	/^int al_findfirst(AL_CONST char *pattern, struct al_ffblk *info, int attrib)$/;"	f
+al_findnext	dfile.c	/^int al_findnext(struct al_ffblk *info)$/;"	f
+al_findclose	dfile.c	/^void al_findclose(struct al_ffblk *info)$/;"	f
+_al_drive_exists	dfile.c	/^int _al_drive_exists(int drive)$/;"	f
+_al_getdrive	dfile.c	/^int _al_getdrive(void)$/;"	f
+_al_getdcwd	dfile.c	/^void _al_getdcwd(int drive, char *buf, int size)$/;"	f
+al_ffblk_get_size	dfile.c	/^uint64_t al_ffblk_get_size(struct al_ffblk *info)$/;"	f
+VSYNC_MARGIN	dtimer.c	34;"	d	file:
+TIMER_INT	dtimer.c	36;"	d	file:
+LOVEBILL_TIMER_SPEED	dtimer.c	38;"	d	file:
+REENTRANT_RECALL_GAP	dtimer.c	40;"	d	file:
+bios_counter	dtimer.c	/^static long bios_counter;                 \/* keep BIOS time up to date *\/$/;"	v	file:
+timer_delay	dtimer.c	/^static long timer_delay;                  \/* how long between interrupts *\/$/;"	v	file:
+timer_semaphore	dtimer.c	/^static int timer_semaphore = FALSE;       \/* reentrant interrupt? *\/$/;"	v	file:
+timer_clocking_loss	dtimer.c	/^static int timer_clocking_loss = 0;       \/* unmeasured time that gets lost *\/$/;"	v	file:
+vsync_counter	dtimer.c	/^static long vsync_counter;                \/* retrace position counter *\/$/;"	v	file:
+vsync_speed	dtimer.c	/^static long vsync_speed;                  \/* retrace speed *\/$/;"	v	file:
+fixed_timer_init	dtimer.c	/^int fixed_timer_init(void);$/;"	p	file:
+fixed_timer_exit	dtimer.c	/^void fixed_timer_exit(void);$/;"	p	file:
+timedrv_fixed_rate	dtimer.c	/^TIMER_DRIVER timedrv_fixed_rate =$/;"	v
+var_timer_init	dtimer.c	/^int var_timer_init(void);$/;"	p	file:
+var_timer_exit	dtimer.c	/^void var_timer_exit(void);$/;"	p	file:
+var_timer_can_simulate_retrace	dtimer.c	/^int var_timer_can_simulate_retrace(void);$/;"	p	file:
+var_timer_simulate_retrace	dtimer.c	/^void var_timer_simulate_retrace(int enable);$/;"	p	file:
+timedrv_variable_rate	dtimer.c	/^TIMER_DRIVER timedrv_variable_rate =$/;"	v
+_timer_driver_list	dtimer.c	/^_DRIVER_INFO _timer_driver_list[] =$/;"	v
+set_timer	dtimer.c	/^static INLINE void set_timer(long time)$/;"	f	file:
+set_timer_rate	dtimer.c	/^static INLINE void set_timer_rate(long time)$/;"	f	file:
+read_timer	dtimer.c	/^static INLINE long read_timer(void)$/;"	f	file:
+fixed_timer_handler	dtimer.c	/^static int fixed_timer_handler(void)$/;"	f	file:
+fixed_timer_handler	dtimer.c	/^END_OF_STATIC_FUNCTION(fixed_timer_handler);$/;"	v
+fixed_timer_init	dtimer.c	/^int fixed_timer_init(void)$/;"	f
+fixed_timer_exit	dtimer.c	/^void fixed_timer_exit(void)$/;"	f
+var_timer_handler	dtimer.c	/^static int var_timer_handler(void)$/;"	f	file:
+var_timer_handler	dtimer.c	/^END_OF_STATIC_FUNCTION(var_timer_handler);$/;"	v
+var_timer_can_simulate_retrace	dtimer.c	/^int var_timer_can_simulate_retrace(void)$/;"	f
+timer_calibrate_retrace	dtimer.c	/^static void timer_calibrate_retrace(void)$/;"	f	file:
+AVERAGE_COUNT	dtimer.c	378;"	d	file:
+var_timer_simulate_retrace	dtimer.c	/^void var_timer_simulate_retrace(int enable)$/;"	f
+var_timer_init	dtimer.c	/^int var_timer_init(void)$/;"	f
+var_timer_exit	dtimer.c	/^void var_timer_exit(void)$/;"	f
+_create_physical_mapping	dpmi.c	/^int _create_physical_mapping(unsigned long *linear, int *segment, unsigned long physaddr, int size)$/;"	f
+_remove_physical_mapping	dpmi.c	/^void _remove_physical_mapping(unsigned long *linear, int *segment)$/;"	f
+_create_linear_mapping	dpmi.c	/^int _create_linear_mapping(unsigned long *linear, unsigned long physaddr, int size)$/;"	f
+_remove_linear_mapping	dpmi.c	/^void _remove_linear_mapping(unsigned long *linear)$/;"	f
+_create_selector	dpmi.c	/^int _create_selector(int *segment, unsigned long linear, int size)$/;"	f
+_remove_selector	dpmi.c	/^void _remove_selector(int *segment)$/;"	f
+_unlock_dpmi_data	dpmi.c	/^void _unlock_dpmi_data(void *addr, int size)$/;"	f
+init1_1	emu8k.c	/^static unsigned short init1_1[32] = { 0x03ff, 0x0030, 0x07ff, 0x0130, 0x0bff, 0x0230, 0x0fff, 0x0330, 0x13ff, 0x0430, 0x17ff, 0x0530, 0x1bff, 0x0630, 0x1fff, 0x0730, 0x23ff, 0x0830, 0x27ff, 0x0930, 0x2bff, 0x0a30, 0x2fff, 0x0b30, 0x33ff, 0x0c30, 0x37ff, 0x0d30, 0x3bff, 0x0e30, 0x3fff, 0x0f30 };$/;"	v	file:
+init1_2	emu8k.c	/^static unsigned short init1_2[32] = { 0x43ff, 0x0030, 0x47ff, 0x0130, 0x4bff, 0x0230, 0x4fff, 0x0330, 0x53ff, 0x0430, 0x57ff, 0x0530, 0x5bff, 0x0630, 0x5fff, 0x0730, 0x63ff, 0x0830, 0x67ff, 0x0930, 0x6bff, 0x0a30, 0x6fff, 0x0b30, 0x73ff, 0x0c30, 0x77ff, 0x0d30, 0x7bff, 0x0e30, 0x7fff, 0x0f30 };$/;"	v	file:
+init1_3	emu8k.c	/^static unsigned short init1_3[32] = { 0x83ff, 0x0030, 0x87ff, 0x0130, 0x8bff, 0x0230, 0x8fff, 0x0330, 0x93ff, 0x0430, 0x97ff, 0x0530, 0x9bff, 0x0630, 0x9fff, 0x0730, 0xa3ff, 0x0830, 0xa7ff, 0x0930, 0xabff, 0x0a30, 0xafff, 0x0b30, 0xb3ff, 0x0c30, 0xb7ff, 0x0d30, 0xbbff, 0x0e30, 0xbfff, 0x0f30 };$/;"	v	file:
+init1_4	emu8k.c	/^static unsigned short init1_4[32] = { 0xc3ff, 0x0030, 0xc7ff, 0x0130, 0xcbff, 0x0230, 0xcfff, 0x0330, 0xd3ff, 0x0430, 0xd7ff, 0x0530, 0xdbff, 0x0630, 0xdfff, 0x0730, 0xe3ff, 0x0830, 0xe7ff, 0x0930, 0xebff, 0x0a30, 0xefff, 0x0b30, 0xf3ff, 0x0c30, 0xf7ff, 0x0d30, 0xfbff, 0x0e30, 0xffff, 0x0f30 };$/;"	v	file:
+init2_1	emu8k.c	/^static unsigned short init2_1[32] = { 0x03ff, 0x8030, 0x07ff, 0x8130, 0x0bff, 0x8230, 0x0fff, 0x8330, 0x13ff, 0x8430, 0x17ff, 0x8530, 0x1bff, 0x8630, 0x1fff, 0x8730, 0x23ff, 0x8830, 0x27ff, 0x8930, 0x2bff, 0x8a30, 0x2fff, 0x8b30, 0x33ff, 0x8c30, 0x37ff, 0x8d30, 0x3bff, 0x8e30, 0x3fff, 0x8f30 };$/;"	v	file:
+init2_2	emu8k.c	/^static unsigned short init2_2[32] = { 0x43ff, 0x8030, 0x47ff, 0x8130, 0x4bff, 0x8230, 0x4fff, 0x8330, 0x53ff, 0x8430, 0x57ff, 0x8530, 0x5bff, 0x8630, 0x5fff, 0x8730, 0x63ff, 0x8830, 0x67ff, 0x8930, 0x6bff, 0x8a30, 0x6fff, 0x8b30, 0x73ff, 0x8c30, 0x77ff, 0x8d30, 0x7bff, 0x8e30, 0x7fff, 0x8f30 };$/;"	v	file:
+init2_3	emu8k.c	/^static unsigned short init2_3[32] = { 0x83ff, 0x8030, 0x87ff, 0x8130, 0x8bff, 0x8230, 0x8fff, 0x8330, 0x93ff, 0x8430, 0x97ff, 0x8530, 0x9bff, 0x8630, 0x9fff, 0x8730, 0xa3ff, 0x8830, 0xa7ff, 0x8930, 0xabff, 0x8a30, 0xafff, 0x8b30, 0xb3ff, 0x8c30, 0xb7ff, 0x8d30, 0xbbff, 0x8e30, 0xbfff, 0x8f30 };$/;"	v	file:
+init2_4	emu8k.c	/^static unsigned short init2_4[32] = { 0xc3ff, 0x8030, 0xc7ff, 0x8130, 0xcbff, 0x8230, 0xcfff, 0x8330, 0xd3ff, 0x8430, 0xd7ff, 0x8530, 0xdbff, 0x8630, 0xdfff, 0x8730, 0xe3ff, 0x8830, 0xe7ff, 0x8930, 0xebff, 0x8a30, 0xefff, 0x8b30, 0xf3ff, 0x8c30, 0xf7ff, 0x8d30, 0xfbff, 0x8e30, 0xffff, 0x8f30 };$/;"	v	file:
+init3_1	emu8k.c	/^static unsigned short init3_1[32] = { 0x0C10, 0x8470, 0x14FE, 0xB488, 0x167F, 0xA470, 0x18E7, 0x84B5, 0x1B6E, 0x842A, 0x1F1D, 0x852A, 0x0DA3, 0x8F7C, 0x167E, 0xF254, 0x0000, 0x842A, 0x0001, 0x852A, 0x18E6, 0x8BAA, 0x1B6D, 0xF234, 0x229F, 0x8429, 0x2746, 0x8529, 0x1F1C, 0x86E7, 0x229E, 0xF224 };$/;"	v	file:
+init3_2	emu8k.c	/^static unsigned short init3_2[32] = { 0x0DA4, 0x8429, 0x2C29, 0x8529, 0x2745, 0x87F6, 0x2C28, 0xF254, 0x383B, 0x8428, 0x320F, 0x8528, 0x320E, 0x8F02, 0x1341, 0xF264, 0x3EB6, 0x8428, 0x3EB9, 0x8528, 0x383A, 0x8FA9, 0x3EB5, 0xF294, 0x3EB7, 0x8474, 0x3EBA, 0x8575, 0x3EB8, 0xC4C3, 0x3EBB, 0xC5C3 };$/;"	v	file:
+init3_3	emu8k.c	/^static unsigned short init3_3[32] = { 0x0000, 0xA404, 0x0001, 0xA504, 0x141F, 0x8671, 0x14FD, 0x8287, 0x3EBC, 0xE610, 0x3EC8, 0x8C7B, 0x031A, 0x87E6, 0x3EC8, 0x86F7, 0x3EC0, 0x821E, 0x3EBE, 0xD208, 0x3EBD, 0x821F, 0x3ECA, 0x8386, 0x3EC1, 0x8C03, 0x3EC9, 0x831E, 0x3ECA, 0x8C4C, 0x3EBF, 0x8C55 };$/;"	v	file:
+init3_4	emu8k.c	/^static unsigned short init3_4[32] = { 0x3EC9, 0xC208, 0x3EC4, 0xBC84, 0x3EC8, 0x8EAD, 0x3EC8, 0xD308, 0x3EC2, 0x8F7E, 0x3ECB, 0x8219, 0x3ECB, 0xD26E, 0x3EC5, 0x831F, 0x3EC6, 0xC308, 0x3EC3, 0xB2FF, 0x3EC9, 0x8265, 0x3EC9, 0x8319, 0x1342, 0xD36E, 0x3EC7, 0xB3FF, 0x0000, 0x8365, 0x1420, 0x9570 };$/;"	v	file:
+init4_1	emu8k.c	/^static unsigned short init4_1[32] = { 0x0C10, 0x8470, 0x14FE, 0xB488, 0x167F, 0xA470, 0x18E7, 0x84B5, 0x1B6E, 0x842A, 0x1F1D, 0x852A, 0x0DA3, 0x0F7C, 0x167E, 0x7254, 0x0000, 0x842A, 0x0001, 0x852A, 0x18E6, 0x0BAA, 0x1B6D, 0x7234, 0x229F, 0x8429, 0x2746, 0x8529, 0x1F1C, 0x06E7, 0x229E, 0x7224 };$/;"	v	file:
+init4_2	emu8k.c	/^static unsigned short init4_2[32] = { 0x0DA4, 0x8429, 0x2C29, 0x8529, 0x2745, 0x07F6, 0x2C28, 0x7254, 0x383B, 0x8428, 0x320F, 0x8528, 0x320E, 0x0F02, 0x1341, 0x7264, 0x3EB6, 0x8428, 0x3EB9, 0x8528, 0x383A, 0x0FA9, 0x3EB5, 0x7294, 0x3EB7, 0x8474, 0x3EBA, 0x8575, 0x3EB8, 0x44C3, 0x3EBB, 0x45C3 };$/;"	v	file:
+init4_3	emu8k.c	/^static unsigned short init4_3[32] = { 0x0000, 0xA404, 0x0001, 0xA504, 0x141F, 0x0671, 0x14FD, 0x0287, 0x3EBC, 0xE610, 0x3EC8, 0x0C7B, 0x031A, 0x07E6, 0x3EC8, 0x86F7, 0x3EC0, 0x821E, 0x3EBE, 0xD208, 0x3EBD, 0x021F, 0x3ECA, 0x0386, 0x3EC1, 0x0C03, 0x3EC9, 0x031E, 0x3ECA, 0x8C4C, 0x3EBF, 0x0C55 };$/;"	v	file:
+init4_4	emu8k.c	/^static unsigned short init4_4[32] = { 0x3EC9, 0xC208, 0x3EC4, 0xBC84, 0x3EC8, 0x0EAD, 0x3EC8, 0xD308, 0x3EC2, 0x8F7E, 0x3ECB, 0x0219, 0x3ECB, 0xD26E, 0x3EC5, 0x031F, 0x3EC6, 0xC308, 0x3EC3, 0x32FF, 0x3EC9, 0x0265, 0x3EC9, 0x8319, 0x1342, 0xD36E, 0x3EC7, 0x33FF, 0x0000, 0x8365, 0x1420, 0x9570 };$/;"	v	file:
+MIN_LOOP_LEN	emu8k.c	78;"	d	file:
+_emu8k_baseport	emu8k.c	/^int _emu8k_baseport = 0;$/;"	v
+_emu8k_numchannels	emu8k.c	/^int _emu8k_numchannels = 32;$/;"	v
+write_word	emu8k.c	/^static INLINE void write_word(int reg, int channel, int port, int data)$/;"	f	file:
+read_word	emu8k.c	/^static INLINE unsigned int read_word(int reg, int channel, int port)$/;"	f	file:
+write_dword	emu8k.c	/^static INLINE void write_dword(int reg, int channel, int port, unsigned int data)$/;"	f	file:
+read_dword	emu8k.c	/^static INLINE unsigned int read_dword(int reg, int channel, int port)$/;"	f	file:
+write_CPF	emu8k.c	/^static INLINE void write_CPF(int channel, int i)$/;"	f	file:
+write_PTRX	emu8k.c	/^static INLINE void write_PTRX(int channel, int i)$/;"	f	file:
+write_CVCF	emu8k.c	/^static INLINE void write_CVCF(int channel, int i)$/;"	f	file:
+write_VTFT	emu8k.c	/^static INLINE void write_VTFT(int channel, int i)$/;"	f	file:
+write_PSST	emu8k.c	/^static INLINE void write_PSST(int channel, int i)$/;"	f	file:
+write_CSL	emu8k.c	/^static INLINE void write_CSL(int channel, int i)$/;"	f	file:
+write_CCCA	emu8k.c	/^static INLINE void write_CCCA(int channel, int i)$/;"	f	file:
+write_HWCF4	emu8k.c	/^static INLINE void write_HWCF4(int i)$/;"	f	file:
+write_HWCF5	emu8k.c	/^static INLINE void write_HWCF5(int i)$/;"	f	file:
+write_HWCF6	emu8k.c	/^static INLINE void write_HWCF6(int i)$/;"	f	file:
+write_SMALR	emu8k.c	/^static INLINE void write_SMALR(int i)$/;"	f	file:
+write_SMARR	emu8k.c	/^static INLINE void write_SMARR(int i)$/;"	f	file:
+write_SMALW	emu8k.c	/^static INLINE void write_SMALW(int i)$/;"	f	file:
+write_SMARW	emu8k.c	/^static INLINE void write_SMARW(int i)$/;"	f	file:
+write_HWCF1	emu8k.c	/^static INLINE void write_HWCF1(int i)$/;"	f	file:
+write_HWCF2	emu8k.c	/^static INLINE void write_HWCF2(int i)$/;"	f	file:
+write_HWCF3	emu8k.c	/^static INLINE void write_HWCF3(int i)$/;"	f	file:
+write_INIT1	emu8k.c	/^static INLINE void write_INIT1(int channel, int i)$/;"	f	file:
+write_INIT2	emu8k.c	/^static INLINE void write_INIT2(int channel, int i)$/;"	f	file:
+write_INIT3	emu8k.c	/^static INLINE void write_INIT3(int channel, int i)$/;"	f	file:
+write_INIT4	emu8k.c	/^static INLINE void write_INIT4(int channel, int i)$/;"	f	file:
+write_ENVVOL	emu8k.c	/^static INLINE void write_ENVVOL(int channel, int i)$/;"	f	file:
+write_DCYSUSV	emu8k.c	/^static INLINE void write_DCYSUSV(int channel, int i)$/;"	f	file:
+write_ENVVAL	emu8k.c	/^static INLINE void write_ENVVAL(int channel, int i)$/;"	f	file:
+write_DCYSUS	emu8k.c	/^static INLINE void write_DCYSUS(int channel, int i)$/;"	f	file:
+write_ATKHLDV	emu8k.c	/^static INLINE void write_ATKHLDV(int channel, int i)$/;"	f	file:
+write_LFO1VAL	emu8k.c	/^static INLINE void write_LFO1VAL(int channel, int i)$/;"	f	file:
+write_ATKHLD	emu8k.c	/^static INLINE void write_ATKHLD(int channel, int i)$/;"	f	file:
+write_LFO2VAL	emu8k.c	/^static INLINE void write_LFO2VAL(int channel, int i)$/;"	f	file:
+write_IP	emu8k.c	/^static INLINE void write_IP(int channel, int i)$/;"	f	file:
+write_IFATN	emu8k.c	/^static INLINE void write_IFATN(int channel, int i)$/;"	f	file:
+write_PEFE	emu8k.c	/^static INLINE void write_PEFE(int channel, int i)$/;"	f	file:
+write_FMMOD	emu8k.c	/^static INLINE void write_FMMOD(int channel, int i)$/;"	f	file:
+write_TREMFRQ	emu8k.c	/^static INLINE void write_TREMFRQ(int channel, int i)$/;"	f	file:
+write_FM2FRQ2	emu8k.c	/^static INLINE void write_FM2FRQ2(int channel, int i)$/;"	f	file:
+read_PSST	emu8k.c	/^static INLINE int read_PSST(int channel)$/;"	f	file:
+read_IFATN	emu8k.c	/^static INLINE int read_IFATN(int channel)$/;"	f	file:
+write_init_arrays	emu8k.c	/^static void write_init_arrays(unsigned short *init1, unsigned short *init2, unsigned short *init3, unsigned short *init4)$/;"	f	file:
+emu8k_init	emu8k.c	/^void emu8k_init(void)$/;"	f
+emu8k_startsound	emu8k.c	/^void emu8k_startsound(int channel, struct envparms_t *envparms)$/;"	f
+emu8k_startsound	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_startsound);$/;"	v
+emu8k_releasesound	emu8k.c	/^void emu8k_releasesound(int channel, struct envparms_t *envparms)$/;"	f
+emu8k_releasesound	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_releasesound);$/;"	v
+emu8k_modulate_atten	emu8k.c	/^void emu8k_modulate_atten(int channel, int atten)$/;"	f
+emu8k_modulate_atten	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_modulate_atten);$/;"	v
+emu8k_modulate_ip	emu8k.c	/^void emu8k_modulate_ip(int channel, int ip)$/;"	f
+emu8k_modulate_ip	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_modulate_ip);$/;"	v
+emu8k_modulate_pan	emu8k.c	/^void emu8k_modulate_pan(int channel, int pan)$/;"	f
+emu8k_modulate_pan	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_modulate_pan);$/;"	v
+emu8k_terminatesound	emu8k.c	/^void emu8k_terminatesound(int channel)$/;"	f
+emu8k_terminatesound	emu8k.c	/^END_OF_STATIC_FUNCTION(emu8k_terminatesound);$/;"	v
+emu8k_detect	emu8k.c	/^int emu8k_detect(void)$/;"	f
+emu_delay	emu8k.c	/^static INLINE unsigned short emu_delay(int x)$/;"	f	file:
+emu_attack	emu8k.c	/^static INLINE unsigned char emu_attack(int x)$/;"	f	file:
+emu_hold	emu8k.c	/^static INLINE unsigned char emu_hold(int x)$/;"	f	file:
+emu_decay	emu8k.c	/^static INLINE unsigned char emu_decay(int x)$/;"	f	file:
+emu_sustain	emu8k.c	/^static INLINE unsigned char emu_sustain(int x)$/;"	f	file:
+emu_release	emu8k.c	/^static INLINE unsigned char emu_release(int x)$/;"	f	file:
+emu_mod	emu8k.c	/^static INLINE unsigned char emu_mod(int x, int peak_deviation)$/;"	f	file:
+emu_freq	emu8k.c	/^static INLINE unsigned char emu_freq(int x)$/;"	f	file:
+emu_reverb	emu8k.c	/^static INLINE unsigned char emu_reverb(int x)$/;"	f	file:
+emu_chorus	emu8k.c	/^static INLINE unsigned char emu_chorus(int x)$/;"	f	file:
+emu_pan	emu8k.c	/^static INLINE unsigned char emu_pan(int x)$/;"	f	file:
+emu_filterQ	emu8k.c	/^static INLINE unsigned char emu_filterQ(int x)$/;"	f	file:
+emu_address	emu8k.c	/^static INLINE unsigned int emu_address(int base, int offset, int coarse_offset)$/;"	f	file:
+emu_filter	emu8k.c	/^static INLINE unsigned char emu_filter(int x)$/;"	f	file:
+emu_atten	emu8k.c	/^static INLINE unsigned char emu_atten(int x)$/;"	f	file:
+emu8k_createenvelope	emu8k.c	/^envparms_t *emu8k_createenvelope(generators_t sfgen)$/;"	f
+emu8k_destroyenvelope	emu8k.c	/^void emu8k_destroyenvelope(envparms_t * env)$/;"	f
+emu8k_lock	emu8k.c	/^void emu8k_lock(void)$/;"	f
+sw_init	sw.c	/^static int sw_init(void);$/;"	p	file:
+sw_init_aggressive	sw.c	/^static int sw_init_aggressive(void);$/;"	p	file:
+sw_exit	sw.c	/^static void sw_exit(void);$/;"	p	file:
+sw_poll	sw.c	/^static int sw_poll(void);$/;"	p	file:
+DETECT_TRIES	sw.c	37;"	d	file:
+read_sidewinder	sw.c	/^static int read_sidewinder(void);$/;"	p	file:
+change_mode_b	sw.c	/^static int change_mode_b(void);$/;"	p	file:
+g_aggressive	sw.c	/^static int g_aggressive = FALSE;$/;"	v	file:
+g_port	sw.c	/^static int g_port = 0x201;$/;"	v	file:
+g_swbuff_index	sw.c	/^static int g_swbuff_index = 0;$/;"	v	file:
+g_swbuff	sw.c	/^static char g_swbuff[4096];$/;"	v	file:
+g_swdata	sw.c	/^static char g_swdata[60];$/;"	v	file:
+g_swpaddata	sw.c	/^static int g_swpaddata[4];$/;"	v	file:
+g_valid_count	sw.c	/^static int g_valid_count = 4096;$/;"	v	file:
+g_base_count	sw.c	/^static int g_base_count  = 0;$/;"	v	file:
+g_sw_count	sw.c	/^static int g_sw_count    = 0;$/;"	v	file:
+g_sw_mode	sw.c	/^static int g_sw_mode     = 0;$/;"	v	file:
+g_sw_status	sw.c	/^static int g_sw_status   = 0;$/;"	v	file:
+g_endstrobelimit	sw.c	/^static int g_endstrobelimit = 0;$/;"	v	file:
+g_sw_raw_input	sw.c	/^static int g_sw_raw_input[4];$/;"	v	file:
+SWMODE_A	sw.c	60;"	d	file:
+SWMODE_B	sw.c	61;"	d	file:
+_sw_reset_swbuff_index	sw.c	/^static void _sw_reset_swbuff_index(void);$/;"	p	file:
+_sw_swbuff_index_dec	sw.c	/^static void _sw_swbuff_index_dec(void);$/;"	p	file:
+_sw_poll	sw.c	/^static int _sw_poll(int gameport, int endstrobe_limit);$/;"	p	file:
+_sw_poll_b	sw.c	/^static int _sw_poll_b(int gameport, int endstrobelimit);$/;"	p	file:
+_sw_wait_strobe	sw.c	/^static int _sw_wait_strobe(char* data, int* length, char HL);$/;"	p	file:
+_sw_in	sw.c	/^static int _sw_in(char* data);$/;"	p	file:
+_sw_mode_a_convert	sw.c	/^static int _sw_mode_a_convert(char* data);$/;"	p	file:
+_sw_mode_b_convert	sw.c	/^static int _sw_mode_b_convert(char* data);$/;"	p	file:
+_sw_convert	sw.c	/^static int _sw_convert(char* data, int* paddatabuff, int mode, int sw_count);$/;"	p	file:
+_sw_trace_data	sw.c	/^static int _sw_trace_data(char* data, int* sw_count, int* mode);$/;"	p	file:
+_sw_get_base_count	sw.c	/^static int _sw_get_base_count(int* count);$/;"	p	file:
+_sw_check_parity	sw.c	/^static int _sw_check_parity(int data);$/;"	p	file:
+wait_for_sw_sleep	sw.c	/^static void wait_for_sw_sleep(int gameport, int count);$/;"	p	file:
+joystick_sw	sw.c	/^JOYSTICK_DRIVER joystick_sw =$/;"	v
+joystick_sw_ag	sw.c	/^JOYSTICK_DRIVER joystick_sw_ag =$/;"	v
+sw_init_aggressive	sw.c	/^static int sw_init_aggressive(void)$/;"	f	file:
+sw_init	sw.c	/^static int sw_init(void)$/;"	f	file:
+sw_exit	sw.c	/^static void sw_exit(void)$/;"	f	file:
+sw_poll	sw.c	/^static int sw_poll(void)$/;"	f	file:
+read_sidewinder	sw.c	/^static int read_sidewinder(void)$/;"	f	file:
+_sw_convert	sw.c	/^static int _sw_convert(char* data, int* paddatabuff, int mode, int sw_count)$/;"	f	file:
+_sw_check_parity	sw.c	/^static int _sw_check_parity(int data)$/;"	f	file:
+_sw_mode_a_convert	sw.c	/^static int _sw_mode_a_convert(char* data)$/;"	f	file:
+_sw_mode_b_convert	sw.c	/^static int _sw_mode_b_convert(char* data)$/;"	f	file:
+_sw_trace_data	sw.c	/^static int _sw_trace_data(char* data, int* sw_count, int* mode)$/;"	f	file:
+_sw_get_base_count	sw.c	/^static int _sw_get_base_count(int* count)$/;"	f	file:
+_sw_wait_strobe	sw.c	/^static int _sw_wait_strobe(char* data, int* length, char HL)$/;"	f	file:
+_sw_reset_swbuff_index	sw.c	/^static void _sw_reset_swbuff_index(void)$/;"	f	file:
+_sw_swbuff_index_dec	sw.c	/^static void _sw_swbuff_index_dec(void)$/;"	f	file:
+_sw_in	sw.c	/^static int _sw_in(char* data)$/;"	f	file:
+_sw_poll	sw.c	/^static int _sw_poll(int gameport, int endstrobelimit)$/;"	f	file:
+wait_for_sw_sleep	sw.c	/^static void wait_for_sw_sleep(int gameport, int count)$/;"	f	file:
+change_mode_b	sw.c	/^static int change_mode_b(void)$/;"	f	file:
+mouse_mx	dmouse.c	/^static int mouse_mx = 0;            \/* internal position, in mickeys *\/$/;"	v	file:
+mouse_my	dmouse.c	/^static int mouse_my = 0;$/;"	v	file:
+mouse_sx	dmouse.c	/^static int mouse_sx = 2;            \/* mickey -> pixel scaling factor *\/$/;"	v	file:
+mouse_sy	dmouse.c	/^static int mouse_sy = 2;$/;"	v	file:
+mouse_minx	dmouse.c	/^static int mouse_minx = 0;          \/* mouse range *\/$/;"	v	file:
+mouse_miny	dmouse.c	/^static int mouse_miny = 0;$/;"	v	file:
+mouse_maxx	dmouse.c	/^static int mouse_maxx = 319;$/;"	v	file:
+mouse_maxy	dmouse.c	/^static int mouse_maxy = 199;$/;"	v	file:
+mymickey_x	dmouse.c	/^static int mymickey_x = 0;          \/* for get_mouse_mickeys() *\/$/;"	v	file:
+mymickey_y	dmouse.c	/^static int mymickey_y = 0;$/;"	v	file:
+mymickey_ox	dmouse.c	/^static int mymickey_ox = 0; $/;"	v	file:
+mymickey_oy	dmouse.c	/^static int mymickey_oy = 0;$/;"	v	file:
+mouse_seginfo	dmouse.c	/^   static _go32_dpmi_seginfo mouse_seginfo;$/;"	v	file:
+mouse_regs	dmouse.c	/^static __dpmi_regs mouse_regs;$/;"	v	file:
+MICKEY_TO_COORD_X	dmouse.c	57;"	d	file:
+MICKEY_TO_COORD_Y	dmouse.c	58;"	d	file:
+COORD_TO_MICKEY_X	dmouse.c	60;"	d	file:
+COORD_TO_MICKEY_Y	dmouse.c	61;"	d	file:
+CLEAR_MICKEYS	dmouse.c	64;"	d	file:
+mick_init	dmouse.c	/^static int mick_init(void);$/;"	p	file:
+mick_exit	dmouse.c	/^static void mick_exit(void);$/;"	p	file:
+mick_position	dmouse.c	/^static void mick_position(int x, int y);$/;"	p	file:
+mick_set_range	dmouse.c	/^static void mick_set_range(int x1, int y1, int x2, int y2);$/;"	p	file:
+mick_set_speed	dmouse.c	/^static void mick_set_speed(int xspeed, int yspeed);$/;"	p	file:
+mick_get_mickeys	dmouse.c	/^static void mick_get_mickeys(int *mickeyx, int *mickeyy);$/;"	p	file:
+mousedrv_mickeys	dmouse.c	/^MOUSE_DRIVER mousedrv_mickeys =$/;"	v
+int33_init	dmouse.c	/^static int int33_init(void);$/;"	p	file:
+int33_exit	dmouse.c	/^static void int33_exit(void);$/;"	p	file:
+int33_position	dmouse.c	/^static void int33_position(int x, int y);$/;"	p	file:
+int33_set_range	dmouse.c	/^static void int33_set_range(int x1, int y1, int x2, int y2);$/;"	p	file:
+int33_set_speed	dmouse.c	/^static void int33_set_speed(int xspeed, int yspeed);$/;"	p	file:
+int33_get_mickeys	dmouse.c	/^static void int33_get_mickeys(int *mickeyx, int *mickeyy);$/;"	p	file:
+mousedrv_int33	dmouse.c	/^MOUSE_DRIVER mousedrv_int33 =$/;"	v
+polling_init	dmouse.c	/^static int polling_init(void);$/;"	p	file:
+polling_exit	dmouse.c	/^static void polling_exit(void);$/;"	p	file:
+polling_timer_poll	dmouse.c	/^static void polling_timer_poll(void);$/;"	p	file:
+mousedrv_polling	dmouse.c	/^MOUSE_DRIVER mousedrv_polling =$/;"	v
+winnt_init	dmouse.c	/^static int winnt_init(void);$/;"	p	file:
+mousedrv_winnt	dmouse.c	/^MOUSE_DRIVER mousedrv_winnt =$/;"	v
+win2k_init	dmouse.c	/^static int win2k_init(void);$/;"	p	file:
+mousedrv_win2k	dmouse.c	/^MOUSE_DRIVER mousedrv_win2k =$/;"	v
+_mouse_driver_list	dmouse.c	/^_DRIVER_INFO _mouse_driver_list[] =$/;"	v
+init_mouse	dmouse.c	/^static int init_mouse(void (*handler)(__dpmi_regs *r))$/;"	f	file:
+mick_handler	dmouse.c	/^static void mick_handler(__dpmi_regs *r)$/;"	f	file:
+mick_handler	dmouse.c	/^END_OF_STATIC_FUNCTION(mick_handler);$/;"	v
+mick_position	dmouse.c	/^static void mick_position(int x, int y)$/;"	f	file:
+mick_set_range	dmouse.c	/^static void mick_set_range(int x1, int y1, int x2, int y2)$/;"	f	file:
+mick_set_speed	dmouse.c	/^static void mick_set_speed(int xspeed, int yspeed)$/;"	f	file:
+mick_get_mickeys	dmouse.c	/^static void mick_get_mickeys(int *mickeyx, int *mickeyy)$/;"	f	file:
+mick_lock	dmouse.c	/^static void mick_lock(void)$/;"	f	file:
+mick_init	dmouse.c	/^static int mick_init(void)$/;"	f	file:
+win2k_init	dmouse.c	/^static int win2k_init(void)$/;"	f	file:
+mick_exit	dmouse.c	/^static void mick_exit(void)$/;"	f	file:
+int33_handler	dmouse.c	/^static void int33_handler(__dpmi_regs *r)$/;"	f	file:
+int33_handler	dmouse.c	/^END_OF_STATIC_FUNCTION(int33_handler);$/;"	v
+int33_position	dmouse.c	/^static void int33_position(int x, int y)$/;"	f	file:
+int33_set_range	dmouse.c	/^static void int33_set_range(int x1, int y1, int x2, int y2)$/;"	f	file:
+int33_set_speed	dmouse.c	/^static void int33_set_speed(int xspeed, int yspeed)$/;"	f	file:
+int33_get_mickeys	dmouse.c	/^static void int33_get_mickeys(int *mickeyx, int *mickeyy)$/;"	f	file:
+int33_init	dmouse.c	/^static int int33_init(void)$/;"	f	file:
+int33_exit	dmouse.c	/^static void int33_exit(void)$/;"	f	file:
+polling_timer_poll	dmouse.c	/^static void polling_timer_poll(void)$/;"	f	file:
+polling_timer_poll	dmouse.c	/^END_OF_STATIC_FUNCTION(polling_timer_poll);$/;"	v
+polling_init	dmouse.c	/^static int polling_init(void)$/;"	f	file:
+winnt_init	dmouse.c	/^static int winnt_init(void)$/;"	f	file:
+polling_exit	dmouse.c	/^static void polling_exit(void)$/;"	f	file:
+ww_init	ww.c	/^static int ww_init(void);$/;"	p	file:
+ww_exit	ww.c	/^static void ww_exit(void);$/;"	p	file:
+ww_poll	ww.c	/^static int ww_poll(void);$/;"	p	file:
+SWIFT_T	ww.c	/^typedef union SWIFT_T$/;"	u	file:
+type	ww.c	/^      unsigned char type;$/;"	m	struct:SWIFT_T::__anon2	file:
+swift	ww.c	/^   } swift;$/;"	m	union:SWIFT_T	typeref:struct:SWIFT_T::__anon2	file:
+x	ww.c	/^      short x;                \/* unused *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+y	ww.c	/^      short y;                \/* unused *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+z	ww.c	/^      short z;                \/* throttle *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+pitch	ww.c	/^      short pitch;            \/* stick y axis *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+roll	ww.c	/^      short roll;             \/* stick x axis *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+yaw	ww.c	/^      short yaw;              \/* spinner *\/$/;"	m	struct:SWIFT_T::__anon3	file:
+buttons	ww.c	/^      short buttons;$/;"	m	struct:SWIFT_T::__anon3	file:
+data	ww.c	/^   } data;$/;"	m	union:SWIFT_T	typeref:struct:SWIFT_T::__anon3	file:
+SWIFT_T	ww.c	/^} SWIFT_T;$/;"	t	typeref:union:SWIFT_T	file:
+wingman	ww.c	/^static SWIFT_T *wingman = NULL;$/;"	v	file:
+joystick_ww	ww.c	/^JOYSTICK_DRIVER joystick_ww =$/;"	v
+ww_init	ww.c	/^static int ww_init(void)$/;"	f	file:
+ww_poll	ww.c	/^static int ww_poll(void)$/;"	f	file:
+ww_exit	ww.c	/^static void ww_exit(void)$/;"	f	file:
+IFSEGAISA_BASE	ifsega.c	27;"	d	file:
+sg_init	ifsega.c	/^static int sg_init(void);$/;"	p	file:
+sg_exit	ifsega.c	/^static void sg_exit(void);$/;"	p	file:
+sg_poll	ifsega.c	/^static int sg_poll(int);$/;"	p	file:
+sg1_poll	ifsega.c	/^static int sg1_poll(void);$/;"	p	file:
+sg_poll_sub	ifsega.c	/^static int sg_poll_sub(int num, int base);$/;"	p	file:
+sg_poll_sub2	ifsega.c	/^static int sg_poll_sub2(int base);$/;"	p	file:
+sg_poll_sub3	ifsega.c	/^static int sg_poll_sub3(int num, int count, int base);$/;"	p	file:
+pad_kind	ifsega.c	/^static int pad_kind(int base);$/;"	p	file:
+sg_button_init	ifsega.c	/^static void sg_button_init(int num);$/;"	p	file:
+joystick_sg1	ifsega.c	/^JOYSTICK_DRIVER joystick_sg1 =$/;"	v
+sg_init	ifsega.c	/^static int sg_init(void)$/;"	f	file:
+sg_exit	ifsega.c	/^static void sg_exit(void)$/;"	f	file:
+sg_poll	ifsega.c	/^static int sg_poll(int base)$/;"	f	file:
+sg_poll_sub	ifsega.c	/^static int sg_poll_sub(int num, int base)$/;"	f	file:
+sg_poll_sub2	ifsega.c	/^static int sg_poll_sub2(int base)$/;"	f	file:
+sg_poll_sub3	ifsega.c	/^static int sg_poll_sub3(int num, int count, int base)$/;"	f	file:
+pad_kind	ifsega.c	/^static int pad_kind(int base)$/;"	f	file:
+sg_button_init	ifsega.c	/^static void sg_button_init(int num)$/;"	f	file:
+sg1_poll	ifsega.c	/^static int sg1_poll(void)$/;"	f	file:
+ALLEGRO_DOS_EMU8K_H	emu8k.h	25;"	d
+envparms_t	emu8k.h	/^typedef struct envparms_t $/;"	s
+envvol	emu8k.h	/^   int envvol,  envval,  dcysus,  atkhldv;$/;"	m	struct:envparms_t
+envval	emu8k.h	/^   int envvol,  envval,  dcysus,  atkhldv;$/;"	m	struct:envparms_t
+dcysus	emu8k.h	/^   int envvol,  envval,  dcysus,  atkhldv;$/;"	m	struct:envparms_t
+atkhldv	emu8k.h	/^   int envvol,  envval,  dcysus,  atkhldv;$/;"	m	struct:envparms_t
+lfo1val	emu8k.h	/^   int lfo1val, atkhld,  lfo2val, ip;$/;"	m	struct:envparms_t
+atkhld	emu8k.h	/^   int lfo1val, atkhld,  lfo2val, ip;$/;"	m	struct:envparms_t
+lfo2val	emu8k.h	/^   int lfo1val, atkhld,  lfo2val, ip;$/;"	m	struct:envparms_t
+ip	emu8k.h	/^   int lfo1val, atkhld,  lfo2val, ip;$/;"	m	struct:envparms_t
+ifatn	emu8k.h	/^   int ifatn,   pefe,    fmmod,   tremfrq;$/;"	m	struct:envparms_t
+pefe	emu8k.h	/^   int ifatn,   pefe,    fmmod,   tremfrq;$/;"	m	struct:envparms_t
+fmmod	emu8k.h	/^   int ifatn,   pefe,    fmmod,   tremfrq;$/;"	m	struct:envparms_t
+tremfrq	emu8k.h	/^   int ifatn,   pefe,    fmmod,   tremfrq;$/;"	m	struct:envparms_t
+fm2frq2	emu8k.h	/^   int fm2frq2, dcysusv, ptrx,    psst;$/;"	m	struct:envparms_t
+dcysusv	emu8k.h	/^   int fm2frq2, dcysusv, ptrx,    psst;$/;"	m	struct:envparms_t
+ptrx	emu8k.h	/^   int fm2frq2, dcysusv, ptrx,    psst;$/;"	m	struct:envparms_t
+psst	emu8k.h	/^   int fm2frq2, dcysusv, ptrx,    psst;$/;"	m	struct:envparms_t
+csl	emu8k.h	/^   int csl,     ccca,    rootkey, ipbase;$/;"	m	struct:envparms_t
+ccca	emu8k.h	/^   int csl,     ccca,    rootkey, ipbase;$/;"	m	struct:envparms_t
+rootkey	emu8k.h	/^   int csl,     ccca,    rootkey, ipbase;$/;"	m	struct:envparms_t
+ipbase	emu8k.h	/^   int csl,     ccca,    rootkey, ipbase;$/;"	m	struct:envparms_t
+ipscale	emu8k.h	/^   int ipscale, minkey,  maxkey,  minvel;$/;"	m	struct:envparms_t
+minkey	emu8k.h	/^   int ipscale, minkey,  maxkey,  minvel;$/;"	m	struct:envparms_t
+maxkey	emu8k.h	/^   int ipscale, minkey,  maxkey,  minvel;$/;"	m	struct:envparms_t
+minvel	emu8k.h	/^   int ipscale, minkey,  maxkey,  minvel;$/;"	m	struct:envparms_t
+maxvel	emu8k.h	/^   int maxvel,  key,     vel,     exc;$/;"	m	struct:envparms_t
+key	emu8k.h	/^   int maxvel,  key,     vel,     exc;$/;"	m	struct:envparms_t
+vel	emu8k.h	/^   int maxvel,  key,     vel,     exc;$/;"	m	struct:envparms_t
+exc	emu8k.h	/^   int maxvel,  key,     vel,     exc;$/;"	m	struct:envparms_t
+keyMEH	emu8k.h	/^   int keyMEH,  keyMED,  keyVEH,  keyVED;$/;"	m	struct:envparms_t
+keyMED	emu8k.h	/^   int keyMEH,  keyMED,  keyVEH,  keyVED;$/;"	m	struct:envparms_t
+keyVEH	emu8k.h	/^   int keyMEH,  keyMED,  keyVEH,  keyVED;$/;"	m	struct:envparms_t
+keyVED	emu8k.h	/^   int keyMEH,  keyMED,  keyVEH,  keyVED;$/;"	m	struct:envparms_t
+filter	emu8k.h	/^   int filter,  atten,   smpmode, volrel;$/;"	m	struct:envparms_t
+atten	emu8k.h	/^   int filter,  atten,   smpmode, volrel;$/;"	m	struct:envparms_t
+smpmode	emu8k.h	/^   int filter,  atten,   smpmode, volrel;$/;"	m	struct:envparms_t
+volrel	emu8k.h	/^   int filter,  atten,   smpmode, volrel;$/;"	m	struct:envparms_t
+modrel	emu8k.h	/^   int modrel,  pan,     loopst,  reverb;$/;"	m	struct:envparms_t
+pan	emu8k.h	/^   int modrel,  pan,     loopst,  reverb;$/;"	m	struct:envparms_t
+loopst	emu8k.h	/^   int modrel,  pan,     loopst,  reverb;$/;"	m	struct:envparms_t
+reverb	emu8k.h	/^   int modrel,  pan,     loopst,  reverb;$/;"	m	struct:envparms_t
+chorus	emu8k.h	/^   int chorus,  volsust, modsust, pitch;$/;"	m	struct:envparms_t
+volsust	emu8k.h	/^   int chorus,  volsust, modsust, pitch;$/;"	m	struct:envparms_t
+modsust	emu8k.h	/^   int chorus,  volsust, modsust, pitch;$/;"	m	struct:envparms_t
+pitch	emu8k.h	/^   int chorus,  volsust, modsust, pitch;$/;"	m	struct:envparms_t
+sampend	emu8k.h	/^   int sampend;$/;"	m	struct:envparms_t
+envparms_t	emu8k.h	/^} envparms_t;$/;"	t	typeref:struct:envparms_t
+sfgen_startAddrsOffset	emu8k.h	45;"	d
+sfgen_endAddrsOffset	emu8k.h	46;"	d
+sfgen_startloopAddrsOffset	emu8k.h	47;"	d
+sfgen_endloopAddrsOffset	emu8k.h	48;"	d
+sfgen_startAddrsCoarseOffset	emu8k.h	49;"	d
+sfgen_modLfoToPitch	emu8k.h	50;"	d
+sfgen_vibLfoToPitch	emu8k.h	51;"	d
+sfgen_modEnvToPitch	emu8k.h	52;"	d
+sfgen_initialFilterFc	emu8k.h	53;"	d
+sfgen_initialFilterQ	emu8k.h	54;"	d
+sfgen_modLfoToFilterFc	emu8k.h	55;"	d
+sfgen_modEnvToFilterFc	emu8k.h	56;"	d
+sfgen_endAddrsCoarseOffset	emu8k.h	57;"	d
+sfgen_modLfoToVolume	emu8k.h	58;"	d
+sfgen_chorusEffectsSend	emu8k.h	59;"	d
+sfgen_reverbEffectsSend	emu8k.h	60;"	d
+sfgen_pan	emu8k.h	61;"	d
+sfgen_delayModLFO	emu8k.h	62;"	d
+sfgen_freqModLFO	emu8k.h	63;"	d
+sfgen_delayVibLFO	emu8k.h	64;"	d
+sfgen_freqVibLFO	emu8k.h	65;"	d
+sfgen_delayModEnv	emu8k.h	66;"	d
+sfgen_attackModEnv	emu8k.h	67;"	d
+sfgen_holdModEnv	emu8k.h	68;"	d
+sfgen_decayModEnv	emu8k.h	69;"	d
+sfgen_sustainModEnv	emu8k.h	70;"	d
+sfgen_releaseModEnv	emu8k.h	71;"	d
+sfgen_keynumToModEnvHold	emu8k.h	72;"	d
+sfgen_keynumToModEnvDecay	emu8k.h	73;"	d
+sfgen_delayVolEnv	emu8k.h	74;"	d
+sfgen_attackVolEnv	emu8k.h	75;"	d
+sfgen_holdVolEnv	emu8k.h	76;"	d
+sfgen_decayVolEnv	emu8k.h	77;"	d
+sfgen_sustainVolEnv	emu8k.h	78;"	d
+sfgen_releaseVolEnv	emu8k.h	79;"	d
+sfgen_keynumToVolEnvHold	emu8k.h	80;"	d
+sfgen_keynumToVolEnvDecay	emu8k.h	81;"	d
+sfgen_instrument	emu8k.h	82;"	d
+sfgen_keyRange	emu8k.h	83;"	d
+sfgen_velRange	emu8k.h	84;"	d
+sfgen_startloopAddrsCoarseOffset	emu8k.h	85;"	d
+sfgen_keynum	emu8k.h	86;"	d
+sfgen_velocity	emu8k.h	87;"	d
+sfgen_initialAttenuation	emu8k.h	88;"	d
+sfgen_endloopAddrsCoarseOffset	emu8k.h	89;"	d
+sfgen_coarseTune	emu8k.h	90;"	d
+sfgen_fineTune	emu8k.h	91;"	d
+sfgen_sampleID	emu8k.h	92;"	d
+sfgen_sampleModes	emu8k.h	93;"	d
+sfgen_initialPitch	emu8k.h	94;"	d
+sfgen_scaleTuning	emu8k.h	95;"	d
+sfgen_exclusiveClass	emu8k.h	96;"	d
+sfgen_overridingRootKey	emu8k.h	97;"	d
+gfgen_startAddrs	emu8k.h	99;"	d
+gfgen_startloopAddrs	emu8k.h	100;"	d
+gfgen_endloopAddrs	emu8k.h	101;"	d
+gfgen_endAddrs	emu8k.h	102;"	d
+SOUNDFONT_NUM_GENERATORS	emu8k.h	104;"	d
+generators_t	emu8k.h	/^typedef int generators_t[SOUNDFONT_NUM_GENERATORS];$/;"	t
+_emu8k_baseport	emu8k.h	/^extern int _emu8k_baseport;$/;"	x
+_emu8k_numchannels	emu8k.h	/^extern int _emu8k_numchannels;$/;"	x
+emu8k_init	emu8k.h	/^void emu8k_init(void);$/;"	p
+emu8k_startsound	emu8k.h	/^void emu8k_startsound(int channel,struct envparms_t *envparms);$/;"	p
+emu8k_releasesound	emu8k.h	/^void emu8k_releasesound(int channel,struct envparms_t *envparms);$/;"	p
+emu8k_terminatesound	emu8k.h	/^void emu8k_terminatesound(int channel);$/;"	p
+emu8k_detect	emu8k.h	/^int  emu8k_detect(void);$/;"	p
+emu8k_modulate_atten	emu8k.h	/^void emu8k_modulate_atten (int channel, int atten);$/;"	p
+emu8k_modulate_ip	emu8k.h	/^void emu8k_modulate_ip (int channel, int ip);$/;"	p
+emu8k_modulate_pan	emu8k.h	/^void emu8k_modulate_pan (int channel, int pan);$/;"	p
+emu8k_createenvelope	emu8k.h	/^envparms_t *emu8k_createenvelope(generators_t);$/;"	p
+emu8k_destroyenvelope	emu8k.h	/^void emu8k_destroyenvelope(envparms_t *);$/;"	p
+emu8k_lock	emu8k.h	/^void emu8k_lock(void);$/;"	p
+_lock_malloc	emu8k.h	/^void *_lock_malloc(size_t size);                \/* malloc and lock *\/$/;"	p
+vesa_1_init	vesa.c	/^static BITMAP *vesa_1_init(int w, int h, int v_w, int v_h, int color_depth);$/;"	p	file:
+vesa_2b_init	vesa.c	/^static BITMAP *vesa_2b_init(int w, int h, int v_w, int v_h, int color_depth);$/;"	p	file:
+vesa_2l_init	vesa.c	/^static BITMAP *vesa_2l_init(int w, int h, int v_w, int v_h, int color_depth);$/;"	p	file:
+vesa_3_init	vesa.c	/^static BITMAP *vesa_3_init(int w, int h, int v_w, int v_h, int color_depth);$/;"	p	file:
+vesa_exit	vesa.c	/^static void vesa_exit(BITMAP *b);$/;"	p	file:
+vesa_scroll	vesa.c	/^static int vesa_scroll(int x, int y);$/;"	p	file:
+vesa_vsync	vesa.c	/^static void vesa_vsync(void);$/;"	p	file:
+vesa_set_palette_range	vesa.c	/^static void vesa_set_palette_range(AL_CONST PALETTE p, int from, int to, int vsync);$/;"	p	file:
+vesa_request_scroll	vesa.c	/^static int vesa_request_scroll(int x, int y);$/;"	p	file:
+vesa_poll_scroll	vesa.c	/^static int vesa_poll_scroll(void);$/;"	p	file:
+vesa_fetch_mode_list	vesa.c	/^static GFX_MODE_LIST *vesa_fetch_mode_list(void);$/;"	p	file:
+vesa_desc	vesa.c	/^static char vesa_desc[256] = EMPTY_STRING;$/;"	v	file:
+gfx_vesa_1	vesa.c	/^GFX_DRIVER gfx_vesa_1 = $/;"	v
+gfx_vesa_2b	vesa.c	/^GFX_DRIVER gfx_vesa_2b = $/;"	v
+gfx_vesa_2l	vesa.c	/^GFX_DRIVER gfx_vesa_2l = $/;"	v
+gfx_vesa_3	vesa.c	/^GFX_DRIVER gfx_vesa_3 = $/;"	v
+MASK_LINEAR	vesa.c	148;"	d	file:
+RM_TO_LINEAR	vesa.c	149;"	d	file:
+RM_OFFSET	vesa.c	150;"	d	file:
+RM_SEGMENT	vesa.c	151;"	d	file:
+__PACKED__	vesa.c	156;"	d	file:
+__PACKED__	vesa.c	158;"	d	file:
+VESA_INFO	vesa.c	/^typedef struct VESA_INFO         \/* VESA information block structure *\/$/;"	s	file:
+__PACKED__	vesa.c	/^   char           VESASignature[4]     __PACKED__;$/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short VESAVersion          __PACKED__;$/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  OEMStringPtr         __PACKED__;$/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  Capabilities[4]      __PACKED__;$/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  VideoModePtr         __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short TotalMemory          __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short OemSoftwareRev       __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  OemVendorNamePtr     __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  OemProductNamePtr    __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  OemProductRevPtr     __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  Reserved[222]        __PACKED__; $/;"	m	struct:VESA_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  OemData[256]         __PACKED__; $/;"	m	struct:VESA_INFO	file:
+VESA_INFO	vesa.c	/^} VESA_INFO;$/;"	t	typeref:struct:VESA_INFO	file:
+MODE_INFO	vesa.c	/^typedef struct MODE_INFO         \/* VESA information for a specific mode *\/$/;"	s	file:
+__PACKED__	vesa.c	/^   unsigned short ModeAttributes       __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  WinAAttributes       __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  WinBAttributes       __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short WinGranularity       __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short WinSize              __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short WinASegment          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short WinBSegment          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  WinFuncPtr           __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short BytesPerScanLine     __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short XResolution          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short YResolution          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  XCharSize            __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  YCharSize            __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  NumberOfPlanes       __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  BitsPerPixel         __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  NumberOfBanks        __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  MemoryModel          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  BankSize             __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  NumberOfImagePages   __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  Reserved_page        __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  RedMaskSize          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  RedMaskPos           __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  GreenMaskSize        __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  GreenMaskPos         __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  BlueMaskSize         __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  BlueMaskPos          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  ReservedMaskSize     __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  ReservedMaskPos      __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  DirectColorModeInfo  __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  PhysBasePtr          __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  OffScreenMemOffset   __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short OffScreenMemSize     __PACKED__; $/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short LinBytesPerScanLine  __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  BnkNumberOfPages     __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinNumberOfPages     __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinRedMaskSize       __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinRedFieldPos       __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinGreenMaskSize     __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinGreenFieldPos     __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinBlueMaskSize      __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinBlueFieldPos      __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinRsvdMaskSize      __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  LinRsvdFieldPos      __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned long  MaxPixelClock        __PACKED__;$/;"	m	struct:MODE_INFO	file:
+__PACKED__	vesa.c	/^   unsigned char  Reserved[190]        __PACKED__; $/;"	m	struct:MODE_INFO	file:
+MODE_INFO	vesa.c	/^} MODE_INFO;$/;"	t	typeref:struct:MODE_INFO	file:
+PM_INFO	vesa.c	/^typedef struct PM_INFO           \/* VESA 2.0 protected mode interface *\/$/;"	s	file:
+__PACKED__	vesa.c	/^   unsigned short setWindow            __PACKED__; $/;"	m	struct:PM_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short setDisplayStart      __PACKED__; $/;"	m	struct:PM_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short setPalette           __PACKED__; $/;"	m	struct:PM_INFO	file:
+__PACKED__	vesa.c	/^   unsigned short IOPrivInfo           __PACKED__; $/;"	m	struct:PM_INFO	file:
+PM_INFO	vesa.c	/^} PM_INFO;$/;"	t	typeref:struct:PM_INFO	file:
+CRTCInfoBlock	vesa.c	/^typedef struct CRTCInfoBlock     \/* VESA 3.0 CRTC timings structure *\/$/;"	s	file:
+__PACKED__	vesa.c	/^    unsigned short HorizontalTotal     __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short HorizontalSyncStart __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short HorizontalSyncEnd   __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short VerticalTotal       __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short VerticalSyncStart   __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short VerticalSyncEnd     __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned char  Flags               __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned long  PixelClock          __PACKED__;    \/* units of Hz *\/$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned short RefreshRate         __PACKED__;    \/* units of 0.01 Hz *\/$/;"	m	struct:CRTCInfoBlock	file:
+__PACKED__	vesa.c	/^    unsigned char  reserved[40]        __PACKED__;$/;"	m	struct:CRTCInfoBlock	file:
+CRTCInfoBlock	vesa.c	/^} CRTCInfoBlock;$/;"	t	typeref:struct:CRTCInfoBlock	file:
+HPOS	vesa.c	266;"	d	file:
+HNEG	vesa.c	267;"	d	file:
+VPOS	vesa.c	268;"	d	file:
+VNEG	vesa.c	269;"	d	file:
+INTERLACED	vesa.c	270;"	d	file:
+DOUBLESCAN	vesa.c	271;"	d	file:
+vesa_info	vesa.c	/^static VESA_INFO vesa_info;               \/* SVGA info block *\/$/;"	v	file:
+mode_info	vesa.c	/^static MODE_INFO mode_info;               \/* info for this video mode *\/$/;"	v	file:
+oem_string	vesa.c	/^static char oem_string[256];              \/* vendor name *\/$/;"	v	file:
+lb_linear	vesa.c	/^static unsigned long lb_linear = 0;       \/* linear address of framebuffer *\/$/;"	v	file:
+lb_segment	vesa.c	/^static int lb_segment = 0;                \/* descriptor for the buffer *\/$/;"	v	file:
+pm_info	vesa.c	/^static PM_INFO *pm_info = NULL;           \/* VESA 2.0 pmode interface *\/$/;"	v	file:
+mmio_linear	vesa.c	/^static unsigned long mmio_linear = 0;     \/* linear addr for mem mapped IO *\/$/;"	v	file:
+vesa_xscroll	vesa.c	/^static int vesa_xscroll = 0;              \/* current display start address *\/$/;"	v	file:
+vesa_yscroll	vesa.c	/^static int vesa_yscroll = 0;$/;"	v	file:
+_dpmi_reg	vesa.c	/^__dpmi_regs _dpmi_reg;                    \/* for the bank switch routines *\/$/;"	v
+_window_2_offset	vesa.c	/^int _window_2_offset = 0;                 \/* window state information *\/$/;"	v
+_mmio_segment	vesa.c	/^int _mmio_segment = 0;$/;"	v
+_pm_vesa_switcher	vesa.c	/^void (*_pm_vesa_switcher)(void) = NULL;   \/* VBE 2.0 pmode interface *\/$/;"	v
+_pm_vesa_scroller	vesa.c	/^void (*_pm_vesa_scroller)(void) = NULL;$/;"	v
+_pm_vesa_palette	vesa.c	/^void (*_pm_vesa_palette)(void) = NULL;$/;"	v
+evilness_flag	vesa.c	/^static int evilness_flag = 0;             \/* set if we are doing dodgy things$/;"	v	file:
+get_vesa_info	vesa.c	/^static int get_vesa_info(void)$/;"	f	file:
+get_mode_info	vesa.c	/^static int get_mode_info(int mode)$/;"	f	file:
+_vesa_vidmem_check	vesa.c	/^long _vesa_vidmem_check(long mem)$/;"	f
+find_vesa_mode	vesa.c	/^static int find_vesa_mode(int w, int h, int color_depth, int vbe_version)$/;"	f	file:
+MAX_VESA_MODES	vesa.c	397;"	d	file:
+MEM_MATCH	vesa.c	497;"	d	file:
+BPP_MATCH	vesa.c	500;"	d	file:
+RES_SIZE_MATCH	vesa.c	503;"	d	file:
+RES_POS_MATCH	vesa.c	506;"	d	file:
+setup_vesa_desc	vesa.c	/^static void setup_vesa_desc(GFX_DRIVER *driver, int vbe_version, int linear)$/;"	f	file:
+vesa_fetch_mode_list	vesa.c	/^static GFX_MODE_LIST *vesa_fetch_mode_list(void)$/;"	f	file:
+get_pmode_functions	vesa.c	/^static int get_pmode_functions(void (**w1)(void), void (**w2)(void))$/;"	f	file:
+sort_out_vesa_windows	vesa.c	/^static int sort_out_vesa_windows(BITMAP *b, void (*w1)(void), void (*w2)(void))$/;"	f	file:
+make_linear_bitmap	vesa.c	/^static BITMAP *make_linear_bitmap(GFX_DRIVER *driver, int width, int height, int color_depth, int bpl)$/;"	f	file:
+calc_crtc_timing	vesa.c	/^static void calc_crtc_timing(CRTCInfoBlock *crtc, int xres, int yres, int xadjust, int yadjust)$/;"	f	file:
+get_closest_pixel_clock	vesa.c	/^static unsigned long get_closest_pixel_clock(int mode_no, unsigned long vclk)$/;"	f	file:
+vesa_init	vesa.c	/^static BITMAP *vesa_init(GFX_DRIVER *driver, int linear, int vbe_version, int w, int h, int v_w, int v_h, int color_depth)$/;"	f	file:
+vesa_1_init	vesa.c	/^static BITMAP *vesa_1_init(int w, int h, int v_w, int v_h, int color_depth)$/;"	f	file:
+vesa_2b_init	vesa.c	/^static BITMAP *vesa_2b_init(int w, int h, int v_w, int v_h, int color_depth)$/;"	f	file:
+vesa_2l_init	vesa.c	/^static BITMAP *vesa_2l_init(int w, int h, int v_w, int v_h, int color_depth)$/;"	f	file:
+vesa_3_init	vesa.c	/^static BITMAP *vesa_3_init(int w, int h, int v_w, int v_h, int color_depth)$/;"	f	file:
+vesa_vsync	vesa.c	/^static void vesa_vsync(void)$/;"	f	file:
+vesa_scroll	vesa.c	/^static int vesa_scroll(int x, int y)$/;"	f	file:
+vesa_set_palette_range	vesa.c	/^static void vesa_set_palette_range(AL_CONST PALETTE p, int from, int to, int vsync)$/;"	f	file:
+vesa_request_scroll	vesa.c	/^static int vesa_request_scroll(int x, int y)$/;"	f	file:
+vesa_poll_scroll	vesa.c	/^static int vesa_poll_scroll(void)$/;"	f	file:
+vesa_exit	vesa.c	/^static void vesa_exit(BITMAP *b)$/;"	f	file:
+ODIE	sndscape.c	34;"	d	file:
+OPUS	sndscape.c	35;"	d	file:
+MMIC	sndscape.c	36;"	d	file:
+soundscape_hw_ver	sndscape.c	/^static int soundscape_hw_ver = -1;      \/* as reported by detection *\/$/;"	v	file:
+ensoniq_gate_array	sndscape.c	/^static char *ensoniq_gate_array[] = { "ODIE", "OPUS", "MiMIC" };$/;"	v	file:
+GA_HOSTCTL_OFF	sndscape.c	43;"	d	file:
+GA_ADDR_OFF	sndscape.c	44;"	d	file:
+GA_DATA_OFF	sndscape.c	45;"	d	file:
+GA_CODEC_OFF	sndscape.c	46;"	d	file:
+GA_DMAB_REG	sndscape.c	48;"	d	file:
+GA_INTCFG_REG	sndscape.c	49;"	d	file:
+GA_DMACFG_REG	sndscape.c	50;"	d	file:
+GA_CDCFG_REG	sndscape.c	51;"	d	file:
+GA_HMCTL_REG	sndscape.c	52;"	d	file:
+CD_ADDR_OFF	sndscape.c	54;"	d	file:
+CD_DATA_OFF	sndscape.c	55;"	d	file:
+CD_STATUS_OFF	sndscape.c	56;"	d	file:
+OUT_TO_ADDR	sndscape.c	59;"	d	file:
+CODEC_MODE_CHANGE_ON	sndscape.c	61;"	d	file:
+CODEC_MODE_CHANGE_OFF	sndscape.c	62;"	d	file:
+CD_ADCL_REG	sndscape.c	65;"	d	file:
+CD_ADCR_REG	sndscape.c	66;"	d	file:
+CD_CDAUXL_REG	sndscape.c	67;"	d	file:
+CD_CDAUXR_REG	sndscape.c	68;"	d	file:
+CD_DACL_REG	sndscape.c	69;"	d	file:
+CD_DACR_REG	sndscape.c	70;"	d	file:
+CD_FORMAT_REG	sndscape.c	71;"	d	file:
+CD_CONFIG_REG	sndscape.c	72;"	d	file:
+CD_PINCTL_REG	sndscape.c	73;"	d	file:
+CD_UCOUNT_REG	sndscape.c	74;"	d	file:
+CD_LCOUNT_REG	sndscape.c	75;"	d	file:
+CD_XFORMAT_REG	sndscape.c	76;"	d	file:
+CD_XUCOUNT_REG	sndscape.c	77;"	d	file:
+CD_XLCOUNT_REG	sndscape.c	78;"	d	file:
+ENABLE_CODEC_IRQ	sndscape.c	81;"	d	file:
+DISABLE_CODEC_IRQ	sndscape.c	82;"	d	file:
+soundscape_enabled	sndscape.c	/^static int soundscape_enabled = FALSE;$/;"	v	file:
+soundscape_mem_allocated	sndscape.c	/^static int soundscape_mem_allocated = FALSE;$/;"	v	file:
+soundscape_dma_count	sndscape.c	/^static int soundscape_dma_count = 0;$/;"	v	file:
+soundscape_dma	sndscape.c	/^static int soundscape_dma;$/;"	v	file:
+soundscape_freq	sndscape.c	/^static int soundscape_freq;$/;"	v	file:
+soundscape_baseport	sndscape.c	/^static int soundscape_baseport;              \/* gate Array\/MPU-401 port *\/$/;"	v	file:
+soundscape_waveport	sndscape.c	/^static int soundscape_waveport;              \/* the AD-1848 base port *\/$/;"	v	file:
+soundscape_midiirq	sndscape.c	/^static int soundscape_midiirq;               \/* the MPU-401 IRQ *\/$/;"	v	file:
+soundscape_waveirq	sndscape.c	/^static int soundscape_waveirq;               \/* the PCM IRQ *\/$/;"	v	file:
+soundscape_detect	sndscape.c	/^static int soundscape_detect(int input);$/;"	p	file:
+soundscape_init	sndscape.c	/^static int soundscape_init(int input, int voices);$/;"	p	file:
+soundscape_exit	sndscape.c	/^static void soundscape_exit(int input);$/;"	p	file:
+soundscape_set_mixer_volume	sndscape.c	/^static int soundscape_set_mixer_volume(int volume);$/;"	p	file:
+soundscape_buffer_size	sndscape.c	/^static int soundscape_buffer_size(void);$/;"	p	file:
+soundscape_int	sndscape.c	/^static int soundscape_int = -1;              \/* interrupt vector *\/$/;"	v	file:
+soundscape_dma_size	sndscape.c	/^static int soundscape_dma_size = -1;         \/* size of dma transfer *\/$/;"	v	file:
+soundscape_semaphore	sndscape.c	/^static volatile int soundscape_semaphore = FALSE;$/;"	v	file:
+soundscape_sel	sndscape.c	/^static int soundscape_sel;                   \/* selector for the DMA buffer *\/$/;"	v	file:
+soundscape_buf	sndscape.c	/^static unsigned long soundscape_buf[2];      \/* pointers to the two buffers *\/$/;"	v	file:
+soundscape_bufnum	sndscape.c	/^static int soundscape_bufnum = 0;            \/* the one currently in use *\/$/;"	v	file:
+soundscape_lock_mem	sndscape.c	/^static void soundscape_lock_mem(void);$/;"	p	file:
+soundscape_desc	sndscape.c	/^static char soundscape_desc[256] = EMPTY_STRING;$/;"	v	file:
+cd_cfg_save	sndscape.c	/^static int cd_cfg_save;             \/* gate array register save area *\/$/;"	v	file:
+dma_cfg_save	sndscape.c	/^static int dma_cfg_save;            \/* gate array register save area *\/$/;"	v	file:
+int_cfg_save	sndscape.c	/^static int int_cfg_save;            \/* gate array register save area *\/$/;"	v	file:
+dac_save_l	sndscape.c	/^static int dac_save_l;              \/* DAC left volume save *\/$/;"	v	file:
+dac_save_r	sndscape.c	/^static int dac_save_r;              \/* DAC right volume save *\/$/;"	v	file:
+cdx_save_l	sndscape.c	/^static int cdx_save_l;              \/* CD\/Aux left volume save *\/$/;"	v	file:
+cdx_save_r	sndscape.c	/^static int cdx_save_r;              \/* CD\/Aux right volume save *\/$/;"	v	file:
+adc_save_l	sndscape.c	/^static int adc_save_l;              \/* ADC left volume save *\/$/;"	v	file:
+adc_save_r	sndscape.c	/^static int adc_save_r;              \/* ADC right volume save *\/$/;"	v	file:
+ss_irqs	sndscape.c	/^static int ss_irqs[4] = { 9, 5, 7, 10 };$/;"	v	file:
+rs_irqs	sndscape.c	/^static int rs_irqs[4] = { 9, 7, 5, 15 };$/;"	v	file:
+soundscape_irqset	sndscape.c	/^static int *soundscape_irqset;      \/* pointer to one of the IRQ sets *\/$/;"	v	file:
+soundscape_detected	sndscape.c	/^static int soundscape_detected = FALSE; $/;"	v	file:
+addr	sndscape.c	/^   unsigned char addr;              \/* address register, lower\/upper *\/$/;"	m	struct:__anon4	file:
+count	sndscape.c	/^   unsigned char count;             \/* address register, lower\/upper *\/$/;"	m	struct:__anon4	file:
+status	sndscape.c	/^   unsigned char status;            \/* status register *\/$/;"	m	struct:__anon4	file:
+mask	sndscape.c	/^   unsigned char mask;              \/* single channel mask register *\/$/;"	m	struct:__anon4	file:
+mode	sndscape.c	/^   unsigned char mode;              \/* mode register *\/$/;"	m	struct:__anon4	file:
+clrff	sndscape.c	/^   unsigned char clrff;             \/* clear flip-flop register *\/$/;"	m	struct:__anon4	file:
+page	sndscape.c	/^   unsigned char page;              \/* fixed page register *\/$/;"	m	struct:__anon4	file:
+DMAC_REGS	sndscape.c	/^} DMAC_REGS;$/;"	t	typeref:struct:__anon4	file:
+dmac_regs	sndscape.c	/^static DMAC_REGS dmac_regs[4] =      \/* the DMAC regs for chans 0-3 *\/$/;"	v	file:
+dmac_reg_p	sndscape.c	/^static DMAC_REGS *dmac_reg_p;       \/* a pointer to a DMAC reg struct *\/$/;"	v	file:
+digi_soundscape	sndscape.c	/^DIGI_DRIVER digi_soundscape =$/;"	v
+soundscape_buffer_size	sndscape.c	/^static int soundscape_buffer_size(void)$/;"	f	file:
+cd_write	sndscape.c	/^static void cd_write(int rnum, int value)$/;"	f	file:
+cd_read	sndscape.c	/^static int cd_read(int rnum)$/;"	f	file:
+ga_write	sndscape.c	/^static void ga_write(int rnum, int value)$/;"	f	file:
+ga_read	sndscape.c	/^static int ga_read(int rnum)$/;"	f	file:
+set_dac_vol	sndscape.c	/^static void set_dac_vol(int lvol, int rvol)$/;"	f	file:
+resume_codec	sndscape.c	/^static void resume_codec(int direction)$/;"	f	file:
+set_format	sndscape.c	/^static int set_format(int srate, int stereo, int size16bit, int direction)$/;"	f	file:
+stop_codec	sndscape.c	/^static void stop_codec(void)$/;"	f	file:
+get_ini_config_entry	sndscape.c	/^static int get_ini_config_entry(char *entry, char *dest, unsigned int dest_size, FILE *fp)$/;"	f	file:
+get_init_config	sndscape.c	/^static int get_init_config(void)$/;"	f	file:
+detect_soundscape	sndscape.c	/^static int detect_soundscape(void)$/;"	f	file:
+soundscape_set_mixer_volume	sndscape.c	/^static int soundscape_set_mixer_volume(int volume)$/;"	f	file:
+soundscape_interrupt	sndscape.c	/^static int soundscape_interrupt(void)$/;"	f	file:
+soundscape_interrupt	sndscape.c	/^END_OF_STATIC_FUNCTION(soundscape_interrupt);$/;"	v
+soundscape_detect	sndscape.c	/^static int soundscape_detect(int input)$/;"	f	file:
+soundscape_init	sndscape.c	/^static int soundscape_init(int input, int voices)$/;"	f	file:
+soundscape_exit	sndscape.c	/^static void soundscape_exit(int input)$/;"	f	file:
+soundscape_lock_mem	sndscape.c	/^static void soundscape_lock_mem(void)$/;"	f	file:
+mpu_detect	mpu.c	/^static int mpu_detect(int input);$/;"	p	file:
+mpu_init	mpu.c	/^static int mpu_init(int input, int voices);$/;"	p	file:
+mpu_exit	mpu.c	/^static void mpu_exit(int input);$/;"	p	file:
+mpu_output	mpu.c	/^static void mpu_output(int data);$/;"	p	file:
+mpu_desc	mpu.c	/^static char mpu_desc[256] = EMPTY_STRING;$/;"	v	file:
+midi_mpu401	mpu.c	/^MIDI_DRIVER midi_mpu401 =$/;"	v
+mpu_output_mode	mpu.c	/^static int mpu_output_mode = FALSE;    \/* are we active for output? *\/$/;"	v	file:
+mpu_input_mode	mpu.c	/^static int mpu_input_mode = FALSE;     \/* are we active for input? *\/$/;"	v	file:
+mpu_piggyback	mpu.c	/^static int mpu_piggyback = FALSE;      \/* are we having to share our IRQ? *\/$/;"	v	file:
+_mpu_port	mpu.c	/^int _mpu_port = -1;                    \/* where is the card? *\/$/;"	v
+_mpu_irq	mpu.c	/^int _mpu_irq = -1;                     \/* which IRQ? *\/$/;"	v
+mpu_int	mpu.c	/^static int mpu_int = -1;               \/* which interrupt? *\/$/;"	v	file:
+wait_for_mpu	mpu.c	/^static INLINE int wait_for_mpu(int flag, int port)$/;"	f	file:
+mpu_output	mpu.c	/^static void mpu_output(int data)$/;"	f	file:
+mpu_output	mpu.c	/^END_OF_STATIC_FUNCTION(mpu_output);$/;"	v
+mpu_input	mpu.c	/^static INLINE int mpu_input(void)$/;"	f	file:
+_mpu_poll	mpu.c	/^void _mpu_poll(void)$/;"	f
+_mpu_poll	mpu.c	/^END_OF_FUNCTION(_mpu_poll);$/;"	v
+mpu_interrupt	mpu.c	/^static int mpu_interrupt(void)$/;"	f	file:
+mpu_interrupt	mpu.c	/^END_OF_STATIC_FUNCTION(mpu_interrupt);$/;"	v
+mpu_detect	mpu.c	/^static int mpu_detect(int input)$/;"	f	file:
+mpu_init	mpu.c	/^static int mpu_init(int input, int voices)$/;"	f	file:
+mpu_exit	mpu.c	/^static void mpu_exit(int input)$/;"	f	file:
+DMA1_STAT	dma.c	29;"	d	file:
+DMA1_WCMD	dma.c	30;"	d	file:
+DMA1_WREQ	dma.c	31;"	d	file:
+DMA1_SNGL	dma.c	32;"	d	file:
+DMA1_MODE	dma.c	33;"	d	file:
+DMA1_CLRFF	dma.c	34;"	d	file:
+DMA1_MCLR	dma.c	35;"	d	file:
+DMA1_CLRM	dma.c	36;"	d	file:
+DMA1_WRTALL	dma.c	37;"	d	file:
+DMA2_STAT	dma.c	40;"	d	file:
+DMA2_WCMD	dma.c	41;"	d	file:
+DMA2_WREQ	dma.c	42;"	d	file:
+DMA2_SNGL	dma.c	43;"	d	file:
+DMA2_MODE	dma.c	44;"	d	file:
+DMA2_CLRFF	dma.c	45;"	d	file:
+DMA2_MCLR	dma.c	46;"	d	file:
+DMA2_CLRM	dma.c	47;"	d	file:
+DMA2_WRTALL	dma.c	48;"	d	file:
+DMA0_ADDR	dma.c	51;"	d	file:
+DMA0_CNT	dma.c	52;"	d	file:
+DMA1_ADDR	dma.c	53;"	d	file:
+DMA1_CNT	dma.c	54;"	d	file:
+DMA2_ADDR	dma.c	55;"	d	file:
+DMA2_CNT	dma.c	56;"	d	file:
+DMA3_ADDR	dma.c	57;"	d	file:
+DMA3_CNT	dma.c	58;"	d	file:
+DMA4_ADDR	dma.c	59;"	d	file:
+DMA4_CNT	dma.c	60;"	d	file:
+DMA5_ADDR	dma.c	61;"	d	file:
+DMA5_CNT	dma.c	62;"	d	file:
+DMA6_ADDR	dma.c	63;"	d	file:
+DMA6_CNT	dma.c	64;"	d	file:
+DMA7_ADDR	dma.c	65;"	d	file:
+DMA7_CNT	dma.c	66;"	d	file:
+DMA0_PAGE	dma.c	68;"	d	file:
+DMA1_PAGE	dma.c	69;"	d	file:
+DMA2_PAGE	dma.c	70;"	d	file:
+DMA3_PAGE	dma.c	71;"	d	file:
+DMA4_PAGE	dma.c	72;"	d	file:
+DMA5_PAGE	dma.c	73;"	d	file:
+DMA6_PAGE	dma.c	74;"	d	file:
+DMA7_PAGE	dma.c	75;"	d	file:
+dma_disable	dma.c	/^   unsigned char dma_disable;           \/* bits to disable dma channel *\/$/;"	m	struct:__anon5	file:
+dma_enable	dma.c	/^   unsigned char dma_enable;            \/* bits to enable dma channel *\/$/;"	m	struct:__anon5	file:
+page	dma.c	/^   unsigned short page;                 \/* page port location *\/$/;"	m	struct:__anon5	file:
+addr	dma.c	/^   unsigned short addr;                 \/* addr port location *\/$/;"	m	struct:__anon5	file:
+count	dma.c	/^   unsigned short count;                \/* count port location *\/$/;"	m	struct:__anon5	file:
+single	dma.c	/^   unsigned short single;               \/* single mode port location *\/$/;"	m	struct:__anon5	file:
+mode	dma.c	/^   unsigned short mode;                 \/* mode port location *\/$/;"	m	struct:__anon5	file:
+clear_ff	dma.c	/^   unsigned short clear_ff;             \/* clear flip-flop port location *\/$/;"	m	struct:__anon5	file:
+write	dma.c	/^   unsigned char write;                 \/* bits for write transfer *\/$/;"	m	struct:__anon5	file:
+read	dma.c	/^   unsigned char read;                  \/* bits for read transfer *\/$/;"	m	struct:__anon5	file:
+DMA_ENTRY	dma.c	/^} DMA_ENTRY;$/;"	t	typeref:struct:__anon5	file:
+mydma	dma.c	/^static DMA_ENTRY mydma[] =$/;"	v	file:
+_dma_allocate_mem	dma.c	/^int _dma_allocate_mem(int bytes, int *sel, unsigned long *phys)$/;"	f
+_dma_allocate_mem	dma.c	/^END_OF_FUNCTION(_dma_allocate_mem);$/;"	v
+_dma_start	dma.c	/^void _dma_start(int channel, unsigned long addr, int size, int auto_init, int input)$/;"	f
+_dma_start	dma.c	/^END_OF_FUNCTION(_dma_start);$/;"	v
+_dma_stop	dma.c	/^void _dma_stop(int channel)$/;"	f
+_dma_stop	dma.c	/^END_OF_FUNCTION(_dma_stop);$/;"	v
+_dma_todo	dma.c	/^unsigned long _dma_todo(int channel)$/;"	f
+_dma_todo	dma.c	/^END_OF_FUNCTION(_dma_todo);$/;"	v
+_dma_lock_mem	dma.c	/^void _dma_lock_mem(void)$/;"	f
+KEYBOARD_INT	dkeybd.c	33;"	d	file:
+leds_ok	dkeybd.c	/^static int leds_ok = TRUE;$/;"	v	file:
+in_a_terrupt	dkeybd.c	/^static int in_a_terrupt = FALSE;$/;"	v	file:
+extended_key	dkeybd.c	/^static int extended_key = FALSE;$/;"	v	file:
+pcdos_key_init	dkeybd.c	/^static int pcdos_key_init(void);$/;"	p	file:
+pcdos_key_exit	dkeybd.c	/^static void pcdos_key_exit(void);$/;"	p	file:
+pcdos_set_leds	dkeybd.c	/^static void pcdos_set_leds(int leds);$/;"	p	file:
+pcdos_set_rate	dkeybd.c	/^static void pcdos_set_rate(int delay, int rate);$/;"	p	file:
+keydrv_pcdos	dkeybd.c	/^KEYBOARD_DRIVER keydrv_pcdos =$/;"	v
+_keyboard_driver_list	dkeybd.c	/^_DRIVER_INFO _keyboard_driver_list[] =$/;"	v
+kb_wait_for_write_ready	dkeybd.c	/^static INLINE int kb_wait_for_write_ready(void)$/;"	f	file:
+kb_wait_for_read_ready	dkeybd.c	/^static INLINE int kb_wait_for_read_ready(void)$/;"	f	file:
+kb_send_data	dkeybd.c	/^static INLINE int kb_send_data(unsigned char data)$/;"	f	file:
+pcdos_set_leds	dkeybd.c	/^static void pcdos_set_leds(int leds)$/;"	f	file:
+pcdos_set_leds	dkeybd.c	/^END_OF_STATIC_FUNCTION(pcdos_set_leds);$/;"	v
+pcdos_set_rate	dkeybd.c	/^static void pcdos_set_rate(int delay, int rate)$/;"	f	file:
+keyint	dkeybd.c	/^static int keyint(void)$/;"	f	file:
+keyint	dkeybd.c	/^END_OF_STATIC_FUNCTION(keyint);$/;"	v
+pcdos_key_init	dkeybd.c	/^static int pcdos_key_init(void)$/;"	f	file:
+pcdos_key_exit	dkeybd.c	/^static void pcdos_key_exit(void)$/;"	f	file:
+gpro_init	gpro.c	/^static int gpro_init(void); $/;"	p	file:
+gpro_exit	gpro.c	/^static void gpro_exit(void); $/;"	p	file:
+gpro_poll	gpro.c	/^static int gpro_poll(void);$/;"	p	file:
+joystick_gpro	gpro.c	/^JOYSTICK_DRIVER joystick_gpro =$/;"	v
+read_gpp	gpro.c	/^static int read_gpp(int pad_num)$/;"	f	file:
+gpro_init	gpro.c	/^static int gpro_init(void)$/;"	f	file:
+gpro_exit	gpro.c	/^static void gpro_exit(void)$/;"	f	file:
+gpro_poll	gpro.c	/^static int gpro_poll(void)$/;"	f	file:
+MAX_IRQS	djirq.c	32;"	d	file:
+STACK_SIZE	djirq.c	33;"	d	file:
+_irq_handler	djirq.c	/^_IRQ_HANDLER _irq_handler[MAX_IRQS];$/;"	v
+_irq_stack	djirq.c	/^unsigned char *_irq_stack[IRQ_STACKS];$/;"	v
+_irq_wrapper_0	djirq.c	/^extern void _irq_wrapper_0(void), _irq_wrapper_1(void), $/;"	p	file:
+_irq_wrapper_1	djirq.c	/^extern void _irq_wrapper_0(void), _irq_wrapper_1(void), $/;"	p	file:
+_irq_wrapper_2	djirq.c	/^	    _irq_wrapper_2(void), _irq_wrapper_3(void),$/;"	p	file:
+_irq_wrapper_3	djirq.c	/^	    _irq_wrapper_2(void), _irq_wrapper_3(void),$/;"	p	file:
+_irq_wrapper_4	djirq.c	/^	    _irq_wrapper_4(void), _irq_wrapper_5(void), $/;"	p	file:
+_irq_wrapper_5	djirq.c	/^	    _irq_wrapper_4(void), _irq_wrapper_5(void), $/;"	p	file:
+_irq_wrapper_6	djirq.c	/^	    _irq_wrapper_6(void), _irq_wrapper_7(void),$/;"	p	file:
+_irq_wrapper_7	djirq.c	/^	    _irq_wrapper_6(void), _irq_wrapper_7(void),$/;"	p	file:
+_irq_wrapper_0_end	djirq.c	/^	    _irq_wrapper_0_end(void);$/;"	p	file:
+_dos_irq_init	djirq.c	/^void _dos_irq_init(void)$/;"	f
+_dos_irq_exit	djirq.c	/^void _dos_irq_exit(void)$/;"	f
+_install_irq	djirq.c	/^int _install_irq(int num, int (*handler)(void))$/;"	f
+_remove_irq	djirq.c	/^void _remove_irq(int num)$/;"	f
+pic_virgin	pic.c	/^static int pic_virgin = TRUE;$/;"	v	file:
+default_pic1	pic.c	/^static unsigned char default_pic1;$/;"	v	file:
+default_pic2	pic.c	/^static unsigned char default_pic2;$/;"	v	file:
+altered_pic1	pic.c	/^static unsigned char altered_pic1;$/;"	v	file:
+altered_pic2	pic.c	/^static unsigned char altered_pic2;$/;"	v	file:
+exit_irq	pic.c	/^static void exit_irq(void)$/;"	f	file:
+init_irq	pic.c	/^static void init_irq(void)$/;"	f	file:
+_restore_irq	pic.c	/^void _restore_irq(int num)$/;"	f
+_enable_irq	pic.c	/^void _enable_irq(int num)$/;"	f
+_disable_irq	pic.c	/^void _disable_irq(int num)$/;"	f
+fm_detect	adlib.c	/^static int fm_detect(int input);$/;"	p	file:
+fm_init	adlib.c	/^static int fm_init(int input, int voices);$/;"	p	file:
+fm_exit	adlib.c	/^static void fm_exit(int input);$/;"	p	file:
+fm_set_mixer_volume	adlib.c	/^static int fm_set_mixer_volume(int volume);$/;"	p	file:
+fm_load_patches	adlib.c	/^static int fm_load_patches(AL_CONST char *patches, AL_CONST char *drums);$/;"	p	file:
+fm_key_on	adlib.c	/^static void fm_key_on(int inst, int note, int bend, int vol, int pan);$/;"	p	file:
+fm_key_off	adlib.c	/^static void fm_key_off(int voice);$/;"	p	file:
+fm_set_volume	adlib.c	/^static void fm_set_volume(int voice, int vol);$/;"	p	file:
+fm_set_pitch	adlib.c	/^static void fm_set_pitch(int voice, int note, int bend);$/;"	p	file:
+adlib_desc	adlib.c	/^static char adlib_desc[256] = EMPTY_STRING;$/;"	v	file:
+midi_opl2	adlib.c	/^MIDI_DRIVER midi_opl2 =$/;"	v
+midi_2xopl2	adlib.c	/^MIDI_DRIVER midi_2xopl2 =$/;"	v
+midi_opl3	adlib.c	/^MIDI_DRIVER midi_opl3 =$/;"	v
+FM_HH	adlib.c	121;"	d	file:
+FM_CY	adlib.c	122;"	d	file:
+FM_TT	adlib.c	123;"	d	file:
+FM_SD	adlib.c	124;"	d	file:
+FM_BD	adlib.c	125;"	d	file:
+_fm_port	adlib.c	/^int _fm_port = -1;$/;"	v
+fm_drum_mode	adlib.c	/^static int fm_drum_mode = FALSE;$/;"	v	file:
+fm_delay_1	adlib.c	/^static int fm_delay_1 = 6;$/;"	v	file:
+fm_delay_2	adlib.c	/^static int fm_delay_2 = 35;$/;"	v	file:
+fm_offset	adlib.c	/^static int fm_offset[18] = {$/;"	v	file:
+fm_freq	adlib.c	/^static int fm_freq[13] = {$/;"	v	file:
+fm_vol_table	adlib.c	/^static int fm_vol_table[128] = {$/;"	v	file:
+fm_drum_channel	adlib.c	/^static int fm_drum_channel[] = { 6,       7,       8,       8,       7     };$/;"	v	file:
+fm_drum_op1	adlib.c	/^static int fm_drum_op1[] =     { TRUE,    FALSE,   TRUE,    FALSE,   TRUE  };$/;"	v	file:
+fm_drum_op2	adlib.c	/^static int fm_drum_op2[] =     { TRUE,    TRUE,    FALSE,   TRUE,    FALSE };$/;"	v	file:
+fm_drum_cached_inst1	adlib.c	/^static FM_INSTRUMENT *fm_drum_cached_inst1[5];$/;"	v	file:
+fm_drum_cached_inst2	adlib.c	/^static FM_INSTRUMENT *fm_drum_cached_inst2[5];$/;"	v	file:
+fm_drum_cached_vol1	adlib.c	/^static int fm_drum_cached_vol1[5];$/;"	v	file:
+fm_drum_cached_vol2	adlib.c	/^static int fm_drum_cached_vol2[5];$/;"	v	file:
+fm_drum_cached_time	adlib.c	/^static long fm_drum_cached_time[5];$/;"	v	file:
+fm_drum_mask	adlib.c	/^static unsigned char fm_drum_mask;$/;"	v	file:
+fm_key	adlib.c	/^static unsigned char fm_key[18];$/;"	v	file:
+fm_keyscale	adlib.c	/^static unsigned char fm_keyscale[18];$/;"	v	file:
+fm_feedback	adlib.c	/^static unsigned char fm_feedback[18];$/;"	v	file:
+fm_level	adlib.c	/^static int fm_level[18];$/;"	v	file:
+fm_patch	adlib.c	/^static int fm_patch[18];$/;"	v	file:
+VOICE_OFFSET	adlib.c	197;"	d	file:
+fm_write	adlib.c	/^static void fm_write(int reg, unsigned char data)$/;"	f	file:
+fm_write	adlib.c	/^END_OF_STATIC_FUNCTION(fm_write);$/;"	v
+fm_reset	adlib.c	/^static void fm_reset(int enable)$/;"	f	file:
+fm_reset	adlib.c	/^END_OF_STATIC_FUNCTION(fm_reset);$/;"	v
+fm_set_drum_mode	adlib.c	/^static void fm_set_drum_mode(int usedrums)$/;"	f	file:
+fm_set_drum_mode	adlib.c	/^END_OF_STATIC_FUNCTION(fm_set_drum_mode);$/;"	v
+fm_set_voice	adlib.c	/^static INLINE void fm_set_voice(int voice, FM_INSTRUMENT *inst)$/;"	f	file:
+fm_set_drum_op1	adlib.c	/^static INLINE void fm_set_drum_op1(int voice, FM_INSTRUMENT *inst)$/;"	f	file:
+fm_set_drum_op2	adlib.c	/^static INLINE void fm_set_drum_op2(int voice, FM_INSTRUMENT *inst)$/;"	f	file:
+fm_set_drum_vol_op1	adlib.c	/^static INLINE void fm_set_drum_vol_op1(int voice, int vol)$/;"	f	file:
+fm_set_drum_vol_op2	adlib.c	/^static INLINE void fm_set_drum_vol_op2(int voice, int vol)$/;"	f	file:
+fm_set_drum_pitch	adlib.c	/^static INLINE void fm_set_drum_pitch(int voice, FM_INSTRUMENT *drum)$/;"	f	file:
+fm_trigger_drum	adlib.c	/^static INLINE void fm_trigger_drum(int inst, int vol)$/;"	f	file:
+fm_key_on	adlib.c	/^static void fm_key_on(int inst, int note, int bend, int vol, int pan)$/;"	f	file:
+fm_key_on	adlib.c	/^END_OF_STATIC_FUNCTION(fm_key_on);$/;"	v
+fm_key_off	adlib.c	/^static void fm_key_off(int voice)$/;"	f	file:
+fm_key_off	adlib.c	/^END_OF_STATIC_FUNCTION(fm_key_off);$/;"	v
+fm_set_volume	adlib.c	/^static void fm_set_volume(int voice, int vol)$/;"	f	file:
+fm_set_volume	adlib.c	/^END_OF_STATIC_FUNCTION(fm_set_volume);$/;"	v
+fm_set_pitch	adlib.c	/^static void fm_set_pitch(int voice, int note, int bend)$/;"	f	file:
+fm_set_pitch	adlib.c	/^END_OF_STATIC_FUNCTION(fm_set_pitch);$/;"	v
+fm_load_patches	adlib.c	/^static int fm_load_patches(AL_CONST char *patches, AL_CONST char *drums)$/;"	f	file:
+fm_load_patches	adlib.c	/^END_OF_STATIC_FUNCTION(fm_load_patches);$/;"	v
+fm_set_mixer_volume	adlib.c	/^static int fm_set_mixer_volume(int volume)$/;"	f	file:
+fm_is_there	adlib.c	/^static int fm_is_there(void)$/;"	f	file:
+fm_detect	adlib.c	/^static int fm_detect(int input)$/;"	f	file:
+load_ibk	adlib.c	/^int load_ibk(AL_CONST char *filename, int drums)$/;"	f
+fm_init	adlib.c	/^static int fm_init(int input, int voices)$/;"	f	file:
+fm_exit	adlib.c	/^static void fm_exit(int input)$/;"	f	file:
+ess_detect	essaudio.c	/^static int ess_detect(int input);$/;"	p	file:
+ess_init	essaudio.c	/^static int ess_init(int input, int voices);$/;"	p	file:
+ess_exit	essaudio.c	/^static void ess_exit(int input);$/;"	p	file:
+ess_set_mixer_volume	essaudio.c	/^static int ess_set_mixer_volume(int volume);$/;"	p	file:
+ess_buffer_size	essaudio.c	/^static int ess_buffer_size(void);$/;"	p	file:
+ess_desc	essaudio.c	/^static char ess_desc[256] = EMPTY_STRING;$/;"	v	file:
+digi_audiodrive	essaudio.c	/^DIGI_DRIVER digi_audiodrive =$/;"	v
+ess_int	essaudio.c	/^static int ess_int = -1;                     \/* interrupt vector *\/$/;"	v	file:
+ess_hw_ver	essaudio.c	/^static int ess_hw_ver = -1;                  \/* as reported by autodetect *\/$/;"	v	file:
+ess_dma_size	essaudio.c	/^static int ess_dma_size = -1;                \/* size of dma transfer *\/$/;"	v	file:
+ess_dma_count	essaudio.c	/^static int ess_dma_count = 0;                \/* need to resync with dma? *\/$/;"	v	file:
+ess_semaphore	essaudio.c	/^static volatile int ess_semaphore = FALSE;   \/* reentrant interrupt? *\/$/;"	v	file:
+ess_sel	essaudio.c	/^static int ess_sel;                          \/* selector for the DMA buffer *\/$/;"	v	file:
+ess_buf	essaudio.c	/^static unsigned long ess_buf[2];             \/* pointers to the two buffers *\/$/;"	v	file:
+ess_bufnum	essaudio.c	/^static int ess_bufnum = 0;                   \/* the one currently in use *\/$/;"	v	file:
+ess_lock_mem	essaudio.c	/^static void ess_lock_mem(void);$/;"	p	file:
+ess_buffer_size	essaudio.c	/^static int ess_buffer_size(void)$/;"	f	file:
+is_dsp_ready_for_read	essaudio.c	/^static INLINE RET_VOLATILE int is_dsp_ready_for_read(void)$/;"	f	file:
+ess_read_dsp	essaudio.c	/^static INLINE RET_VOLATILE int ess_read_dsp(void)$/;"	f	file:
+ess_write_dsp	essaudio.c	/^static INLINE RET_VOLATILE int ess_write_dsp(unsigned char byte)$/;"	f	file:
+ess_set_mixer_volume	essaudio.c	/^static int ess_set_mixer_volume(int volume)$/;"	f	file:
+ess_set_sample_rate	essaudio.c	/^static void ess_set_sample_rate(unsigned int rate)$/;"	f	file:
+ess_read_dsp_version	essaudio.c	/^static int ess_read_dsp_version(void)$/;"	f	file:
+ess_play_buffer	essaudio.c	/^static void ess_play_buffer(int size)$/;"	f	file:
+ess_play_buffer	essaudio.c	/^END_OF_STATIC_FUNCTION(ess_play_buffer);$/;"	v
+ess_interrupt	essaudio.c	/^static int ess_interrupt(void)$/;"	f	file:
+ess_interrupt	essaudio.c	/^END_OF_STATIC_FUNCTION(ess_interrupt);$/;"	v
+ess_detect	essaudio.c	/^static int ess_detect(int input)$/;"	f	file:
+ess_init	essaudio.c	/^static int ess_init(int input, int voices)$/;"	f	file:
+ess_exit	essaudio.c	/^static void ess_exit(int input)$/;"	f	file:
+ess_lock_mem	essaudio.c	/^static void ess_lock_mem(void)$/;"	f	file:
+LPT1_BASE	multijoy.c	86;"	d	file:
+LPT2_BASE	multijoy.c	87;"	d	file:
+LPT3_BASE	multijoy.c	88;"	d	file:
+db91_init	multijoy.c	/^static int db91_init(void);$/;"	p	file:
+db92_init	multijoy.c	/^static int db92_init(void);$/;"	p	file:
+db93_init	multijoy.c	/^static int db93_init(void);$/;"	p	file:
+db91_exit	multijoy.c	/^static void db91_exit(void);$/;"	p	file:
+db92_exit	multijoy.c	/^static void db92_exit(void);$/;"	p	file:
+db93_exit	multijoy.c	/^static void db93_exit(void);$/;"	p	file:
+db91_poll	multijoy.c	/^static int db91_poll(void);$/;"	p	file:
+db92_poll	multijoy.c	/^static int db92_poll(void);$/;"	p	file:
+db93_poll	multijoy.c	/^static int db93_poll(void);$/;"	p	file:
+tgx1_init	multijoy.c	/^static int tgx1_init(void);$/;"	p	file:
+tgx2_init	multijoy.c	/^static int tgx2_init(void);$/;"	p	file:
+tgx3_init	multijoy.c	/^static int tgx3_init(void);$/;"	p	file:
+tgx1_exit	multijoy.c	/^static void tgx1_exit(void);$/;"	p	file:
+tgx2_exit	multijoy.c	/^static void tgx2_exit(void);$/;"	p	file:
+tgx3_exit	multijoy.c	/^static void tgx3_exit(void);$/;"	p	file:
+tgx1_poll	multijoy.c	/^static int tgx1_poll(void);$/;"	p	file:
+tgx2_poll	multijoy.c	/^static int tgx2_poll(void);$/;"	p	file:
+tgx3_poll	multijoy.c	/^static int tgx3_poll(void);$/;"	p	file:
+joystick_db91	multijoy.c	/^JOYSTICK_DRIVER joystick_db91 =$/;"	v
+joystick_db92	multijoy.c	/^JOYSTICK_DRIVER joystick_db92 =$/;"	v
+joystick_db93	multijoy.c	/^JOYSTICK_DRIVER joystick_db93 =$/;"	v
+joystick_tgx1	multijoy.c	/^JOYSTICK_DRIVER joystick_tgx1 =$/;"	v
+joystick_tgx2	multijoy.c	/^JOYSTICK_DRIVER joystick_tgx2 =$/;"	v
+joystick_tgx3	multijoy.c	/^JOYSTICK_DRIVER joystick_tgx3 =$/;"	v
+STATUS_PORT_INVERT	multijoy.c	189;"	d	file:
+CONTROL_PORT_INVERT	multijoy.c	190;"	d	file:
+db9_init	multijoy.c	/^static int db9_init (int base)$/;"	f	file:
+db91_init	multijoy.c	/^static int db91_init(void)$/;"	f	file:
+db92_init	multijoy.c	/^static int db92_init(void)$/;"	f	file:
+db93_init	multijoy.c	/^static int db93_init(void)$/;"	f	file:
+db91_exit	multijoy.c	/^static void db91_exit(void)$/;"	f	file:
+db92_exit	multijoy.c	/^static void db92_exit(void)$/;"	f	file:
+db93_exit	multijoy.c	/^static void db93_exit(void)$/;"	f	file:
+db9_poll	multijoy.c	/^static void db9_poll(int base)$/;"	f	file:
+db91_poll	multijoy.c	/^static int db91_poll(void)$/;"	f	file:
+db92_poll	multijoy.c	/^static int db92_poll(void)$/;"	f	file:
+db93_poll	multijoy.c	/^static int db93_poll(void)$/;"	f	file:
+tgx_init	multijoy.c	/^static int tgx_init(int base)$/;"	f	file:
+tgx1_init	multijoy.c	/^static int tgx1_init(void)$/;"	f	file:
+tgx2_init	multijoy.c	/^static int tgx2_init(void)$/;"	f	file:
+tgx3_init	multijoy.c	/^static int tgx3_init(void)$/;"	f	file:
+tgx1_exit	multijoy.c	/^static void tgx1_exit(void)$/;"	f	file:
+tgx2_exit	multijoy.c	/^static void tgx2_exit(void)$/;"	f	file:
+tgx3_exit	multijoy.c	/^static void tgx3_exit(void)$/;"	f	file:
+tgx_poll	multijoy.c	/^static void tgx_poll(int base)$/;"	f	file:
+tgx1_poll	multijoy.c	/^static int tgx1_poll(void)$/;"	f	file:
+tgx2_poll	multijoy.c	/^static int tgx2_poll(void)$/;"	f	file:
+tgx3_poll	multijoy.c	/^static int tgx3_poll(void)$/;"	f	file:
+WRAPPER	djirqs.s	/^#define WRAPPER(x)                                                         ; \\$/;"	d
+PACK_THROTTLES	gripjoy.c	42;"	d	file:
+ENABLE_AXIS	gripjoy.c	46;"	d	file:
+ENABLE_ANALOG	gripjoy.c	47;"	d	file:
+ENABLE_POV	gripjoy.c	48;"	d	file:
+ENABLE_THROTTLE	gripjoy.c	49;"	d	file:
+grip_init	gripjoy.c	/^static int grip_init(void);$/;"	p	file:
+grip_exit	gripjoy.c	/^static void grip_exit(void);$/;"	p	file:
+grip_poll	gripjoy.c	/^static int grip_poll(void);$/;"	p	file:
+grip_link	gripjoy.c	/^static int grip_link(void);$/;"	p	file:
+grip_unlink	gripjoy.c	/^static int grip_unlink(void);$/;"	p	file:
+read_grip	gripjoy.c	/^static int read_grip(int joy_num);$/;"	p	file:
+SIMPLIFY_AXIS	gripjoy.c	62;"	d	file:
+slot_index	gripjoy.c	/^static GRIP_SLOT slot_index[MAX_JOYSTICKS];$/;"	v	file:
+max_value	gripjoy.c	/^static GRIP_VALUE max_value[MAX_JOYSTICKS][(int)GRIP_CLASS_MAX+1];$/;"	v	file:
+throttle_button_start	gripjoy.c	/^static int throttle_button_start[MAX_JOYSTICKS];$/;"	v	file:
+stick_class	gripjoy.c	/^static GRIP_CLASS stick_class[MAX_JOYSTICKS][MAX_JOYSTICK_STICKS];$/;"	v	file:
+fourway	gripjoy.c	/^static int fourway[MAX_JOYSTICKS][MAX_JOYSTICK_STICKS];$/;"	v	file:
+joystick_grip	gripjoy.c	/^JOYSTICK_DRIVER joystick_grip =$/;"	v
+joystick_grip4	gripjoy.c	/^JOYSTICK_DRIVER joystick_grip4 =$/;"	v
+read_grip	gripjoy.c	/^static int read_grip(int j)$/;"	f	file:
+grip_init	gripjoy.c	/^static int grip_init(void)$/;"	f	file:
+grip_exit	gripjoy.c	/^static void grip_exit(void)$/;"	f	file:
+grip_poll	gripjoy.c	/^static int grip_poll(void)$/;"	f	file:
+already_linked	gripjoy.c	/^static int already_linked = 0;$/;"	v	file:
+grip_link	gripjoy.c	/^static int grip_link(void)$/;"	f	file:
+grip_unlink	gripjoy.c	/^static int grip_unlink(void)$/;"	f	file:
+_awe_sf_defaults	emu8kmid.c	/^extern short int _awe_sf_defaults[];$/;"	x
+_awe_sf_num_presets	emu8kmid.c	/^extern int _awe_sf_num_presets;$/;"	x
+_awe_sf_presets	emu8kmid.c	/^extern short int _awe_sf_presets[];$/;"	x
+_awe_sf_splits	emu8kmid.c	/^extern short int _awe_sf_splits[];$/;"	x
+_awe_sf_gens	emu8kmid.c	/^extern short int _awe_sf_gens[];$/;"	x
+_awe_sf_sample_data	emu8kmid.c	/^extern int _awe_sf_sample_data[];$/;"	x
+awe32_detect	emu8kmid.c	/^static int awe32_detect(int input);$/;"	p	file:
+awe32_init	emu8kmid.c	/^static int awe32_init(int input, int voices);$/;"	p	file:
+awe32_exit	emu8kmid.c	/^static void awe32_exit(int input);$/;"	p	file:
+awe32_key_on	emu8kmid.c	/^static void awe32_key_on(int inst, int note, int bend, int vol, int pan);$/;"	p	file:
+awe32_key_off	emu8kmid.c	/^static void awe32_key_off(int voice);$/;"	p	file:
+_awe32_do_note	emu8kmid.c	/^static void _awe32_do_note(int inst, int note, int bend, int vol, int pan);$/;"	p	file:
+awe32_set_volume	emu8kmid.c	/^static void awe32_set_volume(int voice, int vol);$/;"	p	file:
+awe32_set_pitch	emu8kmid.c	/^static void awe32_set_pitch(int voice, int note, int bend);$/;"	p	file:
+translate_soundfont_into_something_useful	emu8kmid.c	/^static void translate_soundfont_into_something_useful(void);$/;"	p	file:
+destroy_useful_version_of_soundfont	emu8kmid.c	/^static void destroy_useful_version_of_soundfont(void);$/;"	p	file:
+midi_preset_t	emu8kmid.c	/^static struct midi_preset_t {   \/* struct to hold envelope data for each preset *\/$/;"	s	file:
+num_splits	emu8kmid.c	/^   int num_splits;              \/* number of splits in this preset *\/$/;"	m	struct:midi_preset_t	file:
+split	emu8kmid.c	/^   struct envparms_t **split;   \/* array of num_splits pointers to envelope data *\/$/;"	m	struct:midi_preset_t	typeref:struct:midi_preset_t::envparms_t	file:
+midi_preset	emu8kmid.c	/^} *midi_preset;                 \/* global variable to hold the data *\/$/;"	v	typeref:struct:midi_preset_t	file:
+voice_envelope	emu8kmid.c	/^static struct envparms_t **voice_envelope;   \/* array of pointers pointing at the envelope playing on each voice *\/$/;"	v	typeref:struct:envparms_t	file:
+exclusive_class_info	emu8kmid.c	/^static int *exclusive_class_info;            \/* exclusive class information *\/$/;"	v	file:
+attentbl	emu8kmid.c	/^static const unsigned char attentbl[] =      \/* logarithm table *\/$/;"	v	file:
+awe32_desc	emu8kmid.c	/^static char awe32_desc[256] = EMPTY_STRING;$/;"	v	file:
+midi_awe32	emu8kmid.c	/^MIDI_DRIVER midi_awe32 =$/;"	v
+awe32_key_on	emu8kmid.c	/^static void awe32_key_on(int inst, int note, int bend, int vol, int pan)$/;"	f	file:
+awe32_key_on	emu8kmid.c	/^END_OF_STATIC_FUNCTION(awe32_key_on);$/;"	v
+_awe32_do_note	emu8kmid.c	/^static void _awe32_do_note(int inst, int note, int bend, int vol, int pan)$/;"	f	file:
+_awe32_do_note	emu8kmid.c	/^END_OF_STATIC_FUNCTION(_awe32_do_note);$/;"	v
+awe32_set_volume	emu8kmid.c	/^static void awe32_set_volume(int voice, int vol)$/;"	f	file:
+awe32_set_volume	emu8kmid.c	/^END_OF_STATIC_FUNCTION(awe32_set_volume);$/;"	v
+awe32_set_pitch	emu8kmid.c	/^static void awe32_set_pitch(int voice, int note, int bend)$/;"	f	file:
+awe32_set_pitch	emu8kmid.c	/^END_OF_STATIC_FUNCTION(awe32_set_pitch);$/;"	v
+awe32_key_off	emu8kmid.c	/^static void awe32_key_off(int voice)$/;"	f	file:
+awe32_key_off	emu8kmid.c	/^END_OF_STATIC_FUNCTION(awe32_key_off);$/;"	v
+awe32_detect	emu8kmid.c	/^static int awe32_detect(int input)$/;"	f	file:
+awe32_lockmem	emu8kmid.c	/^static void awe32_lockmem(void)$/;"	f	file:
+awe32_init	emu8kmid.c	/^static int awe32_init(int input, int voices)$/;"	f	file:
+awe32_exit	emu8kmid.c	/^static void awe32_exit(int input)$/;"	f	file:
+translate_soundfont_into_something_useful	emu8kmid.c	/^static void translate_soundfont_into_something_useful(void)$/;"	f	file:
+destroy_useful_version_of_soundfont	emu8kmid.c	/^static void destroy_useful_version_of_soundfont(void)$/;"	f	file:
+_lock_malloc	emu8kmid.c	/^void *_lock_malloc(size_t size)$/;"	f
+sg_pci_poll_fast	ifsega2f.c	/^static int sg_pci_poll_fast(void);$/;"	p	file:
+sg_pci_poll_sub_fast	ifsega2f.c	/^static int sg_pci_poll_sub_fast(int num, int base);$/;"	p	file:
+_sg_pci_init	ifsega2f.c	/^extern int _sg_pci_init(void);$/;"	p	file:
+_sg_pci_exit	ifsega2f.c	/^extern void _sg_pci_exit(void);$/;"	p	file:
+_sg_pci_ioin	ifsega2f.c	/^extern unsigned long _sg_pci_ioin(unsigned long offset);$/;"	p	file:
+_sg_pci_ioout	ifsega2f.c	/^extern void _sg_pci_ioout(unsigned long offset, unsigned long data);$/;"	p	file:
+joystick_sg2f	ifsega2f.c	/^JOYSTICK_DRIVER joystick_sg2f =$/;"	v
+sg_pci_poll_fast	ifsega2f.c	/^static int sg_pci_poll_fast(void)$/;"	f	file:
+sg_pci_poll_sub_fast	ifsega2f.c	/^static int sg_pci_poll_sub_fast(int num, int base)$/;"	f	file:
+_write	dsystem.c	52;"	d	file:
+_get_dos_version	dsystem.c	53;"	d	file:
+ScreenRows	dsystem.c	54;"	d	file:
+_set_screen_lines	dsystem.c	55;"	d	file:
+i_love_bill	dsystem.c	/^int i_love_bill = FALSE;$/;"	v
+a_rez	dsystem.c	/^static int a_rez = 3;$/;"	v	file:
+a_lines	dsystem.c	/^static int a_lines = -1;$/;"	v	file:
+console_virgin	dsystem.c	/^static int console_virgin = TRUE;$/;"	v	file:
+old_sig_abrt	dsystem.c	/^static void *old_sig_abrt = NULL;$/;"	v	file:
+old_sig_fpe	dsystem.c	/^static void *old_sig_fpe  = NULL;$/;"	v	file:
+old_sig_ill	dsystem.c	/^static void *old_sig_ill  = NULL;$/;"	v	file:
+old_sig_segv	dsystem.c	/^static void *old_sig_segv = NULL;$/;"	v	file:
+old_sig_term	dsystem.c	/^static void *old_sig_term = NULL;$/;"	v	file:
+old_sig_int	dsystem.c	/^static void *old_sig_int  = NULL;$/;"	v	file:
+old_sig_kill	dsystem.c	/^   static void *old_sig_kill = NULL;$/;"	v	file:
+old_sig_quit	dsystem.c	/^   static void *old_sig_quit = NULL;$/;"	v	file:
+old_sig_trap	dsystem.c	/^   static void *old_sig_trap = NULL;$/;"	v	file:
+sys_dos_init	dsystem.c	/^static int sys_dos_init(void);$/;"	p	file:
+sys_dos_exit	dsystem.c	/^static void sys_dos_exit(void);$/;"	p	file:
+sys_dos_get_executable_name	dsystem.c	/^static void sys_dos_get_executable_name(char *output, int size);$/;"	p	file:
+sys_dos_save_console_state	dsystem.c	/^static void sys_dos_save_console_state(void);$/;"	p	file:
+sys_dos_restore_console_state	dsystem.c	/^static void sys_dos_restore_console_state(void);$/;"	p	file:
+sys_dos_read_palette	dsystem.c	/^static void sys_dos_read_palette(void);$/;"	p	file:
+sys_dos_set_palette	dsystem.c	/^static void sys_dos_set_palette(AL_CONST struct RGB *p, int from, int to, int vsync);$/;"	p	file:
+sys_dos_get_gfx_safe_mode	dsystem.c	/^static void sys_dos_get_gfx_safe_mode(int *driver, struct GFX_MODE *mode);$/;"	p	file:
+sys_dos_yield_timeslice	dsystem.c	/^static void sys_dos_yield_timeslice(void);$/;"	p	file:
+sys_dos_assert	dsystem.c	/^   static void sys_dos_assert(AL_CONST char *msg);$/;"	p	file:
+sys_dos_assert	dsystem.c	106;"	d	file:
+system_dos	dsystem.c	/^SYSTEM_DRIVER system_dos =$/;"	v
+_system_driver_list	dsystem.c	/^_DRIVER_INFO _system_driver_list[] =$/;"	v
+signal_handler	dsystem.c	/^static void signal_handler(int num)$/;"	f	file:
+detect_os	dsystem.c	/^static void detect_os(void)$/;"	f	file:
+sys_dos_init	dsystem.c	/^static int sys_dos_init(void)$/;"	f	file:
+sys_dos_exit	dsystem.c	/^static void sys_dos_exit(void)$/;"	f	file:
+sys_dos_get_executable_name	dsystem.c	/^static void sys_dos_get_executable_name(char *output, int size)$/;"	f	file:
+sys_dos_assert	dsystem.c	/^static void sys_dos_assert(AL_CONST char *msg)$/;"	f	file:
+sys_dos_save_console_state	dsystem.c	/^static void sys_dos_save_console_state(void)$/;"	f	file:
+sys_dos_restore_console_state	dsystem.c	/^static void sys_dos_restore_console_state(void)$/;"	f	file:
+sys_dos_read_palette	dsystem.c	/^static void sys_dos_read_palette(void)$/;"	f	file:
+sys_dos_set_palette	dsystem.c	/^static void sys_dos_set_palette(AL_CONST struct RGB *p, int from, int to, int vsync)$/;"	f	file:
+sys_dos_get_gfx_safe_mode	dsystem.c	/^static void sys_dos_get_gfx_safe_mode(int *driver, struct GFX_MODE *mode)$/;"	f	file:
+_set_vga_mode	dsystem.c	/^uintptr_t _set_vga_mode(int modenum)$/;"	f
+_unset_vga_mode	dsystem.c	/^void _unset_vga_mode(void)$/;"	f
+_save_vga_mode	dsystem.c	/^void _save_vga_mode(void)$/;"	f
+_restore_vga_mode	dsystem.c	/^void _restore_vga_mode(void)$/;"	f
+sys_dos_yield_timeslice	dsystem.c	/^static void sys_dos_yield_timeslice(void)$/;"	f	file:
+SWPP_DEBUG	swpp.c	42;"	d	file:
+SWPP_VERBOSE	swpp.c	43;"	d	file:
+SWPP_NPORTS	swpp.c	45;"	d	file:
+SWPP_NSCANS	swpp.c	46;"	d	file:
+SWPP_NSUCCESS	swpp.c	47;"	d	file:
+SWPP_WAITID	swpp.c	48;"	d	file:
+SWPP_START	swpp.c	49;"	d	file:
+SWPP_STROBE	swpp.c	50;"	d	file:
+SWPP_CMDELAY	swpp.c	51;"	d	file:
+SWPP_MAXBITS	swpp.c	52;"	d	file:
+NTSC_CLOCK	swpp.c	54;"	d	file:
+SW3D_POLLOUT	swpp.c	55;"	d	file:
+SW3D_FID	swpp.c	56;"	d	file:
+SW3D_TSUB1	swpp.c	57;"	d	file:
+SW3D_TSUB2	swpp.c	58;"	d	file:
+SW3D_TSUB3	swpp.c	59;"	d	file:
+SWPP_NID	swpp.c	61;"	d	file:
+SWFF_NID	swpp.c	62;"	d	file:
+SW3D_NID	swpp.c	63;"	d	file:
+SWPP_NDATA	swpp.c	65;"	d	file:
+SWFF_NDATA	swpp.c	66;"	d	file:
+SW3D_NDATA	swpp.c	67;"	d	file:
+SW3D_NSTREAM	swpp.c	68;"	d	file:
+SWXX	swpp.c	/^enum { SWXX=0, SWPP, SWFF, SW3D };$/;"	e	enum:__anon6	file:
+SWPP	swpp.c	/^enum { SWXX=0, SWPP, SWFF, SW3D };$/;"	e	enum:__anon6	file:
+SWFF	swpp.c	/^enum { SWXX=0, SWPP, SWFF, SW3D };$/;"	e	enum:__anon6	file:
+SW3D	swpp.c	/^enum { SWXX=0, SWPP, SWFF, SW3D };$/;"	e	enum:__anon6	file:
+swpp_init	swpp.c	/^static int swpp_init(void);$/;"	p	file:
+swpp_exit	swpp.c	/^static void swpp_exit(void);$/;"	p	file:
+swpp_poll	swpp.c	/^static int swpp_poll(void);$/;"	p	file:
+joystick_sw_pp	swpp.c	/^JOYSTICK_DRIVER joystick_sw_pp =$/;"	v
+SWINF_TYPE	swpp.c	/^static struct SWINF_TYPE$/;"	s	file:
+port	swpp.c	/^	unsigned int port, speed, mode, nid, ndata;$/;"	m	struct:SWINF_TYPE	file:
+speed	swpp.c	/^	unsigned int port, speed, mode, nid, ndata;$/;"	m	struct:SWINF_TYPE	file:
+mode	swpp.c	/^	unsigned int port, speed, mode, nid, ndata;$/;"	m	struct:SWINF_TYPE	file:
+nid	swpp.c	/^	unsigned int port, speed, mode, nid, ndata;$/;"	m	struct:SWINF_TYPE	file:
+ndata	swpp.c	/^	unsigned int port, speed, mode, nid, ndata;$/;"	m	struct:SWINF_TYPE	file:
+buttons	swpp.c	/^	unsigned int buttons;$/;"	m	struct:SWINF_TYPE	file:
+hatx	swpp.c	/^	int hatx, haty;$/;"	m	struct:SWINF_TYPE	file:
+haty	swpp.c	/^	int hatx, haty;$/;"	m	struct:SWINF_TYPE	file:
+x	swpp.c	/^	int x, y;$/;"	m	struct:SWINF_TYPE	file:
+y	swpp.c	/^	int x, y;$/;"	m	struct:SWINF_TYPE	file:
+throttle	swpp.c	/^	int throttle, twist;$/;"	m	struct:SWINF_TYPE	file:
+twist	swpp.c	/^	int throttle, twist;$/;"	m	struct:SWINF_TYPE	file:
+swinf	swpp.c	/^} swinf;$/;"	v	typeref:struct:SWINF_TYPE	file:
+swpp_initialized	swpp.c	/^static int swpp_initialized = 0;$/;"	v	file:
+US2COUNT	swpp.c	110;"	d	file:
+WAITSWPP	swpp.c	111;"	d	file:
+_swpp_get_portspeed	swpp.c	/^extern void _swpp_get_portspeed(unsigned int port, unsigned int npasses, unsigned int *nqueries, unsigned int *elapsed);$/;"	p	file:
+get_portspeed	swpp.c	/^static unsigned int get_portspeed(unsigned int port)$/;"	f	file:
+NQUERIES	swpp.c	119;"	d	file:
+NQUERIES	swpp.c	165;"	d	file:
+_swpp_init_digital	swpp.c	/^extern void _swpp_init_digital(unsigned int port, unsigned int ncmds, unsigned char *cmdiv, unsigned int *timeout);$/;"	p	file:
+init_digital	swpp.c	/^static int init_digital(unsigned int port, unsigned int speed)$/;"	f	file:
+_swpp_read_analogue	swpp.c	/^extern void _swpp_read_analogue(unsigned int port, unsigned int *outbuf, unsigned int pollout);$/;"	p	file:
+read_analogue	swpp.c	/^static int read_analogue(unsigned int port, unsigned int speed, unsigned char *buf)$/;"	f	file:
+read_packet	swpp.c	/^static unsigned int read_packet(unsigned int port, unsigned int speed, unsigned char *buf, int length, int id)$/;"	f	file:
+check_parity	swpp.c	/^static unsigned int check_parity(unsigned char *buf, unsigned int length)$/;"	f	file:
+pack_sw3d	swpp.c	/^static unsigned int pack_sw3d(unsigned char *buf, unsigned int length)$/;"	f	file:
+decode_swpp	swpp.c	/^static void decode_swpp(struct SWINF_TYPE *inf, unsigned char *buf)$/;"	f	file:
+decode_sw3d	swpp.c	/^static void decode_sw3d(struct SWINF_TYPE *inf, unsigned char *buf)$/;"	f	file:
+swpp_init	swpp.c	/^static int swpp_init(void)$/;"	f	file:
+swpp_poll	swpp.c	/^static int swpp_poll(void)$/;"	f	file:
+swpp_exit	swpp.c	/^static void swpp_exit(void) {}$/;"	f	file:
+main	swpp.c	/^int main(void)$/;"	f
+out_eax	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+out_ebx	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+out_ecx	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+out_edx	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+out_esi	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+out_edi	wat.c	/^static int out_eax, out_ebx, out_ecx, out_edx, out_esi, out_edi;$/;"	v	file:
+MAX_IRQS	wat.c	36;"	d	file:
+STACK_SIZE	wat.c	37;"	d	file:
+irq_handler	wat.c	/^static _IRQ_HANDLER irq_handler[MAX_IRQS];$/;"	v	file:
+irq_stack	wat.c	/^static unsigned char *irq_stack[IRQ_STACKS];$/;"	v	file:
+rmcb_stack	wat.c	/^static unsigned char *rmcb_stack;$/;"	v	file:
+old_int24	wat.c	/^static void (__interrupt __far *old_int24)() = NULL;$/;"	v	file:
+__tb	wat.c	/^unsigned long __tb = 0;$/;"	v
+tb_sel	wat.c	/^static int tb_sel = 0;$/;"	v	file:
+__djgpp_ds_alias	wat.c	/^int __djgpp_ds_alias = 0;$/;"	v
+my_int24	wat.c	/^static void __interrupt __far my_int24(void)$/;"	f	file:
+my_int24	wat.c	/^static int __interrupt __far my_int24(void)$/;"	f	file:
+_dos_irq_init	wat.c	/^void _dos_irq_init(void)$/;"	f
+_dos_irq_exit	wat.c	/^void _dos_irq_exit(void)$/;"	f
+DPMI	wat.c	/^int DPMI(int ax, int bx, int cx, int dx, int si, int di);$/;"	p	file:
+DPMI_OUT	wat.c	/^int DPMI_OUT(int ax, int bx, int cx, int dx, int si, int di);$/;"	p	file:
+__dpmi_int	wat.c	/^int __dpmi_int(int vector, __dpmi_regs *regs)$/;"	f
+__dpmi_simulate_real_mode_interrupt	wat.c	/^int __dpmi_simulate_real_mode_interrupt(int vector, __dpmi_regs *regs)$/;"	f
+__dpmi_simulate_real_mode_procedure_retf	wat.c	/^int __dpmi_simulate_real_mode_procedure_retf(__dpmi_regs *regs)$/;"	f
+__dpmi_allocate_dos_memory	wat.c	/^int __dpmi_allocate_dos_memory(int paragraphs, int *ret)$/;"	f
+__dpmi_free_dos_memory	wat.c	/^int __dpmi_free_dos_memory(int selector)$/;"	f
+__dpmi_physical_address_mapping	wat.c	/^int __dpmi_physical_address_mapping(__dpmi_meminfo *info)$/;"	f
+__dpmi_free_physical_address_mapping	wat.c	/^int __dpmi_free_physical_address_mapping(__dpmi_meminfo *info)$/;"	f
+__dpmi_lock_linear_region	wat.c	/^int __dpmi_lock_linear_region(__dpmi_meminfo *info)$/;"	f
+__dpmi_unlock_linear_region	wat.c	/^int __dpmi_unlock_linear_region(__dpmi_meminfo *info)$/;"	f
+_go32_dpmi_lock_data	wat.c	/^int _go32_dpmi_lock_data(void *lockaddr, unsigned long locksize)$/;"	f
+_go32_dpmi_lock_code	wat.c	/^int _go32_dpmi_lock_code(void *lockaddr, unsigned long locksize)$/;"	f
+__dpmi_allocate_ldt_descriptors	wat.c	/^int __dpmi_allocate_ldt_descriptors(int count)$/;"	f
+__dpmi_free_ldt_descriptor	wat.c	/^int __dpmi_free_ldt_descriptor(int descriptor)$/;"	f
+__dpmi_get_segment_base_address	wat.c	/^int __dpmi_get_segment_base_address(int selector, unsigned long *addr)$/;"	f
+__dpmi_set_segment_base_address	wat.c	/^int __dpmi_set_segment_base_address(int selector, unsigned long address)$/;"	f
+__dpmi_set_segment_limit	wat.c	/^int __dpmi_set_segment_limit(int selector, unsigned long limit)$/;"	f
+__dpmi_get_free_memory_information	wat.c	/^int __dpmi_get_free_memory_information(__dpmi_free_mem_info *info)$/;"	f
+CALL_HANDLER	wat.c	/^int CALL_HANDLER(int (*func)(void), int max_stack);$/;"	p	file:
+WRAPPER	wat.c	459;"	d	file:
+irq_wrapper_0	wat.c	/^END_OF_STATIC_FUNCTION(irq_wrapper_0);$/;"	v
+_install_irq	wat.c	/^int _install_irq(int num, int (*handler)(void))$/;"	f
+_remove_irq	wat.c	/^void _remove_irq(int num)$/;"	f
+rmcb_handler	wat.c	/^static void (*rmcb_handler)(__dpmi_regs *) = NULL;$/;"	v	file:
+rmcb_regs	wat.c	/^static __dpmi_regs *rmcb_regs = NULL;$/;"	v	file:
+rmcb_saved_ss	wat.c	/^static short rmcb_saved_ss = 0;$/;"	v	file:
+rmcb_saved_esp	wat.c	/^static int rmcb_saved_esp = 0;$/;"	v	file:
+CALL_RMCB_PART1	wat.c	/^void CALL_RMCB_PART1(void);$/;"	p	file:
+CALL_RMCB_PART2	wat.c	/^void CALL_RMCB_PART2(void);$/;"	p	file:
+rmcb_callback	wat.c	/^static void far rmcb_callback(void)$/;"	f	file:
+rmcb_callback	wat.c	/^END_OF_STATIC_FUNCTION(rmcb_callback);$/;"	v
+_allocate_real_mode_callback	wat.c	/^long _allocate_real_mode_callback(void (*handler)(__dpmi_regs *), __dpmi_regs *regs)$/;"	f
+LPT1_BASE	n64pad.c	40;"	d	file:
+LPT2_BASE	n64pad.c	41;"	d	file:
+LPT3_BASE	n64pad.c	42;"	d	file:
+D0	n64pad.c	45;"	d	file:
+D1	n64pad.c	46;"	d	file:
+D2	n64pad.c	47;"	d	file:
+D3	n64pad.c	48;"	d	file:
+D4	n64pad.c	49;"	d	file:
+ACK	n64pad.c	50;"	d	file:
+N64_HI	n64pad.c	51;"	d	file:
+n64_init	n64pad.c	/^static int n64_init(void);$/;"	p	file:
+n64p1_exit	n64pad.c	/^static void n64p1_exit(void); $/;"	p	file:
+n64p2_exit	n64pad.c	/^static void n64p2_exit(void); $/;"	p	file:
+n64p3_exit	n64pad.c	/^static void n64p3_exit(void); $/;"	p	file:
+n64p1_poll	n64pad.c	/^static int n64p1_poll(void);$/;"	p	file:
+n64p2_poll	n64pad.c	/^static int n64p2_poll(void);$/;"	p	file:
+n64p3_poll	n64pad.c	/^static int n64p3_poll(void);$/;"	p	file:
+n64_detect	n64pad.c	/^static int n64_detect(int base, int joynum);$/;"	p	file:
+joystick_n641	n64pad.c	/^JOYSTICK_DRIVER joystick_n641 =$/;"	v
+joystick_n642	n64pad.c	/^JOYSTICK_DRIVER joystick_n642 =$/;"	v
+joystick_n643	n64pad.c	/^JOYSTICK_DRIVER joystick_n643 =$/;"	v
+n64_init	n64pad.c	/^static int n64_init(void)$/;"	f	file:
+n64p1_exit	n64pad.c	/^static void n64p1_exit(void)$/;"	f	file:
+n64p2_exit	n64pad.c	/^static void n64p2_exit(void)$/;"	f	file:
+n64p3_exit	n64pad.c	/^static void n64p3_exit(void)$/;"	f	file:
+n64_poll	n64pad.c	/^static int n64_poll(int base, int joynum)$/;"	f	file:
+n64p1_poll	n64pad.c	/^static int n64p1_poll(void)$/;"	f	file:
+n64p2_poll	n64pad.c	/^static int n64p2_poll(void)$/;"	f	file:
+n64p3_poll	n64pad.c	/^static int n64p3_poll(void)$/;"	f	file:
+PARAM1	swpps.s	/^#define PARAM1 40(%esp)$/;"	d
+PARAM2	swpps.s	/^#define PARAM2 44(%esp)$/;"	d
+PARAM3	swpps.s	/^#define PARAM3 48(%esp)$/;"	d
+PARAM4	swpps.s	/^#define PARAM4 52(%esp)$/;"	d
+PARAM5	swpps.s	/^#define PARAM5 56(%esp)$/;"	d
+PARAM6	swpps.s	/^#define PARAM6 60(%esp)$/;"	d
+PARAM7	swpps.s	/^#define PARAM7 64(%esp)$/;"	d
+PARAM8	swpps.s	/^#define PARAM8 68(%esp)$/;"	d
+ret	swpps.s	/^ret$/;"	l
+ret	swpps.s	/^ret$/;"	l
+ret	swpps.s	/^ret$/;"	l
+LPT1_BASE	snespad.c	32;"	d	file:
+LPT2_BASE	snespad.c	33;"	d	file:
+LPT3_BASE	snespad.c	34;"	d	file:
+SNES_POWER	snespad.c	35;"	d	file:
+SNES_CLOCK	snespad.c	36;"	d	file:
+SNES_LATCH	snespad.c	37;"	d	file:
+SNES_BUTTONS	snespad.c	38;"	d	file:
+sp_init	snespad.c	/^static int sp_init(void);$/;"	p	file:
+sp_exit	snespad.c	/^static void sp_exit(void);$/;"	p	file:
+sp_poll	snespad.c	/^static int sp_poll(int);$/;"	p	file:
+sp1_poll	snespad.c	/^static int sp1_poll(void);$/;"	p	file:
+sp2_poll	snespad.c	/^static int sp2_poll(void);$/;"	p	file:
+sp3_poll	snespad.c	/^static int sp3_poll(void);$/;"	p	file:
+joystick_sp1	snespad.c	/^JOYSTICK_DRIVER joystick_sp1 =$/;"	v
+joystick_sp2	snespad.c	/^JOYSTICK_DRIVER joystick_sp2 =$/;"	v
+joystick_sp3	snespad.c	/^JOYSTICK_DRIVER joystick_sp3 =$/;"	v
+sp_init	snespad.c	/^static int sp_init(void)$/;"	f	file:
+sp_exit	snespad.c	/^static void sp_exit(void)$/;"	f	file:
+sp_poll	snespad.c	/^static int sp_poll(int base)$/;"	f	file:
+sp1_poll	snespad.c	/^static int sp1_poll(void)$/;"	f	file:
+sp2_poll	snespad.c	/^static int sp2_poll(void)$/;"	f	file:
+sp3_poll	snespad.c	/^static int sp3_poll(void)$/;"	f	file:

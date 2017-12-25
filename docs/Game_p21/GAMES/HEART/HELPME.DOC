@@ -1,0 +1,169 @@
+=============================================================================
+Heartlight PC   *    Instructions & Troubleshooting Info     *    Version 1.0
+=============================================================================
+
+
+Heartlight PC Requires:
+  * A 386 or faster IBM-compatible PC
+  * VGA graphics
+  * Hard disk
+
+Also supports:
+  * Sound Blaster, SB Pro, and compatible music cards
+
+To start Heartlight PC:
+
+1. Switch to the drive where the game is installed (C:)
+2. Switch to the subdirectory where the game is installed (CD \HEART)
+3. Type HEART to begin.
+
+
+=============================================================================
+		      Common problems and solutions
+=============================================================================
+
+
+RUNNING WITH WINDOWS AND OS/2
+=============================
+
+This game should work properly under Windows and OS/2 if you turn all
+sound card support OFF by running SETUP.  However, if you want to hear
+music or sound through your Sound Blaster or SB Pro, only run Heartlight
+through DOS.
+
+Here are some more Windows and OS/2 tips:
+
+1. Even though Heartlight will work under Windows with sound card support
+   turned OFF,  the graphics will run more smoothly under plain DOS.
+
+2. If you try to run Heartlight through Windows or OS/2 with sound card
+   support ON,  you'll get unpredictable results - it probably will not
+   run properly.
+
+3. If you encounter any problems running through Windows or OS/2, exit and
+   run Heartlight through plain DOS instead!  This will likely solve any
+   problems you are encountering.
+
+4. Running Heartlight through the "MS-DOS Shell" in Windows (or the
+   OS/2 Dos box) is NOT the same as running it straight from DOS.  For
+   best results, you need to completely exit from Windows or OS/2 and run
+   it from the DOS prompt.
+
+
+NOT ENOUGH FREE MEMORY
+======================
+
+Problem:  When I run Heartlight,  the game refuses to start and gives
+   me the message "You need (amount) of free memory to run this program".
+
+Solution:  You need to free up more main (conventional) memory before
+   starting Heartlight.  Here are some solution tips:
+
+1. If you are trying to run Heartlight from Windows, completely exit
+   Windows and try running it from DOS.
+
+2. If you are trying to run Heartlight from "DOSSHELL" or any other
+   menu program,  please exit from the menu program.  Then, run Heartlight
+   from the DOS prompt.  Menu programs often occupy enough memory that
+   there won't be enough left for Heartlight.
+
+If neither #1 or #2 solves the problem,  do the following:
+
+1. From the DOS prompt,  type "MEM" and press Enter.
+
+2. You'll see a lot of information about your computer's memory.  Look at
+   the number after the words "Largest Executable Program Size".  This is
+   how much memory you currently have available.
+
+Now you need to free up more main memory.  Here are some tips:
+
+1. If you're using DOS 6.0 or later,  reboot your computer by pressing
+   RESET or Ctrl-Alt-Del.  Wait for the message "Starting MS-DOS..." to come
+   up.  Now press the [F5] key.
+
+   This will cause DOS 6.0 to bypass all of your TSR's, memory managers,
+   and other programs which normally occupy main memory.
+
+   Now change into the Heartlight directory and begin the game.
+
+2. If you have a version of DOS earlier than 6.0:  You need to create a
+   "boot disk" to allow you to start your computer without loading all
+   the TSR's and memory managers that take away main memory.  Here's how.
+
+   A. Put a blank disk in your A: drive and format it as a DOS disk.  (Don't
+      do this in your B: drive - it won't work!)  To do this, type the
+      following command:
+      
+      FORMAT A: /S
+
+   B.  Wait while your computer formats the disk.
+   C.  Label the disk "Boot Disk" and keep it handy.  You'll need this
+       disk whenever you want to start Heartlight.
+
+   Now, you can reboot your computer and play Heartlight:
+
+   A.  Put the boot disk in your A: drive.
+   B.  Restart your computer,  either by pressing CTRL-ALT-DELETE,  by
+       hitting your reset button,  or by turning it on.
+   C.  Wait while your computer boots from the boot disk.
+   D.  After a little while, your computer will stop and give you the A>
+       prompt.
+   E. Now change to your hard disk by typing "C:".
+   F. Go into the Heartlight directory by typing "CD \HEART".
+   G. Begin by typing "HEART".
+
+   Note to owners of "Stacker", "Superstor", and other hard disk compression
+   programs:  If your C: drive is compressed and you need a boot disk to
+   start Heartlight, you must install Heartlight on a different,
+   non-compressed drive.  See your manual for instructions on doing this.
+   (This only applies to users of DOS version 5.0 or earlier).
+
+
+OTHER PROBLEMS
+==============
+
+Problem: When I run HEARTLIGHT,  the computer locks up or reboots.
+
+Solution:  Run SETUP and verify that your settings are correct.  If you are
+   not using a sound card, make sure that SETUP is set for "No Sound Card".
+   If you are using a sound card,  Heartlight may not be compatible with
+   your settings.  We recommend setting your sound card to address 220,
+   DMA 1, and interrupt 2, 5, or 7.  Other settings may not work properly!
+
+
+NOTE TO PRO AUDIO SPECTRUM OWNERS
+=================================
+
+Heartlight should work fine with the PAS, PAS+, and PAS-16 sound cards.
+You need to run SETUP and tell it that you have a Sound Blaster card.
+
+Important!  To run Heartlight on any Pro Audio Spectrum sound card, you
+need to have the PAS drivers loaded properly.  Heartlight will only recognize
+your PAS card if the drivers are loaded.  See your PAS manual for
+instructions on loading the right PAS drivers in your AUTOEXEC.BAT and
+CONFIG.SYS files.
+
+
+CONTACTING EPIC'S TECH SUPPORT
+==============================
+
+If you need further assistance, please call our tech support department
+at 301-983-9771 between 9AM and 5PM Eastern Standard Time,  or fax us
+at 301-299-3841.  You can also contact us online:
+
+COMPUSERVE:
+   Mail:  70451,633
+   Messages & Files:  GO EPIC
+
+INTERNET:
+   Mail:  70451.633@compuserve.com
+   FTP:   ftp.ulowell.edu
+
+THE SHAREWARE SUPPORT BBS (Herts, England):
+   Contact: Epic MegaGames
+   2400-14.4K Baud: +44 (0) 442-891-109
+
+
+
+
+

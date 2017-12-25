@@ -1,0 +1,36 @@
+
+PCXSHOW  C      - pcx file program
+PCXSHOW  OBJ
+PCXSHOW  EXE
+
+ATTANK   C      - sprirte demo
+ATTANK   OBJ
+ATTANK   EXE
+
+SHUTTLE  EXE    - shuttle demo and pcx file
+SHUTTLE  PCX
+
+OUTPOST  PCX    - pcx files for attank
+TANKS    PCX
+
+GRAPH4   C       - today's graphics module
+GRAPH4   H
+GRAPH4   OBJ
+
+TGP4AL   DOC     - the WROD 6.0 document
+
+4TGP01   PCX     - figures
+4TGP02   PCX
+4TGP03   PCX
+4TGP04   PCX
+4TGP05   PCX
+4TGP08   PCX
+4TGP09   PCX
+4TGP10   PCX
+4TGP12   PCX
+4TGP13   PCX
+4TGP15   PCX
+4TGP14   PCX
+4TGP16   PCX
+
+

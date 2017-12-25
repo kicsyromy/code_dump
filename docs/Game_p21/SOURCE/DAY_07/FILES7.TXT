@@ -1,0 +1,29 @@
+
+GRAPH7J  H      - the library modules for today
+GRAPH7M  H
+GRAPH7K  H
+GRAPH7J  C
+GRAPH7K  C
+GRAPH7M  C
+GRAPH7J  OBJ
+GRAPH7K  OBJ
+GRAPH7M  OBJ
+
+KEYTST   MAP    - keyboard demo program
+KEYTST   EXE
+KEYTST   OBJ
+KEYTST   C
+
+JOYTST   MAP    - joystick demo program
+JOYTST   EXE
+JOYTST   OBJ
+JOYTST   C
+
+MOUSETST MAP    - mouse demo program
+MOUSETST EXE
+MOUSETST OBJ
+MOUSETST C
+
+TGP7AL   DOC    - take a guess???
+
+

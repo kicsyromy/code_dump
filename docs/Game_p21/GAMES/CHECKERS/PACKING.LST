@@ -1,0 +1,17 @@
+
+ This file contains a list of all files required for 
+redistributing Argo Checkers.
+
+Name              Size  Description
+------------    ------  ----------------------------------------------------
+CHECKERS EXE     43045  Main program.
+CHECKERS DOC      5543  Program documentation.
+GRAPHICS ACS    580320  Program data file.
+ORDERFRM DOC      2418  Order form.
+LICENSE  DOC      6878  License agreement.
+VENDOR   DOC      7818  Vendor agreement.
+OMBUDSMN ASP       917  ASP statement.
+SYSOPS   DOC      2157  Information for SysOps.
+PACKING  LST       724  This file.
+FILE_ID  DIZ       338  Package description for bulletin board systems.
+CATALOG  TXT      7405  A list of Software Creations' offerings.

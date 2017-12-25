@@ -1,0 +1,272 @@
+' Chinese Checkers Shareware Installation Script
+' Copyright 1992, ImagiSOFT, Inc.
+' November 1, 1992
+
+' Note:  This installation script is written for THE FINISHING TOUCH, a
+'        professional installation program which is also an ImagiSOFT
+'        product.  It is distributed with Chinese Checkers to make installation
+'        easier -- especially for disk vendors.  Disk vendors may want to
+'        change the first window to their name instead of ImagiSOFT's name.
+
+'        This script does not unpack compressed files which is a
+'        major feature of the program.  For more information about
+'        THE FINISHING TOUCH, call ImagiSOFT at (505) 275-1920.
+
+'        You can download the shareware version from Software Creations BBS:
+'              (508) 368-7036  2400 - 9600 Baud, N, 8, 1  (33 lines)
+'        Download the file FINISH22.ZIP.
+
+'        Our personal BBS number is (505) 275-9697  2400, N, 8, 1 (1 line).
+
+
+BACKGROUND 63
+TELESCOPE OFF
+
+WINOPEN 0 2 95
+
+' ATTENTION VENDORS:
+' Feel free to change the top two lines of this window to your message:
+
+"             ImagiSOFT, Inc."
+"Where Imagination Brings Software to Life"
+""
+""
+"          Installation Program"
+WINUPDATE +3 +4 94
+"CHINESE CHECKERS SHAREWARE VERSION 2.1"
+
+TELESCOPE ON
+SHADOW ON
+SPACE 360
+
+VIDEO EGA                       ' requires EGA (or better) monitor
+JUMP.NO NO_EGA
+
+MEMORY 640
+JUMP.NO NO_MEM
+
+:PROMPT
+DRIVE C 0 11 31 15 32 14 79
+PATH \CHINESE 0 11 31 15 32 14 79
+
+EXIST ~1~2\*.*
+JUMP.NO UNPACK
+
+EXIST ~1~2\CHINESE.EXE
+JUMP.YES UNPACK
+
+WINOPEN 0 11 79
+"The directory ~1~2 already exists and contains files!"
+""
+"   Installing Chinese Checkers in this directory will"
+""
+"       in this directory prior to installing."
+""
+"Are you SURE you want to install it here   Y or N?"
+WINUPDATE +45 +7 78
+"Y or N?"
+WINUPDATE +17 +4 78
+"DELETE ALL THE FILES"
+BEEP
+ASK +52 +7
+WINCLOSE
+JUMP.NO PROMPT
+
+:UNPACK
+PROMPT OFF
+DELETE ~1~2\*.* 1 24 51
+PROMPT ON
+COPY ~0\CHINESE.* ~1~2\ 0 12 31
+JUMP.FAIL INSTALL_FAILURE
+COPY ~0\CC*.* ~1~2\ 0 12 31
+COPY ~0\VENDOR.DOC ~1~2\ 0 12 31
+COPY ~0\*.ME ~1~2\ 0 12 31
+
+' ---------------------------------
+' should we write batch file y / n?
+' ---------------------------------
+
+WINOPEN 0 11 31
+"Most people prefer having a batch file created which makes"
+"running Chinese Checkers easier.  If you answer YES to the"
+"next question, we will write the file ~1\CHINESE.BAT"
+"so that you can run Chinese Checkers from the root directory"
+"by entering the simple command: CHINESE."
+""
+"Do you want us to write this batch file for you   Y or N?"
+WINUPDATE +40 +3 27
+"~1\CHINESE.BAT"
+WINUPDATE +34 +5 27
+"CHINESE"
+WINUPDATE +52 +7 30
+"Y or N?"
+ASK +59 +7
+WINCLOSE
+JUMP.NO DONE2
+
+' ----------------
+' write batch file
+' ----------------
+
+EXIST ~1\CHINESE.BAT
+JUMP.NO DOS_PROMPT
+PROMPT OFF
+DELETE ~1\CHINESE.BAT 1 24 51
+PROMPT ON
+
+:DOS_PROMPT
+DOS 3.3
+JUMP.NO OLD_DOS
+
+FILE ~1\CHINESE.BAT
+"@~1"
+"@cd ~2"
+"@chinese"
+"@cd \"
+JUMP DONE
+
+:OLD_DOS
+FILE ~1\CHINESE.BAT
+"echo off"
+"~1"
+"cd ~2"
+"cls"
+"chinese"
+"cd \"
+
+
+' -----------------------
+' successfully installed!
+' -----------------------
+
+:DONE
+
+SHADOW ON
+WINOPEN 0 11 31
+"CHINESE CHECKERS HAS BEEN SUCCESSFULLY INSTALLED."
+"   To run it, enter the command  CHINESE"
+"   from the root directory of drive ~1."
+""
+""
+""
+""
+"Press the [Enter] key to continue."
+WINUPDATE +35 +2 30
+"CHINESE"
+WINUPDATE +5 +5 27
+"THANK YOU FOR CHOOSING OUR SOFTWARE!"
+WAIT +36 +8
+WINCLOSE
+JUMP RUN_IT
+
+' -------------------------------------------------
+' successfully installed (version 2, no batch file)
+' -------------------------------------------------
+
+:DONE2
+
+SHADOW ON
+WINOPEN 0 11 31
+"CHINESE CHECKERS HAS BEEN SUCCESSFULLY INSTALLED."
+"   To run it, enter the command  CHINESE"
+"   from the ~1~2 directory."
+""
+""
+""
+""
+"Press the [Enter] key to continue."
+WINUPDATE +35 +2 30
+"CHINESE"
+WINUPDATE +5 +5 27
+"THANK YOU FOR CHOOSING OUR SOFTWARE!"
+WAIT +36 +8
+WINCLOSE
+
+:RUN_IT
+WINOPEN 0 11 31
+"Would you like to run CHINESE CHECKERS Right Now   Y or N?"
+WINUPDATE +53 +1 30
+"Y or N?"
+ASK +60 +1
+JUMP.NO EXIT
+
+EXIST ~1\CHINESE.BAT
+JUMP.NO EXE_RUN
+RUN ~1\CHINESE.BAT
+:EXE_RUN
+RUN ~1~2\CHINESE.EXE
+
+:EXIT
+
+END
+
+:INSTALL_FAILURE
+
+WINOPEN 0 11 79
+
+"THE INSTALLATION PROGRAM FAILED PRIOR TO COMPLETION!"
+""
+"Possible reasons:"
+"   -- The floppy disk was damaged during shipping."
+"   -- Your disk drive is out of alignment."
+"   -- The floppy disk was removed prior to completion."
+""
+"Press [Enter] to remove incomplete program files."
+
+WAIT +50 +8
+
+PROMPT OFF
+DELETE ~1~2\*.* 0 0 31
+RD ~1~2
+DELETE ~1\CHINESE.BAT 0 0 31
+PROMPT ON
+
+WINCLOSE
+WINCLOSE
+
+WINOPEN 0 0 31
+
+"PARTIALLY INSTALLED FILES ARE NOW DELETED."
+""
+"Please try to install the software again."
+""
+"If you get this error message again, please contact us"
+"and we will send you a new disk."
+"
+"     ImagiSOFT, Inc."
+"     Computer Games Division"
+"     P.O. Box 13208"
+"     Albuquerque, NM   87192"
+"     (800) 767-1978"
+""
+"Press [Enter] to Quit."
+
+WAIT +14 +24
+END
+
+
+:NO_EGA
+
+WINOPEN 0 11 79
+
+"CHINESE CHECKERS REQUIRES AN EGA (OR BETTER) MONITOR TO RUN."
+"Sorry, but it won't run on your computer."
+""
+"      Press [Enter] to Quit."
+
+WAIT +29 +4
+END
+
+
+:NO_MEM
+
+WINOPEN 0 11 79
+
+"CHINESE CHECKERS REQUIRES 640K MEMORY TO RUN."
+"Sorry, but it won't run on your computer."
+""
+"      Press [Enter] to Quit."
+
+WAIT +29 +4
+END
+

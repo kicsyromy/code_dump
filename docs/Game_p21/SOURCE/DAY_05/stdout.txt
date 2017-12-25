@@ -1,0 +1,9 @@
+DOSBox version 0.74
+Copyright 2002-2010 DOSBox Team, published under GNU GPL.
+---
+CONFIG:Loading primary settings from config file C:\Program Files\D-Fend\Confs\test.conf
+"vga" is not a valid value for variable: machine.
+It might now be reset it to default value: svga_s3
+"true" is not a valid value for variable: mpu401.
+It might now be reset it to default value: intelligent
+MIDI:Opened device:win32

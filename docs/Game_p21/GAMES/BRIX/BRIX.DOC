@@ -1,0 +1,148 @@
+=============================================================================
+                           Brix:  An Arcade & Puzzle Experience
+
+Requirements:
+     þ  VGA graphics (supports high-quality 256-color graphics)
+     þ  80286 or faster processor
+     þ  512K memory and DOS 3.0 or later
+     þ  A Hard Disk
+     þ  Lots & Lots of free time!
+
+Also supports:
+     þ  Sound Blaster & compatible music cards
+
+=============================================================================
+
+               Brix I:  A New Shareware Release
+               --------------------------------
+
+Created by:  Michael Riedel
+Published by Epic MegaGames
+
+Brix is an arcade and puzzle experience!  Don't let the ultra smooth 256-
+color VGA graphics and animation fool you into thinking Brix is just an
+arcade game,  because your brain will be taunted,  teased,  and twisted
+as must as your reflexes.
+
+Your task in Brix seems simple:  Eliminate all of the colored bricks by
+uniting them.  But the 112 levels in Brix 1 are also habitated by lasers,
+elevators,  boiling acid,  anti-gravity,  teleporters,  and more!  There are
+enough hand-crafted puzzles in this Epic action-puzzler duo to keep you busy
+for eons.
+
+Check out Brix,  another fine release from the publishers of Jill of the
+Jungle,  ZZT,  and Kiloblaster!
+
+
+Registration
+============
+
+Registration is $30 + $4 p&h,  and earns you Brix I and Brix II Deluxe (with
+112 awesome new levels,  level editor,  and a level solver),  and a disk of
+Epic's latest bonus games.  Print ORDER.DOC for ordering instructions.
+
+
+Starting
+========
+
+To start Brix,  type:
+
+   BRIX1
+
+Brix also speaks German!  To start the German version of Brix,  type:
+
+   BRIX1 /d
+
+
+Troubleshooting
+===============
+
+If Brix gives you a "Not Enough Memory" message,  you need to free up more
+system memory,  then start over again.  Suggestions:
+
+* Try renaming your AUTOEXEC.BAT and CONFIG.SYS files,  then rebooting.
+  This will prevent memory-hogging SR's from being loaded.
+
+* Create a boot disk and reboot.  To do this:
+  1.  Put a blank disk in the A: drive.
+  2.  Type:  FORMAT A: /S
+  3.  Once the disk is formatted,  keep the disk drive door closed and
+      reboot your computer.
+
+If Brix still refuses to load properly,  the problem is most likely due to
+Brix scanning your system for a Sound Blaster card.  To solve this,  type:
+
+   BRIX1 /nosb      (This turns off the Sound Blaster card)
+
+
+Playing Brix
+============
+
+Your main goal is to remove all of the objects (brix) from the screen.  To
+remove them,  you need to put them together -- which causes them to explode.
+This is easy enough with two objects,  but can be very tricky with three
+or more.  (Try to figure it out!)
+
+To pick up an object,  move the red cursor above it and press [space].  The
+cursor turns white while you are carrying an object.
+
+
+Secret Codes
+============
+
+When you leave the game (because you missed or finished a level),  you will be
+tols a secret code.  Remeber this!  You can use it later to start back at the
+level without going through all of the previous levels.  Use the "Secret Code"
+option in the main menu.
+
+
+Difficulty levels
+=================
+
+Brix has four difficulty levels ranging from easy to hard.  While you're
+first learning to play,  we recommend the easy level.  It gives you more
+time to complete each puzzle.
+
+
+While playing!
+==============
+
+Press [Escape] to bring up a menu of options:
+   Abort game:  Lets you leave the actual game.  Use this option once you've
+                thoroughly given up and need to take a break!
+   Continue game:  Keep on playing!
+   Retry level:  Lets you start over from scratch on the current level, in
+                case you've gotten into an unsolvable mess.  Beware,  the
+                time is not set back!
+   Solve:  Brix will solve the level for you.  (Brix 2 Deluxe only!)  This will
+                cost you 20000 points in the second level,  40000 points in the
+                third level,  and so on.
+
+
+MEMBER, ASP
+===========
+
+This program is produced by a member of the Association of Shareware
+Professionals (ASP).  ASP wants to make sure that the shareware principal
+works for you.  If you are unable to resolve a shareware-related problem
+with an ASP member by contacting the member directly,  ASP may be able to
+help.  The ASP Ombudsman can help you resolve a dispute with an ASP member,
+but does not provide technical support for members' products.  Please write
+to the ASP Ombudsman at 545 Grover Road,  Muskogeon, MI 49442-9427 or send
+a Compuserve message via CompuServe Mail to ASP Ombudsman 70007,3536.
+
+   CALL OUR BBS
+
+Call Software Creations for all the latest Epic MegaGames releases and
+updates.  33 Lines!  Sysop:  Dan Linton.
+
+                508-365-2359 (2400 Baud)
+                508-365-9825 (9600 Baud)
+                508-365-9668 (14.4K Dual HST)
+
+=============================================================================
+
+Thanks for trying Brix!
+
+            Michael Riedel,  Author of Brix
+              Tim Sweeney,  Epic MegaGames

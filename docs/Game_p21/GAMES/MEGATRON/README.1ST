@@ -1,0 +1,26 @@
+From:  John Stanely  [Internet Address: dracus@herbon.connected.com]
+Subj:  Megatron VGA
+Date:  03/18/94
+
+Welcome to the shareware release of Megatron VGA.  You should have the
+following files in the release kit.
+
+    README.1ST                 This File.
+    MEGA.BAT                   Megatron Startup.
+    MEGATRON.EXE               The Megatron Program.
+    MEGA.DOC                   Megatron Documentation.
+    WHATS.NEW                  Game Additions and Changes.
+    NOTICE.TXT                 Shareware User Release Notice.
+    RESELLER.LIC               Shareware Reseller License Notice.
+    ORDER.FRM                  Shareware End-User Registration Form.
+    MODEMS.CFG                 Modem Configuration History Logfile.
+    MODEMS.INI                 Advanced Modem Initialization String.
+    SIMPLE.INI                 Simplistic Modem Initialization String.
+    MEGATRON.MFS               Game Database Module (approximately 850K).
+
+To start the game, type: MEGA at your DOS prompt. You MUST have a VGA
+video card and monitor to play the game.  If you do not have the required
+equipment, Megatron will refuse to run and return you to DOS.
+
+Good Luck and Good Hunting!
+

@@ -1,0 +1,103 @@
+
+			N I T E M A R E  - 3 D
+
+                   EPISODE 1 - A House of Horrors
+
+
+  	Copyright 1994, David P. Gray, Gray Design Associates
+         		All Rights Reserved
+
+	    Member, Association of Shareware Professionals
+
+
+-----------------------------------------------------------------------------
+
+     	L I C E N S E   &   W A R R A N T Y   I N F O R M A T I O N
+
+-----------------------------------------------------------------------------
+
+
+THIRD PARTY EPISODES
+====================
+
+The sale and distribution of third party episodes which work with this
+shareware version is prohibited and violates the copyright of this game.
+Distribution of such episodes would be in direct competition with our own.
+
+Anyone wishing to produce or distribute third party episodes for the
+registered version of the game may do so provided the following points
+are made clear to customers:
+
+1.  The registered version of the game is required.
+2.  The episodes are not connected with David P. Gray.
+3.  No technical support is provided by David P. Gray.
+
+Please note that no technical assistance or toolkit is available from
+David P. Gray for third party episode development.
+
+
+
+LICENSE
+=======
+
+This is the first of three episodes.  Episode ONE is shareware.  The other
+TWO episodes are not.  The final two episodes must be purchased directly
+from David P. Gray.  Do not distribute episodes TWO and THREE.
+
+As the exclusive copyright holder for this software David P. Gray authorizes
+distribution only in accordance with the following restrictions:
+
+*   This software package and all related program files and documentation
+    files, including VENDOR.DOC, LICENSE.TXT and ORDER.TXT may *not* be
+    modified in any way and must be distributed as a complete package.  Disk
+    vendors may add their own batch/documentation files for the purpose of
+    user installation.
+
+*   No price or other compensation may be charged for this software package.
+    A distribution fee may be charged for the cost of the diskette, shipping
+    and handling as long as the total does not exceed US$6.00 in the U.S. and
+    Canada, or US$10.00 internationally.
+
+*   Licensee shall not use, copy, rent, lease, sell, modify, decompile,
+    disassemble, otherwise reverse engineer, or transfer the licensed program
+    except as provided in this license.  Any such unauthorized use shall result
+    in immediate and automatic termination of this license.
+
+*   This software package CANNOT be sold as part of any commercial software
+    packaging offer, without prior written authorization from David P. Gray.
+
+*   This software is not to be used as an enticement to purchase another
+    product without prior written authorization from David P. Gray.
+
+*   This software package including all documentation may not be translated
+    in any form whatsoever.
+
+*   Publishers wishing to include a diskette of this software package in a
+    magazine may do so in accordance with the Distribution Restrictions listed
+    above.  If the version you have is over six (6) months old, please contact
+    the author, David P. Gray, PO Box 333, Northboro, MA 01532, USA to obtain
+    the latest version.
+
+
+
+DISCLAIMER OF WARRANTY
+======================
+
+This software is provided "AS IS" and the author makes no warranty of any
+kind, expressed or implied, including without limitation, any warranties of
+merchantability and/or fitness for a particular purpose.
+
+Good data processing procedure dictates that any program be thoroughly
+tested with non-critical data before relying on it.  The user must assume
+the entire risk of using the program.
+
+In no event will the author be liable for incidental, consequential, indirect
+or other damages including any lost profits or lost savings arising from the
+use of, or inability to use the software even if the author has been advised
+of the possibility of such damages, or for any claim by any other party.  And
+in no event shall the liability for any damages ever exceed the price paid for
+the software, regardless of the form and/or extent of the claim.
+
+
+
+-----------------------------------------------------------------------------

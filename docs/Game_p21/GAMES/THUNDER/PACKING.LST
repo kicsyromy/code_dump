@@ -1,0 +1,19 @@
+The following is the list of files that should be present
+in the GOT100.ZIP file:
+
+PACKING  LST  - This file
+FILE_ID  DIZ  - Description of God of Thunder
+VENDOR   TXT  - Information for shareware vendors 
+SYSOPS   TXT  - Information for BBS Sysops
+CATALOG  TXT  - Catalog of other Software Creations products
+TROUBLE  DOC  - Troubleshooting guide for God of Thunder
+ORDERFRM DOC  - Order form for all of Software Creations products
+GOT      DOC  - Manual for God of Thunder
+VERSION  GOT  - Version information used by God of Thunder
+GOTRES   DAT  - Resource file used by God of Thunder
+_G1      EXE  - Overlay used by God of Thunder
+GOT      EXE  - Main executable for God of Thunder
+AV       DOC  - Authentication information for God of Thunder
+
+If any of these files are missing or corrupt, be sure to obtain a 
+complete version from Software Creations before you distribute it.

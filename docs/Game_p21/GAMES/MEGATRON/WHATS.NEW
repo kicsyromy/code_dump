@@ -1,0 +1,7 @@
+                What's New Game Additions and Changes
+
+Version: 7.0.0
+(1)   Designed new assault robot images.
+(2)   Added 19.2K and 38.4K serial port speeds.
+(3)   Added serial port ADDRESS and IRQ settings to modems files
+      so users with non-standard equipment can use the game.

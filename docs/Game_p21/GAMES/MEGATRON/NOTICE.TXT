@@ -1,0 +1,37 @@
+From:  John Stanely  [Internet Address: Dracus@Aol.Com]
+Subj:  Distribution
+Date:  03/18/94
+
+Shareware Release
+-----------------
+This product has been revised to remove unauthorized elements contained
+in earlier versions of Megatron.
+
+This new version of Megatron cannot be used with previous copies of the
+game that include unauthorized elements. The Stanley Design Team requests
+that all users destroy any prior versions of the Megatron Shareware product
+and use only the new revised version of the game.
+
+                             * * * * *
+
+This version of Megatron (7.x.x) is released as shareware to the 
+software community.  No express time limit is placed on the length 
+of time this copy can be distributed as shareware.  All commercial 
+rights to the game are expressly reserved by the author.  If you are
+a shareware reseller you must follow the terms listed in the 
+RESELLER.LIC file.
+
+
+Unregistered Working Demo
+-------------------------
+The shareware release of Megatron is a fully functional version of 
+the game with the following exceptions:
+
+1.  The FM synthesized sound effects only work during the first 
+    round of combat.  Then the game switches to IBM PC sounds.
+    
+2.  The Explosive Sensor Mines only work during the first round
+    of combat.
+
+3.  Weapons Recharges, Energy Recharges and Teleporter Gates are
+    not present.

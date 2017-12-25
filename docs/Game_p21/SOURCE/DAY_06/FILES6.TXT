@@ -1,0 +1,62 @@
+
+BUFFER   C     - double buffer demo
+BUFFER   OBJ
+BUFFER   MAP
+BUFFER   EXE
+
+SCALAR   C     - bitmap scaling demo
+SCALAR   OBJ
+SCALAR   MAP
+SCALAR   EXE
+
+VERTICAL C     - vertical sync demo
+VERTICAL OBJ
+VERTICAL MAP
+VERTICAL EXE
+
+TRANSFX  OBJ  - screen transitions
+TRANSFX  MAP
+TRANSFX  EXE
+SCREENFX PCX
+TRANSFX  C
+
+
+ANIMATE  EXE  - animotion demo
+WIREMAN  PCX
+WIREROAD PCX
+
+LSCAPE   C    - defender scrolling demo
+LSCAPE   OBJ
+LSCAPE   MAP
+LSCAPE   EXE
+
+ROBOINT  PCX  - robopunk scrolling demo
+ROBOPUNK PCX
+ROBO     C
+ROBO     OBJ
+ROBO     MAP
+ROBO     EXE
+
+PAPER    PCX  - paper airplane program
+PAPER    C
+PAPER    OBJ
+PAPER    MAP
+PAPER    EXE
+
+GRAPH6   C    - todays graphics module
+GRAPH6   H
+GRAPH6   OBJ
+
+TGP6AL   DOC  - the word document for this chapter
+
+6TGP04   PCX  - the figures for this chapter
+6TGP05   PCX
+6TGP06   PCX
+6TGP12   PCX
+6TGP11   PCX
+6TGP13   PCX
+6TGP14   PCX
+6TGP15   PCX
+6TGP17   PCX
+
+

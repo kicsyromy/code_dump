@@ -1,0 +1,251 @@
+~
+
+                  PLAYER SELECTION SCREEN
+
+In  Redhook's Revenge, 2 to 5  players compete against  each
+other  to  see which player has accumulated  the  most  gold
+doubloons when every player has finished playing.  The  five
+characters  on the first screen, Bastian Blood,  Le Boucher,
+Lucrecia  De Peligro, Blackbeard,  and  Poseidon the Parrot,
+must be set to one of the following positions:
+
+            -- Off    (not playing)
+            -- Player (a person)
+            -- Auto   (the computer)
+
+Press the OK Button (Enter Key) after you have selected  the
+players you want.
+
+
+NOTE:  At  least TWO players must play against  each  other.
+If you set more than three players to the "Off" position  an
+error message will be displayed.
+
+
+Press the Down Arrow for more, OK (Enter) to exit help . . .
+
+
+HOW TO SELECT THE PLAYERS:
+
+     MOUSE METHOD                     KEYBOARD METHOD
+     ------------                     ---------------
+Click the  mouse  on one of    Use  the RIGHT and LEFT arrow
+the three buttons  for each    keys to select a player.  Use
+player:                        the UP and DOWN arrow keys to
+                               select the player's status:
+
+                   OFF  that character doesn't play.
+                PLAYER  a person plays.
+                  AUTO  the computer plays.
+
+
+
+                      LOAD SAVED GAMES
+
+Press  the  F2  key  to display a menu  of  games  you  have
+previously  saved.  To load a saved game, arrow down to  the
+game you want to retrieve and press the ENTER key.  The game
+will return the exact place you were at when you saved it.
+
+
+Press the Down Arrow for Setup Instructions . . .
+
+                  SETTING UP YOUR COMPUTER
+
+Redhook's Revenge is has several user definable options:
+
+DIALOGUE  which refers to the pirate dialogue for  automatic
+players.  If you toggle this switch to "On" the pirates will
+talk  to  you and their playing boards will  remain  on  the
+screen  long  enough for you to read most of them.   If  you
+toggle  this switch to "Off" the pirates will tell you  only
+the messages that are absolutely necessary and their playing
+boards will open and close almost instantly.
+
+MUSIC  can  be toggled "On" or "Off" with the  switch  which
+appears in the middle of screen.
+
+MUSIC CARD  is detected when you first run the software  and
+this  information is saved in a configuration file.  If  you
+want  to change your computer's configuration,  toggle  this
+switch to either "PC Speaker", "AdLib", or "Soundblaster".
+
+
+
+Press OK (Enter) to exit help . . .
+
+~
+             INSTRUCTIONS FOR REDHOOK'S REVENGE
+
+
+KEYBOARD OVERVIEW:
+
+     Space Bar       Roll the Dice -- Take Your Turn!
+     Arrow Keys      Scroll The Game Board Right / Left
+     F1  Key         Help
+     F2  Key         Load Saved Game
+     F3  Key         Save Game
+     F4  Key         New Game
+     F5  Key         Look at Your Booty / Supplies
+     F10 Key         Quit
+
+
+HOW TO PLAY:
+
+Two  to five players compete against each other to  see  who
+can accumulate the most gold doubloons when every player has
+finished  playing.   When it is your turn, the face  of  the
+player have chosen to be will appear in the upper left  hand
+corner of the screen.  Press the space bar to roll the  dice
+and  the  computer will move your ship forward.
+
+                                                  more . . .
+HOW TO PLAY (Continued)
+
+When your ship lands on a space, one of the following things
+will happen:
+
+   QUESTION SPACE  You  will  be  asked  a  multiple  choice
+                   question  about ships, pirates,  history,
+                   sailing,  or  geography.  If you  get  it
+                   right,  you  will  earn  gold,   cannons,
+                   supplies,  or disaster  insurance  cards.
+                   These spaces usually make the  difference
+                   between winning and losing the game.
+
+   DISASTER SPACE  Something bad will happen.  You will lose
+                   turns, go back (which isn't always  bad),
+                   lose treasure, or lose supplies.  Certain
+                   supplies  avoid certain  disasters:  rope
+                   will help you get off sandbars, a compass
+                   will  help  you  navigate  through   fog,
+                   bales  of  cotton plug up  holes  in  the
+                   bottom of your ship.  Of course, disaster
+                   insurance cards cancel these disasters.
+
+
+                                                  more . . .
+TYPES OF SPACES ON THE GAME BOARD (Continued)
+
+   TREASURE SPACE  Find treasure!
+
+   MISCELLANEOUS   Buy supplies, find treasure maps,  ransom
+                   hostages, buy cannons, take chances, etc.
+
+   RAID A CITY     It is usually to your advantage to  fight
+                   a city because you may win some of  their
+                   gold, and the only thing you have to lose
+                   is  one turn.  Hint: get as many  cannons
+                   as  you  can as soon  as  possible!
+
+   FIGHT A PLAYER  When  you land on another player's  ship,
+                   you  have  the choice to  fight  for  the
+                   space  or to fall back to the first  open
+                   space.   If you fight, EACH PLAYER  risks
+                   losing  up to half of their gold  to  the
+                   other player.  Hint: get as many  cannons
+                   as  you  can as soon  as  possible!   The
+                   attacker always has the advantage because
+                   attackers always win ties.
+
+                                                  more . . .
+
+FIGHTING WITH CANNONS:
+
+It will be to your advantage to get as many cannons (maximum
+of  four)  as possible.  Each time you raid a  city,  attack
+another  player, or another player attacks you, here's  what
+happens:
+
+   1)  The  attacker and defender will appear on the  screen
+       and Redhook will arbitrate the fight.
+
+   2)  The  defender will roll the dice first:  one die  for
+       each cannon he/she has.
+
+   3)  Next  the  attacker will roll the dice, one  die  for
+       each cannon he/she has.
+
+   4)  Redhook  will  sort the dice on the screen  from  the
+       highest   to  the  lowest  and  determine  who   won.
+       ATTACKERS WIN ALL TIES.
+
+   5)  Redhook will award any loot won to the victor, and in
+       the case of a ship to ship fight, send the loser back
+       to the first open space.
+
+                                                  more . . .
+FIGHTING WITH CANNONS (Continued)
+
+Smart players watch other players closely:  It's not usually
+to  your  advantage to fight another player when  they  have
+landed  on  a  disaster space.   Remember,  when  you  fight
+another  player,  EACH player can lose up to HALF  of  their
+gold to the other player -- if you have lots of gold and few
+cannons,  don't  attack  a player who has  little  gold  and
+several  cannons!   On the other hand, if you  are  in  last
+place, try to attack players with piles of  gold -- remember
+attackers always win ties.
+
+
+FOOD / WATER / RUM:
+
+One  ration  of food, water, and rum is used on  each  turn.
+Some spaces allow you to buy these items; it is up to you to
+determine whether the price is fair, and how much you should
+buy  when given the opportunity.  If you run out of  one  of
+the  above  items, you will lose a turn,  and  Redhook  will
+force you to by them at the following prices:
+    Food    50  doubloons per day
+    Water   30  doubloons per day
+    Rum     100 doubloons per day
+                                                  more . . .
+OTHER SUPPLIES:
+
+Rope,  canvas,  cotton, and a compass will all help  you  to
+avoid certain disasters along the way.  You can't buy  these
+items:  generally,  the only way to get these  items  is  to
+answer a question space correctly.
+
+
+HOSTAGES:
+
+Sometimes  after looting ships and cities you  will  capture
+hostages.   Redhook may offer ransom for your hostages  from
+time to time:  it's up to you to determine whether the price
+is  fair, or whether to hold out for a higher  price  later.
+Hostages  which are not ransomed by the end of the game  are
+worthless.
+
+
+TREASURE MAPS:
+
+Treasure  maps are either extremely valuable  or  worthless.
+You won't know until you find one!
+
+
+                                                  more . . .
+                        A FINAL NOTE
+
+Much  of  the  pirate's dialogue  comes  from  Robert  Louis
+Stevenson's  classic novel, "Treasure Island".  Many of  the
+expressions  used by the pirates in Redhook's  Revenge  such
+as, "skulk", "don't stand there squalling", "lubber", "bless
+me  deadlights", and "if you had the pluck of a weevil in  a
+biscuit"  evolved  from life on the  sea.   The  expression,
+"meaner than the son of a double Dutchman" developed because
+the  Dutch were the most feared of all pirates.   There  are
+hundreds  of these saying in Redhook's Revenge, and we  hope
+that it enhances your pleasure in playing it.
+
+The  factual information for Redhook's Revenge  was  derived
+from the books "The Funnel of Gold" by Mendel Peterson, "The
+Sack  of  Panama" and "The Treasure of  the  Concepcion"  by
+Peter  Earle.  We wish to thank these scholars for their  in
+depth research.
+
+The name "Redhook" was taken from Redhook Bay on St.  Thomas
+Island.   Most  of the names on the playing board,  such  as
+Gallows  Point,   can be found somewhere in  the  Caribbean.
+The  player's names, with the exception of  Blackbeard,  are
+fictitious.

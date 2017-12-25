@@ -1,0 +1,107 @@
+
+
+
+                           CHINESE CHECKERS
+                             Version 2.1
+                           November 1, 1992
+
+                 Copyright (c) 1992, ImagiSOFT, Inc.
+                         All rights reserved.
+
+
+
+                    DISTRIBUTING CHINESE CHECKERS
+
+Anyone distributing Chinese Checkers for any kind of remuneration MUST
+agree with the following terms and conditions prior to distributing it:
+
+    1. The distributor recognizes that ImagiSOFT, Inc. owns all rights
+       for Chinese Checkers, including distribution rights.
+
+    2. The  distributor agrees that ImagiSOFT, Inc. can  withdraw  its
+       permission to distribute Chinese Checkers at any time.
+
+    3. When  requested  to do so in writing by  ImagiSOFT,  and  after
+       receiving a new version of Chinese Checkers from ImagiSOFT, the
+       distributor  agrees  to  begin distributing  this  new  version
+       within sixty days.
+
+    4. The  distributor  agrees  to  use  the  names  "ImagiSOFT"  and
+       "Chinese Checkers" in all printed product descriptions.
+
+    5. The  distributor will attempt to educate the prospective  buyer
+       about  the  shareware  concept in  its  printed  literature  or
+       packaging.   These materials must inform the user that if  they
+       find   shareware   programs  useful,  they   should   pay   the
+       registration fee.  In no event will a distributor be allowed to
+       state  or imply that the user is "buying" the Chinese  Checkers
+       program.
+
+    6. The distributor recognizes that its right to distribute Chinese
+       Checkers is nonexclusive.
+
+    7. Distributors  who  manufacture, package,  or  vend  ImagiSOFT's
+       Chinese  Checkers program with the intent of having it sold  to
+       end  users  for  more  than  $4.00 US  (quantity  one  pricing,
+       exclusive of shipping, handling, or taxes) MUST receive written
+       authorization from ImagiSOFT, Inc., prior to distributing it.
+
+Authorization to distribute Chinese Checkers is automatically  granted
+to  distributors  who  comply with the above  requirements,  and  such
+distributors   may  begin  offering  Chinese   Checkers   immediately.
+However,  distributors may want to contact ImagiSOFT, Inc. for a  copy
+of  the latest version of Chinese Checkers, MOVIES TO GO!,  and  other
+products we have developed.
+
+                           ImagiSOFT, Inc.
+                   Shareware Distributor Relations
+                            P.O. Box 13208
+                    Albuquerque, New Mexico   USA
+                              87192-3208
+
+                          FAX (505) 275-9697
+                        CompuServe 70632,1177
+
+
+
+
+
+If you are going to distribute Chinese Checkers in a compressed  file,
+please  use the name CCHECK21.??? (.ZIP, .ARC, .LZH,  etc).  We  would
+appreciate if you would distribute our original CCHECK21.ZIP  whenever
+possible so that new users can be assured that they aren't receiving a
+program infected with a virus.
+
+Please include the following files in your distribution copy:
+
+    CHINESE.EXE   main program
+    CHINESE.TXT   registration info, license agreement, etc.
+    CC_ORDER.TXT  order form
+    CHINESE.WL    graphics file
+    CC_I_1.WL        "      "
+    CC_I_2.WL        "      "
+    CC_I_3.WL        "      "
+    CC_I_4.WL        "      "
+    CC_I_5.WL        "      "
+    CC_I_6.WL        "      "
+    READ.ME       brief description, how to install, etc.
+    VENDOR.DOC    the file you are reading now
+
+IMPORTANT NOTE:  The  Chinese Checkers program checks for  missing  or
+altered  files.  If any of these files has been altered or is  missing
+the program will exit to DOS.
+
+
+                   SAMPLE SHAREWARE CATALOG LISTING
+
+NEW VERSION! ImagiSOFT's extraordinary game of Chinese Checkers
+features stunning animated graphics and brings you all the challenge
+of the traditional board game.  Nominated for "Best Entertainment
+Software" and "Best New Product" at the 1992 Shareware Industry
+Awards, the object of Chinese Checkers is to be the first player to
+move all your marbles to the opposite side of the board.  The players
+(represented by animated icons, a Dragon, Wind, Flower, Mantis, Tiger,
+and Peacock) can be played either by people or by the computer.  You
+can use the keyboard or a Microsoft compatible mouse.  Requires EGA or
+VGA and 640K of memory.
+

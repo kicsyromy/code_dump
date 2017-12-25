@@ -1,0 +1,340 @@
+M   M  EEEEE   GGG    AAA   TTTTT  RRRR    OOO   N   N     V   V   GGG    AAA
+MM MM  E      G      A   A    T    R   R  O   O  NN  N     V   V  G      A   A
+M M M  EEE    G  GG  AAAAA    T    RRRR   O   O  N N N     V   V  G  GG  AAAAA
+M   M  E      G   G  A   A    T    R  R   O   O  N  NN      VVV   G   G  A   A
+M   M  EEEEE   GGG   A   A    T    R   R   OOO   N   N       V     GGG   A   A
+
+
+                                Megatron VGA
+                    Copyright (c) 1993, Stanley Design Team
+                            [All Rights Reserved]
+
+                          Programming, John Stanley
+                        Design Assistant, Warren Rice
+
+			    
+Disclaimer
+==========
+This program is provided "AS IS" and it is without warranty.  No liability 
+shall be assumed for direct or consequential damage caused by the use of 
+this software.  The only claim that is made is that there are no intentional 
+bugs or fatal errors in any original copy of the program that you receive 
+directly from the author.
+
+
+Assignment
+==========
+The year is 3015 and you are the high commander of an elite Megatron assault 
+force.  You have chosen to enter the combat labyrinth on planet Altar-4 and
+hunt down your adversary.  At your disposal are two standard issue assault 
+robots equipped with high yield armor piercing missiles, plasma disrupters and
+explosive sensor mines.
+
+Enter the world of Megatron and experience realtime two-player modem combat
+first hand. Megatron uses a combination of ray traced computer graphics, hand
+drawn animation and FM synthesized sound effects to bring to life the ultimate
+combat experience.  
+
+
+Game Descriptions
+=================
+Megatron is a two-player game.  It can be played in a single player training 
+mode but for best results I recommend using two computers.  The object of 
+the game simple -- hunt down your adversary and destroy his assault robot.
+
+At the start of the game both and your adversary are placed at random location
+in the combat labyrinth.  You don't know where your adversary is hiding.  All 
+you have to work with is a 3-D view of the corridor you are standing in, a top
+down view of the labyrinth, and a changing sonar blip that can guide you to 
+your adversary if you interpret it properly.  If you are in a hurry, you can
+use your area radar to search for your adversary. The down side to using radar
+is that you don't always locate the enemy, but the enemy always locates you.
+
+To win the game, you most win more combat rounds then your adversary does. The
+only problem is that this is a realtime game.  Both you and your adversary 
+get to shoot freely at each other.  Whoever is fastest with their weapons and
+has the strongest nerve wins.
+
+
+Computer Power
+==============
+This a realtime modem game and it requires "serious" computer power to run 
+it properly.  I would not recommend playing Megatron on anything less then a
+386/25Mhz computer; a 486/33Mhz works great!
+
+For best animation results I suggest you have at least 1MB of EMS memory free 
+or a 1MB disk cache install on your computer. Megatron directly supports EMS 
+memory and it is the best choice to use.
+
+Megatron will function on 286 systems, but if you are connected to someone 
+who is using a 386 system, you won't have a chance.
+
+
+Required Hardware
+=================
+You must have a VGA adapter card and a matching color monitor.  You also 
+need a minimum of 640K RAM to run the game.  Because of the size of the 
+game (approximately 1.3MB) you must install it to a hard disk drive.  
+
+
+Additional Hardware
+===================
+This game is designed to use both the mouse and keyboard as input devices.  
+Depending on the circumstances you will want to switch between the two 
+devices.   
+
+To play in head-to-head combat you need an open serial port with a modem 
+or null-modem cable connect to your adversaries computer.
+
+
+Fast Start
+==========
+The game of Megatron uses futuristic 3-Dimensional and top-down views of 
+the labyrinth and your human or computer adversary.  Sonar blips tell you 
+how close you are to your adversary: you must use strategy to negotiate 
+the labyrinth and get close enough destroy your adversary.
+
+For a fast start, just type MEGA at the DOS command prompt, then wait for 
+the assault robot selection screen to appear.  Press ENTER and you will 
+randomly select a assault robot for you to use.  Once you see a 3D view of the
+combat labyrinth corridor on the screen press F5 to start the (single player) 
+training mode.
+
+Use the direction arrow keys on the numeric keypad to guide your assault robot.
+Use HOME and PGUP to fire your weapons.  The INS key toggles your area radar 
+on/off.  Use END and PGDN to transfer energy between your shield and weapons 
+systems.  Use DEL to drop explosive sensor mines in the labyrinth.  To return
+to normal "Command" mode press F5 again.  The ESC key brings up the EXIT menu.
+
+
+Game Icons and Function Keys
+============================
+There are 6 icons used to control the game.  They are arranged in two set 
+of vertical columns located on the left and right side of the screen.  To 
+activate an icon place the mouse cursor over the picture and press either 
+mouse button.  The icons are arranged as follows.
+
+              F1                             F4
+              F2                             F5
+              F3                             F6
+
+Here is a description of each of the icons along with the function key use 
+to activate it.
+
+F1 -	Copyright Notice and Version Information.  The copyright and game
+        release versions are displayed.  
+
+F2 -	Sound System On/Off.  There are two sound systems built into the 
+        game.  They are FM synthesized sounds and IBM PC sounds.  Unregistered 
+        version of Megatron use FM sounds during the first combat round and 
+        then switch to IBM PC sounds for the remainder of the game.
+ 
+F3 -	Make New Combat Labyrinth.  If you don't like the labyrinth you are
+        using, you can press this key and create a new one.]
+ 
+F4 -	Modem Control.  Choose the modem port to use.  Choose from Dial 
+        Modem or Answer Modem.  You can use a Null-Modem cable by selecting 
+        the appropriate COM port and then press Open.
+ 
+F5 -	Computer Trainer (single player mode) On/Off.  Practice fighting 
+        against the computer.  This is great for homing your combat skills.  
+
+F6 -	Exit Game.  Obvious.
+
+
+Robot Controls
+==============
+The best way to control your assault robot is by using the 10-key pad on your 
+keyboard.  The follows keys are used as controls:
+
+                     HOME  |  UP-ARROW  |  PGUP
+		 ----------+------------+----------     
+		 LT-ARROW  |            |  RT-ARROW
+                 ----------+------------+----------
+                      END  |  DN-ARROW  |  PGDN
+                 -----------------------+----------
+                          INS           |  DEL
+
+Each key instructs your assault robot to perform a specific action.  Here is a
+description of each of the actions along with the key used to activate it.
+
+HOME     - Fire plasma disrupters.  A burst of plasma energy is fired down 
+           the corridor your assault robot is facing.
+
+UP-ARROW - Move forward.  No mater what direction your assault robot is facing
+           in the 3D view window it attempt to move forward one square.
+
+PGUP     - Fire missile.  An armor piercing missile is launched down the 
+           corridor your assault robot is facing.
+
+LT-ARROW - Turn left.  Your assault robot turns 90 degrees left.
+
+RT-ARROW - Turn right.  Your assault robot turns 90 degrees right.
+
+END      - Transfer power from weapons systems to shield system.  If you 
+           have excess power in your weapons systems a portion is transferred 
+           to your shield system.
+
+DN-ARROW - Move backward.  No mater what direction your assault robot is 
+           facing in the 3D view window it attempt to move backward one 
+           square.
+
+PGDN     - Transfer power from shield system to weapons systems.  If you 
+           have excess power in your shield system a portion is transferred 
+           to your weapons systems.
+
+INS      - Radar On/Off.  Your short range radar is best used when you are 
+           in hot pursuit of your adversary.  If your adversary is within 
+           the radar area you will see him on your 2D display.  The down side 
+           to using short range radar is that it displays your location to 
+           your adversary.
+
+DEL -      Drop mine.  An explosive sensor mine is placed at your current 
+           current location.  The location of the mine appears as a green dot
+           on your 2D view.  If anything attempts to pass over the mine it 
+           explodes and the green dot disappears from your 2D view.
+
+
+Instant Messaging
+=================
+You are always in total communication with your adversary.  Once a connection
+is established between your computers, anything you type (except for game 
+commands) is instantly transmitted to your adversary.
+
+
+Energy Meters
+=============
+On the left side of the playing screen is located the assault robot energy 
+meter.  The meter provides useful information about both you and your 
+adversaries assault robots.  The meter is divided into two set of three bar.  
+The top GREEN bars are yours and the bottom RED bars are the adversaries.  
+
+The first bar on the meter shows your shield energy strength.  The second 
+bar shows your current weapon energy supply.  The third bar shows the 
+temperature of your assault robot. 
+
+Bars 4-6 show the same information as do bars 1-3 except it is for your 
+adversaries assault robot.
+
+
+Modem Control Menu - (F4)
+=========================
+Megatron gets the information it needs to communicate with another computer 
+from the Modem Control Menu (F4).  Once in the menu, use the mouse or function
+keys (F1 - F8) to select COM port, baud rate, and modem option.
+
+Use F1 - F2 to select the COM port to communicate through:
+
+F1 -	Cycle COM Port Up
+F2 -	Cycle COM Port Down
+
+Use F3 - F4 to select the baud rate (speed) the computer should use.
+
+F4 -	Cycle Baud Rate Up
+F6 -	Cycle Baud Rate Down
+
+Use F5 - F6 to Dial or Answer the Modem.
+
+F5 -	Dial Modem.  You will be prompted to enter the phone number to dial.
+F6 -	Answer Mode.  Sit back and wait for the other player to call you.  
+
+For direct connection through a null-modem cable, choose the proper COM Port 
+and Baud Rate settings.  Then select Open at the bottom of the Modem Menu.
+
+The external file MODEMS.INI contains the Hayes initialization string used 
+to program your modem for the game.  Here is a transcript of that file.
+
+	AT E1 L3 M1 Q0 V1 X1 &C1 &D2 S0=1 S7=60 S11=155
+	AT DT
+        03F8 4
+        02F8 3
+        03E8 4
+        02E8 3
+	/* this line must be present */
+
+A simplified version of the this file is supplied with the game (SIMPLE.INI) 
+that works well with every modem I've tried to date.  
+
+If your experience problems using your modem you may need to modify this 
+file.  For another type of modem, or to use different dialing or answering 
+parameters, refer to your modem handbook.
+
+If you have non-standard serial port settings you can change the ADDRESS
+and IRQ values in this file to match you system. Use a DOS ascii text editor
+to make the changes to the modem file.
+
+
+RS232 Hardware Signals
+======================
+The number of hardware signals required to run Megatron depends on the 
+type of connection used between computers.  A direct connect uses three 
+pins, (2) TRANSMIT, (3) RECEIVE, and (7) SIGNAL GROUND.  Pins (2) and 
+(3) must be swapped once between the two machines.
+
+An auto-dial modem uses five pins, (2) TRANSMIT, (3) RECEIVE, (7) SIGNAL 
+GROUND, (8) DATA CARRIER DETECT, and (20) DATA TERMINAL READY.  There is 
+not a swap between pins (2) and (3) with a modem.
+
+There is one (1) additional pin signal provided by Megatron that some serial 
+cards and/or modems require.  The signal is pin (4) REQUEST TO SEND.  Most 
+computers will function properly without this extra signal; it is included for
+completeness.  
+
+SPECIAL NOTE:	Megatron uses pin (20) DATA TERMINAL READY to signal the 
+                modem when to hang-up the phone line and reset to command 
+                state. This DTR monitoring option is switch selectable on 
+                some modems. You should check your modem for this option 
+                before making long distance phone calls through Megatron.  
+                If this option is improperly set, the phone will not hang-up 
+                when Megatron exits and you will accumulate excess long 
+                distance charges.
+
+The proper modem DTR setting is:
+
+DTR high - Process dial command and connect normally.
+
+DTR low  - Hang-up phone line and reset to command state.
+
+
+Video Adapter and Monitor
+=========================
+You must have a Video Graphics Array (VGA) installed in your computer as 
+the primary graphics device along with a matching color monitor.  Megatron 
+does not support EGA or CGA graphic at this time.  If Megatron is run on a 
+computer that does not have a VGA installed, it will detect the absence of 
+the VGA and refuse to run.
+
+NOTE:	If Megatron fails to properly detect your VGA hardware, you can 
+        override the video hardware check by using the command line option 
+	NOVIDEO.  
+      
+(Example)		MEGA  NOVIDEO
+  
+This option is especially useful when playing Megatron on computers equipped 
+with off-brand video cards that sometimes lack video BIOS signature.
+
+PS/2 PLAYERS:	Megatron uses full VGA graphics and will not operate on 
+                PS/2's equipped with MCGA graphics.
+
+
+Command Line Switches
+=====================
+Depending on just how compatible your computer is to the IBM PC standard, 
+your computer may fail some (or all) of the built in software safety checks.
+Here is a list of command line switches you can use to override these tests 
+and allow access to the game. 
+
+COM1     - Allows use of COM1 in Modem Control Menu - (F4) 
+COM2     - Allows use of COM2 in Modem Control Menu - (F4)
+COM3     - Allows use of COM3 in Modem Control Menu - (F4)
+COM4     - Allows use of COM4 in Modem Control Menu - (F4)
+NODOS    - Do not test the DOS version level.
+NOCPU    - Do not test the micro-processor type.
+NOVIDEO  - Do not test for VGA present before starting game.
+NOMOUSE	 - Do not allow use of the mouse during game play.
+NOSOUND	 - Do not detect AdLib/SoundBlaster sound card.
+
+SPECIAL NOTE:	If you choose to override the build-in hardware tests, you 
+                do so at your own risk.  If you force the game override a 
+		test and you are wrong, you could SERIOUSLY DAMAGE your 
+		computer!

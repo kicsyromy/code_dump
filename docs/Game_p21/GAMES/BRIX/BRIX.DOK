@@ -1,0 +1,360 @@
+                       BRIX Shareware Anleitung                       
+
+Vorwort:
+
+BRIX  ist  ein Denk- und Geschicktlichkeitsspiel. Es wurde in ca. neun
+Monaten  von  Michael  Riedel  geschrieben.  Durch die Vermarktung als
+Shareware  k”nnen  Sie  BRIX in aller Ruhe zu Hause testen. Wenn Ihnen
+BRIX    gef„llt,    mssen   Sie   sich   registrieren   lassen.   Die
+Registrierungsgebhr  betr„gt  DM 48.- zzgl. Porto und Verpackung. Sie
+erhalten    dann    weitere    112    Levels,    neuen   Sound,   neue
+Hintergrundgrafiken,  einen  Levell”ser und neue Shareware Spiele. Die
+Bezugsadresse fr BRIX2 DELUXE ist:
+
+                       Jrgen Egeling Computer
+                       Werderstr. 41
+                       7500 Karlsruhe 1
+                       Deutschland
+                       Tel.: 0721 - 373 842
+                       FAX.: 0721 - 37 38 42
+
+Auáerhalb von Europa wenden Sie sich bitte an
+
+                       Epic MegaGames
+                       10406 Holbrook Drive
+                       Potomac, MD 20854
+                       301-299-3841
+
+BRIX   enth„lt   ca.   17000   Zeilen  C  Code,  sowie  einige  Zeilen
+Assemblercode.  BRIX  wurde mit dem Editor E! entwickelt, den Sie auch
+ber  uns  beziehen  k”nnen. Wir hoffen alle Fehler entfernt zu haben.
+Sollten  Sie  wider  Erwarten doch einen finden, So teilen Sie uns das
+bitte schriftlich mit.
+
+Alle  eingetragenen  Warenzeichen,  die  in dieser Anleitung verwendet
+werden,   sind   und   bleiben   die  eingetragenen  Warenzeichen  der
+entsprechenden Firmen.
+
+1. Systemvoraussetzungen:
+
+Um     BRIX    spielen    zu    k”nnen    ben”tigen    Sie    folgende
+Computerausstattung:
+
+einen   IBM   (kompatiblen)   AT   Computer  (286er  oder  h”her)  mit
+mindestens 512kB Hauptspeicher.
+
+Eine  VGA  Grafikkarte  mit einem Farbmonitor (ein monochromer Monitor
+schm„lert den Spielgenuá)
+
+Einen  Soundblaster  (um den tollen Sound zu h”ren. Man kann BRIX aber
+auch ohne Soundblaster spielen).
+
+Viel Zeit!
+
+2. Installation:
+
+Um  BRIX  zu  installieren,  gengt  es  ein  Unterverzeichnis auf der
+Festplatte   anzulegen,   und   die  gelieferte  Archivdatei  dort  zu
+entpacken.  Zum  Spielen  rufen  Sie  dann  einfach  BRIX.BAT auf. 
+
+BRIX hat zwei Kommandozeilen Optionen:
+
+/d startet die deutsche Version von BRIX
+
+/nosb  schaltet  die  Soundblasterfunktionen  ab! Diese Option sollten
+Sie  dann  benutzen,  wenn  Sie keinen Soundblaster besitzen. Wenn Sie
+dies  nicht  tun,  kann  es unter Umst„nden vorkommen, daá Teile Ihrer
+Hardware zerst”rt werden.
+
+Achtung!   In   diesem  Handbuch  wird  die  deutschsprachige  Version
+beschrieben.  In  der englischsprachigen Version sind einige Tasten im
+Leveleditor anders belegt!
+
+3. Spielregeln:
+
+Das  Ziel  von BRIX ist es, alle der bis zu acht verschiedenen Objekte
+vom  Bildschirm  zu  entfernen.  Die  Anzahl der verschiedenen Objekte
+sehen Sie im Hilfefenster im unteren linken Teil des Bildschirmes.
+
+Um   zwei   oder   mehr   Objekte   zu  entfernen,  mssen  Sie  diese
+zusammenschieben.  Wenn  sie  nebeneinander  liegen,  explodieren  sie
+sofort,  und  verschwinden  vom Bildschirm. Aber was muá man machen um
+drei  Objekte  explodieren  zu  lassen?  Tja,  es  ist Ihre Sache dies
+herauszufinden.
+
+Um  die  Objekte  zu  bewegen mssen Sie nur den roten Cursor ber ein
+Objekt  setzen,  und  dann  die  [leertaste]  drcken. Der Cursor wird
+dann weiá, das Zeichen fr Sie, daá das Objekt markiert ist.
+
+Um  den  BRIX-Cursor zu bewegen benutzen Sie einfach die Cursortasten,
+die  Sie  auch bei Ihrer normalen Arbeit mit dem Computer benutzen, um
+den  Cursor  zu  bewegen.  Wenn  Sie ein Objekt markiert haben, k”nnen
+Sie  es  nach  links  oder  rechts bewegen, falls der Platz links oder
+rechts  vom  Objekt  nicht  besetzt  ist.  Aber  vorsicht! Die Objekte
+gehorchen  den  Gesetzen  der  Schwerkraft. Wenn sie keinen Boden mehr
+unter den "Fáen" haben, fallen die Objekte herunter!
+
+Wenn  Sie  das  Spiel  nicht  mehr  weiterspielen k”nnen, erhalten Sie
+einen  Geheimcode. Mit Hilfe dieses Geheimcodes ist es leicht m”glich,
+das  Spiel  an  derselben  Stelle  wieder  fortzufhren, an der Sie es
+abgebrochen  haben.  Um  dies  zu  tun mssen Sie nur im Hauptmen von
+zum    Menpunkt   "Geheimcode   eingeben"   gehen,   und   dann   den
+entsprechenden   Code   eingeben.   Sie  kommen  dann  direkt  zu  dem
+entsprechenden Level.
+
+4. Das Auswahlmen:
+
+Mit  Hilfe  der  Cursortasten  k”nnen  Sie  den  roten Cursor auf- und
+abbewegen.  Wenn  Sie  sich  fr  einen  Menpunkt  entschieden haben,
+drcken Sie [return]
+
+EIN  SPIELER:  Hiermit  starten  Sie ein Spiel fr einen Spieler. Wenn
+Sie  sich  fr  diesen Punkt entschieden haben kommen Sie in ein Men,
+in  dem  Sie  den gewnschten Anfangslevel w„hlen k”nnen. Benutzen Sie
+dazu  die  Cursortasten. Die blau unterlegten Levels k”nnen Sie direkt
+anw„hlen.  Um  in  die letzten zwei Levels zu gelangen, mssen Sie die
+Levels  vorher  gel”st  haben.  Mit  der  [leertaste]  w„hlen  Sie den
+entsprechenden Level aus.
+
+ZWEI  SPIELER:  Hiermit  starten  Sie ein Spiel fr zwei Spieler. Wenn
+Sie  sich  fr  diesen Punkt entschieden haben kommen Sie in ein Men,
+in  dem  Sie  den gewnschten Anfangslevel w„hlen k”nnen. Benutzen Sie
+dazu  die  Cursortasten. Die blau unterlegten Levels k”nnen Sie direkt
+anw„hlen.  Um  in  die letzten zwei Levels zu gelangen, mssen Sie die
+Levels  vorher  gel”st  haben.  Mit  der  [leertaste]  w„hlen  Sie den
+entsprechenden Level aus.
+
+STUFE:  Jedesmal  wenn  Sie  hier  [Return] drcken, ver„ndern Sie den
+Schwierigkeitsgrad von BRIX.
+
+BESTELLINFORMATION:  Hier  erhalten  Sie  ein kurzes Info, wo Sie sich
+registrieren lassen k”nnen. Die beiden Adressen sind:
+
+           In Europa: Jrgen Egeling Computer
+                      Werderstr. 41
+                      7500 Karlsruhe
+                      Deutschland
+                      FAX: 0721 - 37 38 42
+                      Tel.: 0721 - 373 842
+                      
+      In USA, Canada: Epic MEGAGames
+                      10406 Holbrook Drive
+                      Potomac
+                      Maryland 20854
+                      USA
+
+Soundeinstellung:  Bei  dieser Auswahl gelangen Sie in das Sound Men.
+Dort k”nnen Sie:
+
+-  PC-Lautsprecher:  Sound  Effekte  ber den eingebauten Lautsprecher
+ein- und ausschalten.
+
+-  Soundblaster/Musik:  Wenn  Sie  einen  Soundblaster besitzen k”nnen
+Sie die Musik an- und ausschalten.
+
+-  Soundblaster/Effects:  Wenn  Sie einen Soundblaster besitzen k”nnen
+Sie die Sound Effekte an- und ausschalten.
+
+- [ESC]: Das Soundmen verlassen.
+
+W„hrend  des  Spieles  k”nnen  Sie  mit den Tasten [F5], [F6] und [F7]
+die entsprechenden Ger„usche ein- und ausschalten.
+
+BESTENLISTE:  Hier  sehen  Sie  die  High  Score  Liste,  in  die sich
+vielleicht schon einige vor Ihnen eingetragen haben.
+
+PROGRAMMINFORMATIONEN:   Die   Liste   all   derer,   denen   Sie  das
+Spielvergngen verdanken.
+
+LEVELEDITOR:  Entwickeln  Sie  mit dem Leveleditor Ihre eigenen Levels
+fr  Freund  und  Feind.  Der  Bildschirmaufbau  des  Leveleditors ist
+zweigeteilt.  Links  sehen  Sie  den  aktuellen  Level,  den  Sie auch
+ver„ndern k”nnen. Rechts werden allerlei Informationen angezeigt.
+
+Innerhalb  des  Levels  k”nnen  Sie  wieder  mit  den Cursortasten den
+roten  Cursor  bewegen. Mit den beiden Tasten [Pos1] und [Ende] k”nnen
+Sie  den  Level  ausw„hlen,  den  Sie  editieren m”chten. Es wird dann
+immer  der  n„chste,  bzw.  vorhergehende Level ausgew„hlt. Sie k”nnen
+einen  Level  auch direkt anspringen, indem Sie die Taste [v] drcken,
+und  dann  die Nummer des Levels eingeben. Mit den beiden Tasten [Bild
+hoch]  bzw.  [Bild  runter]  w„hlen Sie die verschiedenen Objekte aus.
+Zus„tzlich  k”nnen  Sie  mit  den  Zahlentasten  [1] bis [8] eines der
+farbigen  Objekte  ausw„hlen  und  auch  gleich setzen. Sie k”nnen ein
+Objekt  auf  das  Spielfeld setzen, indem Sie die [Leertaste] oder die
+[Einfg] drcken.
+
+Drcken  Sie  die  Taste  [Entf]  so  wird  ein  Objekt  vom Spielfeld
+gel”scht.  Denselben  Effekt  erreichen  Sie,  wenn Sie auf ein Objekt
+der  Hintergrund  setzen  wollen. Im rechten Anzeigenteil erhalten Sie
+folgende  Informationen:  -  Ganz oben werden alle verfgbaren Objekte
+dargestellt.  Das  Objekt innerhalb des kleinen weiáen Rahmens ist das
+aktive  Objekt,  das gesetzt werden kann. Unterhalb des Objektes steht
+dessen Name. Folgende Objekte stehen zur Verfgung:
+
+Hinterg.:  Hintergrund:  An  dieser Stelle kann durch das Programm das
+Hintergrundbild eingeblendet werden.
+
+Objekt  [1  2  3 4 5 6 7 8]: Objekt Nr. 1-8: Diese Objekte mssen beim
+sp„teren Spiel vom Bildschirm gel”scht werden.
+
+Mauer: Ein Stck Mauer: Hat dieselbe Funktion wie der Innere Rand.
+
+Aus.  Rand:  uáerer  Rand:  Durch  diesen  Rand  kann  man sp„ter den
+Cursor  nicht  bewegen,  Objekte  bleiben  darauf  liegen.  Er  sollte
+m”glichst  zur  Spielfeldbegrenzung  eingesetzt werden, kann aber auch
+dazu dienen einen sp„teren Spieler zu verwirren.
+
+Inn.  Rand:  Innerer  Rand:  Durch  diesen  Rand  kann  man sp„ter den
+Cursor bewegen, Objekte bleiben darauf liegen.
+
+Broesler:  Zerbr”selndes  Stck  Mauer:  Bleibt  ein Objekt auf diesem
+Br”sler   liegen,   so   zerf„llt   der   Br”sler   langsam.  Je  nach
+eingesetztem Zerfallgrad ben”tigt dies mehr oder weniger Zeit.
+
+TeleE.  [1  2 3 4 5]: Teleport Eingang Nr. 1 - 5: In diesen Teleporter
+kann   man   sp„ter   Objekte   hineinschieben.  Sie  kommen  dann  am
+entsprechenden Teleport Ausgang heraus.
+
+TeleA.  [1  2  3  4  5]:  Teleport  Ausgang  Nr.  1  - 5: Ausg„nge der
+entsprechenden  Teleport  Eing„nge.  Die  im Eingang hineingeschobenen
+Objekte   kommen  an  den  entsprechenden  Teleport  Ausg„ngen  wieder
+heraus.
+
+Lift:  Liftstation:  Dieser  Lift  bewegt sich w„hrend des Spieles auf
+und  ab.  Mit  Hilfe  dieses  Liftes kann man Objekte wieder nach oben
+bewegen.  Die  Fahrtrichtung  beim  Start k”nnen Sie mit der Taste [t]
+einstellen.
+
+Laser  [R  L O U]: Laserkanonen die nach rechts, nach links, nach oben
+oder  nach  unten  schieáen:  Wird  ein  Objekt  von einem Laserstrahl
+getroffen,  so  wird  es zerst”rt und der Level gilt als nicht gel”st.
+Die  Intervalle,  nach  denen  die Laser schieáen sollen, kann man mit
+der  Taste  [a]  festlegen. Die dort eingegebene Zahl gibt die Zeit in
+Sekunden an, nach der die Laser wieder aktiviert werden.
+
+Saeure  [L  M  R]: S„ueret”pfe. F„llt ein Objekt in die S„ure, so wird
+es  zerst”rt,  und  der Level gilt als nicht gel”st. Die beiden linken
+und  rechten  Randbegrenzer  verhalten  sich  den  Objekten  gegenber
+neutral.
+
+Wasser  [L  M  R]: Wassertopf: F„llt ein Objekt ins Wasser, so wird es
+vom  Spielfeld  entfernt, der Level gilt nicht als verloren. So ist es
+mit  Hilfe  der Wassert”pfe m”glich einzelne Objekte vom Bildschirm zu
+entfernen.
+
+Sanduhr:  Mit  Hilfe der Sanduhr kann eingestellt werden, nach wieviel
+Sekunden  sich  das Spielfeld um 180 drehen soll. Da danach immer noch
+die  Gesetze  der  Schwerkraft gelten, fallen einige Objekte herunter.
+Drckt  man  die  Taste  [u],  so  kann man die Zeit angeben, nach der
+sich das Spielfeld wieder drehen soll.
+
+-  Cursor:  Hier  wird angezeigt, auf welchem Objekt sich zur Zeit der
+Cursor im Level befindet.
+
+-  L[A]DE:  Drcken  Sie  [l],  dann k”nnen Sie einen oder alle Levels
+laden.
+
+-  E[N]DE:  Drcken  Sie  [n],  dann  wird  der Leveleditor verlassen.
+Falls  nicht  alle  Levels  gesichert  sind,  erscheint  eine Abfrage,
+damit keine Arbeit verloren gehen kann.
+
+-  S[I]CHERE:  Drcken  Sie [s], k”nnen Sie einen oder alle Levels auf
+Ihrer Festplatte oder Diskette sichern.
+
+-  S[P]IELE:  Drcken  Sie [p], so k”nnen Sie Ihren gerade entworfenen
+Level  spielen.  Drcken  Sie  innerhalb  dieses  Spielmodus die Taste
+[ESC], dann verlassen Sie den Spielmodus wieder.
+
+-  H[I]LFE:  Drcken  Sie  [h], so erscheint eine kleine Hilfestellung
+zu all den im Leveleditor benutzen Tasten.
+
+-  Modus:  Es  gibt zwei -- in der DELUXE Version vier -- verschiedene
+Zeichenmodi  im  Leveleditor.  Sie  gelangen  in den jeweiligen Modus,
+indem Sie die entsprechende Funktionstaste drcken:
+
+(a)  F1: Normal: Ist der Modus, mit dem Sie den Cursor bewegen k”nnen,
+und  die  einzelnen  Objekte  mit Hilfe der [Leertaste] oder der Taste
+[Einfg] setzen k”nnen.
+
+(b)  F2:  Zeichnen:  Wenn  Sie  in diesem Modus den Cursor bewegen, so
+wird  das  aktive  Objekt  an  der  Cursorposition  gesetzt. In diesem
+Modus ist es z.B. leicht m”glich einen Rahmen zu ziehen.
+
+-  Status:  Gibt  den  Status  an,  in  dem  sich  der  aktuelle Level
+befindet.  Es  gibt  den  Status gesichert und den Status ungesichert.
+Bei  gesichert  befindet  sich  der  Level in derselben Form auf einem
+Massenspeicher.
+
+-  S-[U]HR:  Drcken Sie [u], dann k”nnen Sie den Wert fr die Sanduhr
+einstellen.  Damit  wird  angegeben,  nach  wieviel  Sekunden sich der
+Bildschirm um 180 drehen soll.
+
+-  L[V]L:  Drcken  Sie  [v],  k”nnen Sie einen Level eingeben, zu dem
+Sie direkt springen k”nnen.
+
+-  [Z]EIT:  Drcken  Sie [z], so k”nnen Sie die Zeit vorgeben, die der
+Spieler  sp„ter  maximal  verwenden  darf,  um  den  gesamten Level zu
+l”sen.
+
+-   LIF[T]:   Drcken  Sie  [t],  so  wird  zwischen  oben  und  unten
+umgeschaltet.  Je  nachdem, ob die Liftstation die erste Bewegung nach
+oben oder nach unten ausfhren soll.
+
+-  L[A]SER:  Drcken Sie [a], so k”nnen Sie die Zeit angeben, nach der
+die   Laserkanonen  ihre  Laserstrahlen  abschieáen  sollen.  Folgende
+Tasten  sind  auch  noch  innerhalb des Editors aktiv, k”nnen aber aus
+Platzgrnden nicht auf dem Bildschirm dargestellt werden.
+
+-  [r]:  Ein  Druck  auf  die  Taste  [r]  bewirkt,  daá der Level auf
+Syntaxschw„chen berprft wird.
+
+LADE  EIGENE  (ODER  ORIGINAL)  LEVELS:  Laden  Sie  die  Levels Ihrer
+Freunde oder Feinde, und spielen Sie diese.
+
+GEHEIMCODE  EINGEBEN:  Geben  Sie  einen  Geheimcode  ein,  den Sie in
+einem  der  letzten  Spiele  erhalten  haben. Sie gelangen ohne Umwege
+direkt zu dem Level in dem Sie den Code erhalten haben.
+
+SPIEL VERLASSEN: verl„át das Spiel.
+
+5. Tastaturbelegung w„hrend des Spiels:
+
+[F4]:  W„hrend  des  Spiels  k”nnen Sie mit der Taste [F4] ein Problem
+neu  beginnen.  Dies kann dann ntzlich sein, wenn Sie merken, daá der
+Level unl”sbar ist. Doch Achtung! Die Zeit l„uft weiter.
+
+[F5]: PC-Lautsprecher an- und ausschalten.
+
+[F6]: Soundeffekte ber den Soundblaster ein- und ausschalten.
+
+[F7]: Hintergrundmusik ber den Soundblaster ein- und ausschalten.
+
+[ESC]  W„hrend  eines  jeden  Levels  k”nnen  Sie  an einer beliebigen
+Stelle  die  Taste  [ESC]  drcken.  Sie gelangen dann in ein Men, in
+dem folgendes angezeigt wird:
+
+-  CODE  FšR  LEVEL:  Dies  ist  der  Geheimcode, den Sie im Hauptmen
+unter dem Menpunkt "Geheimcode eingeben" eingeben k”nnen.
+
+- PC-LAUTSPRECHER: Wie oben beschrieben.
+
+- SOUNDBLASTER/MUSIK: Wie oben beschrieben.
+
+- SOUNDBLASTER/EFFEKTE: Wie oben beschrieben.
+
+-  SPIEL  BEENDEN:  Das  z.Zt.  aktuelle Spiel wird verlassen, und Sie
+gelangen  ins  Hauptmen.  Falls Sie gengend Punkte haben, k”nnen Sie
+sich in der Bestenliste eintragen.
+
+-  WEITERSPIELEN:  Fortfahren  des Spieles an derselben Stelle, an der
+man [ESC] gedrckt hat.
+
+-   WIEDERHOLEN:   Hiermit   kann   man  den  Versuch  starten,  einen
+verfahrenen  Level  noch  einmal  zu  spielen. Doch vorsicht, die Zeit
+wird nicht zurckgesetzt.
+
+Wenn  Sie  eine  Demostration von BRIX sehen wollen, so mssen Sie nur
+eine Weile warten. Die Demos laufen dann von alleine ab.
+
+
+
