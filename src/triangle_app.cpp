@@ -8,8 +8,9 @@
 #include "logger.h"
 
 #include "vk_instance.h"
-#include "vk_debug.h"
 #include "vk_window.h"
+#include "vk_debug.h"
+#include "vk_surface.h"
 #include "vk_physical_device.h"
 #include "vk_logical_device.h"
 #include "vk_queue.h"
@@ -72,27 +73,37 @@ namespace
 #endif
     }
 
-    bool is_device_suitable(const vk::physical_device_t &device)
+    bool is_device_suitable(
+            const vk::physical_device_t &device,
+            const vk::surface_t &surface)
     {
         auto queue_families = device.queue_families();
 
+        int index { 0 };
         auto it = std::find_if(queue_families.cbegin(), queue_families.cend(),
-                               [](const auto &queue_family)
+                               [&](const auto &queue_family)
         {
-            return ((queue_family.queueCount > 0) &&
+            VkBool32 present_support { false };
+            vkGetPhysicalDeviceSurfaceSupportKHR(
+                        device, index, surface, &present_support);
+            ++index;
+
+            return ((queue_family.queueCount > 0) && present_support &&
                 (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT));
         });
 
         return (it != queue_families.cend());
     }
 
-    vk::physical_device_t pick_physical_device(vk::instance_t &vk_instance)
+    vk::physical_device_t pick_physical_device(
+            const vk::instance_t &vk_instance,
+            const vk::surface_t &vk_surface)
     {
         auto devices = vk::physical_device_t::physical_devices(vk_instance);
 
         for (auto &device: devices)
         {
-            if (is_device_suitable(device))
+            if (is_device_suitable(device, vk_surface))
             {
                 return std::move(device);
             }
@@ -106,18 +117,37 @@ void triangle_application::run()
 {
     vk::window_t window;
     auto vk_instance = create_instance();
-    auto physical_device = pick_physical_device(vk_instance);
-
-#ifndef NDEBUG
-    auto logical_device = vk::logical_device_t(physical_device, validation_layers);
-#else
-    auto logical_device = vk::logical_device_t(physical_device);
-#endif
-    vk::queue_t graphics_queue(logical_device);
-
 #ifndef NDEBUG
     vk::debug_t d { vk_instance };
 #endif
+    auto vk_surface = vk::surface_t(vk_instance, window);
+    auto physical_device = pick_physical_device(vk_instance, vk_surface);
+
+    const auto queue_graphics_family_index {
+        physical_device.queue_family_index(VK_QUEUE_GRAPHICS_BIT)
+    };
+    const auto queue_family_surface_support_index {
+        physical_device.queue_surface_support_index(vk_surface)
+    };
+
+#ifndef NDEBUG
+    auto logical_device = vk::logical_device_t(
+                physical_device,
+                {
+                    queue_graphics_family_index,
+                    queue_family_surface_support_index
+                },
+                validation_layers);
+#else
+    auto logical_device = vk::logical_device_t(
+                physical_device,
+                {
+                    queue_graphics_family_index,
+                    queue_family_surface_support_index
+                });
+#endif
+    vk::queue_t graphics_queue(logical_device,
+                               queue_graphics_family_index);
 
     window.runMainLoop();
 }

@@ -1,8 +1,11 @@
 #ifndef VK_LOGICAL_DEVICE_H
 #define VK_LOGICAL_DEVICE_H
 
+#include <set>
+
 #include "support.h"
 #include "vk_physical_device.h"
+#include "vk_surface.h"
 
 namespace vk
 {
@@ -12,24 +15,29 @@ namespace vk
         template <typename array_t = nullptr_t>
         inline logical_device_t(
                 const vk::physical_device_t &vk_physical_device,
+                const std::set<int> &queue_family_indices,
                 const array_t &validation_layers = nullptr)
           : vk_physical_device_(vk_physical_device)
         {
-            VkDeviceQueueCreateInfo queue_create_info { };
-            queue_create_info.sType =
-                    VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queue_create_info.queueFamilyIndex =
-                    vk_physical_device.queue_family_index(VK_QUEUE_GRAPHICS_BIT);
-            queue_create_info.queueCount = 1;
-            float queue_priority { 1.0f };
-            queue_create_info.pQueuePriorities = &queue_priority;
+            std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+            for (int queue_family: queue_family_indices)
+            {
+                VkDeviceQueueCreateInfo queue_create_info { };
+                queue_create_info.sType =
+                        VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                queue_create_info.queueFamilyIndex = queue_family;
+                queue_create_info.queueCount = 1;
+                float queue_priority { 1.0f };
+                queue_create_info.pQueuePriorities = &queue_priority;
+                queue_create_infos.push_back(queue_create_info);
+            }
 
             auto features = vk_physical_device.features();
 
             VkDeviceCreateInfo device_create_info { };
             device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            device_create_info.pQueueCreateInfos = &queue_create_info;
-            device_create_info.queueCreateInfoCount = 1;
+            device_create_info.queueCreateInfoCount = queue_create_infos.size();
+            device_create_info.pQueueCreateInfos = queue_create_infos.data();
             device_create_info.pEnabledFeatures = &features;
             device_create_info.enabledExtensionCount = 0;
 

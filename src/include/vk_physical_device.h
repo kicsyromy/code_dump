@@ -8,6 +8,7 @@
 #include "support.h"
 #include "logger.h"
 #include "vk_instance.h"
+#include "vk_surface.h"
 
 namespace vk
 {
@@ -15,7 +16,7 @@ namespace vk
     {
     public:
         static std::vector<physical_device_t> physical_devices(
-                vk::instance_t &vk_instance)
+                const vk::instance_t &vk_instance)
         {
             std::uint32_t device_count { 0 };
             vkEnumeratePhysicalDevices(vk_instance, &device_count, nullptr);
@@ -72,6 +73,30 @@ namespace vk
             {
                 if ((queue_family.queueCount > 0)
                         && (queue_family.queueFlags & flags))
+                {
+                    result = index;
+                    break;
+                }
+
+                ++index;
+            }
+
+            return result;
+        }
+
+        inline int queue_surface_support_index(const vk::surface_t &surface) const
+        {
+            int result { -1 };
+            int index  {  0 };
+
+            for (const auto &queue_family: queue_families())
+            {
+                VkBool32 present_support { false };
+                vkGetPhysicalDeviceSurfaceSupportKHR(
+                            handle_, index, surface, &present_support);
+
+                if ((queue_family.queueCount > 0)
+                        && present_support)
                 {
                     result = index;
                     break;
