@@ -1,6 +1,7 @@
 #include "triangle_app.h"
 
 #include <array>
+#include <algorithm>
 
 #include <cstdint>
 
@@ -14,6 +15,7 @@
 #include "vk_physical_device.h"
 #include "vk_logical_device.h"
 #include "vk_queue.h"
+#include "vk_swap_chain.h"
 
 using namespace triangle_application;
 
@@ -24,6 +26,10 @@ namespace
         "VK_LAYER_LUNARG_standard_validation"
     };
 #endif
+
+    const std::array required_device_extensions {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
+    };
 
     std::vector<const char *> required_extensions()
     {
@@ -92,7 +98,12 @@ namespace
                 (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT));
         });
 
-        return (it != queue_families.cend());
+        return (
+            (it != queue_families.cend()) &&
+            (device.extensions_supported(required_device_extensions)) &&
+            !device.surface_formats(surface).empty() &&
+            !device.surface_present_modes(surface).empty()
+        );
     }
 
     vk::physical_device_t pick_physical_device(
@@ -111,6 +122,105 @@ namespace
 
         LOG_FATAL("Failed to find a suitable Vulkan capable GPU");
     }
+
+    VkSurfaceFormatKHR choose_swap_surface_format(
+            const vk::physical_device_t &device,
+            const vk::surface_t &surface)
+    {
+        static constexpr auto PREFERED_FORMAT {
+            VK_FORMAT_B8G8R8A8_UNORM
+        };
+        static constexpr auto PREFERED_COLOR_SPACE {
+            VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
+        };
+
+        VkSurfaceFormatKHR result {
+            PREFERED_FORMAT,
+            PREFERED_COLOR_SPACE
+        };
+
+        auto available_formats = device.surface_formats(surface);
+
+        if (!((available_formats.size() == 1) &&
+              (available_formats.front().format == VK_FORMAT_UNDEFINED)))
+        {
+            auto it = std::find_if(
+                          available_formats.cbegin(),
+                          available_formats.cend(),
+                          [] (const auto &format){
+                              return (
+                                  (format.format == PREFERED_FORMAT) &&
+                                  (format.colorSpace == PREFERED_COLOR_SPACE)
+                              );
+                          }
+                      );
+            if (it == available_formats.cend())
+            {
+                result = available_formats.front();
+            }
+        }
+
+        return result;
+    }
+
+    VkPresentModeKHR choose_swap_present_mode(
+            const vk::physical_device_t &device,
+            const vk::surface_t &surface)
+    {
+        VkPresentModeKHR result { VK_PRESENT_MODE_FIFO_KHR };
+
+        auto available_modes = device.surface_present_modes(surface);
+        for (const auto &mode: available_modes)
+        {
+            if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
+            {
+                result = mode;
+                break;
+            }
+
+            if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+            {
+                result = mode;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    VkExtent2D choose_swap_extent(
+            const vk::physical_device_t &device,
+            const vk::surface_t &surface,
+            const vk::window_t &window)
+    {
+        auto capabilities = device.surface_capabilities(surface);
+
+        VkExtent2D result {
+            capabilities.currentExtent.width,
+            capabilities.currentExtent.height
+        };
+
+        if (capabilities.currentExtent.width
+                == std::numeric_limits<std::uint32_t>::max())
+        {
+            result.width = std::max(
+                               capabilities.minImageExtent.width,
+                               std::min(
+                                   capabilities.maxImageExtent.width,
+                                   window.width()
+                                )
+                           );
+            result.height = std::max(
+                                capabilities.minImageExtent.height,
+                                std::min(
+                                    capabilities.maxImageExtent.height,
+                                    window.height()
+                                 )
+                            );
+        }
+
+        return result;
+    }
 }
 
 void triangle_application::run()
@@ -120,19 +230,20 @@ void triangle_application::run()
 #ifndef NDEBUG
     vk::debug_t d { vk_instance };
 #endif
-    auto vk_surface = vk::surface_t(vk_instance, window);
-    auto physical_device = pick_physical_device(vk_instance, vk_surface);
+    auto surface = vk::surface_t(vk_instance, window);
+    auto physical_device = pick_physical_device(vk_instance, surface);
 
     const auto queue_graphics_family_index {
         physical_device.queue_family_index(VK_QUEUE_GRAPHICS_BIT)
     };
     const auto queue_family_surface_support_index {
-        physical_device.queue_surface_support_index(vk_surface)
+        physical_device.queue_surface_support_index(surface)
     };
 
 #ifndef NDEBUG
     auto logical_device = vk::logical_device_t(
                 physical_device,
+                required_device_extensions,
                 {
                     queue_graphics_family_index,
                     queue_family_surface_support_index
@@ -141,13 +252,26 @@ void triangle_application::run()
 #else
     auto logical_device = vk::logical_device_t(
                 physical_device,
+                required_device_extensions,
                 {
                     queue_graphics_family_index,
                     queue_family_surface_support_index
                 });
 #endif
-    vk::queue_t graphics_queue(logical_device,
-                               queue_graphics_family_index);
+    auto graphics_queue = vk::queue_t(logical_device,
+                                      queue_graphics_family_index);
+
+    auto swap_chain = vk::swap_chain_t(
+                logical_device,
+                surface,
+                physical_device.surface_capabilities(surface),
+                choose_swap_surface_format(physical_device, surface),
+                choose_swap_present_mode(physical_device, surface),
+                choose_swap_extent(physical_device, surface, window),
+                {
+                    queue_graphics_family_index,
+                    queue_family_surface_support_index
+                });
 
     window.runMainLoop();
 }

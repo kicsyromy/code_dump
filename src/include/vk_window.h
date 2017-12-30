@@ -8,8 +8,8 @@ namespace vk
     class window_t
     {
     private:
-        static constexpr const auto WIDTH  { 800 * 2 };
-        static constexpr const auto HEIGHT { 600 * 2 };
+        static constexpr std::uint32_t WIDTH  { 800 * 2 };
+        static constexpr std::uint32_t HEIGHT { 600 * 2 };
 
     public:
         inline window_t()
@@ -27,6 +27,10 @@ namespace vk
             glfwDestroyWindow(handle_);
             glfwTerminate();
         }
+
+    public:
+        std::uint32_t width() const  { return WIDTH; }
+        std::uint32_t height() const { return HEIGHT; }
 
     public:
         inline void runMainLoop()

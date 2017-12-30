@@ -2,6 +2,9 @@
 #define VK_PHYSICAL_DEVICE_H
 
 #include <vector>
+#include <array>
+#include <set>
+#include <string_view>
 
 #include <cstdint>
 
@@ -52,6 +55,42 @@ namespace vk
             return result;
         }
 
+        inline std::vector<VkExtensionProperties> supported_extensions() const
+        {
+            std::uint32_t extension_count { 0 };
+            vkEnumerateDeviceExtensionProperties(
+                        handle_, nullptr, &extension_count, nullptr);
+
+            std::vector<VkExtensionProperties> result(extension_count);
+
+            vkEnumerateDeviceExtensionProperties(
+                        handle_, nullptr, &extension_count, result.data());
+
+            return result;
+        }
+
+        template <std::size_t count>
+        inline bool extensions_supported(
+                const std::array<const char *, count> &required_extensions) const
+        {
+            auto available_extensions = supported_extensions();
+            std::set<std::string_view> req_ext(
+                required_extensions.cbegin(),
+                required_extensions.cend()
+            );
+
+            for (const auto &extension: available_extensions)
+            {
+                req_ext.erase(extension.extensionName);
+                if (req_ext.empty())
+                {
+                    break;
+                }
+            }
+
+            return req_ext.empty();
+        }
+
         inline std::vector<VkQueueFamilyProperties> queue_families() const
         {
             std::uint32_t count { 0 };
@@ -84,7 +123,8 @@ namespace vk
             return result;
         }
 
-        inline int queue_surface_support_index(const vk::surface_t &surface) const
+        inline int queue_surface_support_index(
+                const vk::surface_t &surface) const
         {
             int result { -1 };
             int index  {  0 };
@@ -104,6 +144,46 @@ namespace vk
 
                 ++index;
             }
+
+            return result;
+        }
+
+        inline VkSurfaceCapabilitiesKHR surface_capabilities(
+                const vk::surface_t &surface) const
+        {
+            VkSurfaceCapabilitiesKHR result { };
+
+            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+                        handle_, surface, &result);
+
+            return result;
+        }
+
+        /* TODO: Move these to vk::surface_t */
+        inline std::vector<VkSurfaceFormatKHR> surface_formats(
+                const vk::surface_t &surface) const
+        {
+            std::uint32_t count;
+            vkGetPhysicalDeviceSurfaceFormatsKHR(
+                        handle_, surface, &count, nullptr);
+
+            std::vector<VkSurfaceFormatKHR> result(count);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(
+                        handle_, surface, &count, result.data());
+
+            return result;
+        }
+
+        inline std::vector<VkPresentModeKHR> surface_present_modes(
+                const vk::surface_t &surface) const
+        {
+            std::uint32_t count;
+            vkGetPhysicalDeviceSurfacePresentModesKHR(
+                        handle_, surface, &count, nullptr);
+
+            std::vector<VkPresentModeKHR> result(count);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(
+                        handle_, surface, &count, result.data());
 
             return result;
         }

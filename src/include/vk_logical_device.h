@@ -1,7 +1,7 @@
 #ifndef VK_LOGICAL_DEVICE_H
 #define VK_LOGICAL_DEVICE_H
 
-#include <set>
+#include <array>
 
 #include "support.h"
 #include "vk_physical_device.h"
@@ -12,9 +12,10 @@ namespace vk
     class logical_device_t
     {
     public:
-        template <typename array_t = nullptr_t>
+        template <std::size_t count, typename array_t = nullptr_t>
         inline logical_device_t(
                 const vk::physical_device_t &vk_physical_device,
+                const std::array<const char *, count> &extensions,
                 const std::set<int> &queue_family_indices,
                 const array_t &validation_layers = nullptr)
           : vk_physical_device_(vk_physical_device)
@@ -39,7 +40,8 @@ namespace vk
             device_create_info.queueCreateInfoCount = queue_create_infos.size();
             device_create_info.pQueueCreateInfos = queue_create_infos.data();
             device_create_info.pEnabledFeatures = &features;
-            device_create_info.enabledExtensionCount = 0;
+            device_create_info.enabledExtensionCount = extensions.size();
+            device_create_info.ppEnabledExtensionNames = extensions.data();
 
             if constexpr (std::is_same_v<array_t, nullptr_t>)
             {
