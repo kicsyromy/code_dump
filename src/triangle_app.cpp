@@ -2,6 +2,7 @@
 
 #include <array>
 #include <algorithm>
+#include <memory>
 
 #include <cstdint>
 
@@ -16,6 +17,8 @@
 #include "vk_logical_device.h"
 #include "vk_queue.h"
 #include "vk_swap_chain.h"
+#include "vk_image_view.h"
+#include "vk_shader.h"
 
 using namespace triangle_application;
 
@@ -116,7 +119,8 @@ namespace
         {
             if (is_device_suitable(device, vk_surface))
             {
-                return std::move(device);
+                VkPhysicalDevice dev = device;
+                return { dev };
             }
         }
 
@@ -236,7 +240,9 @@ void triangle_application::run()
     const auto queue_graphics_family_index {
         physical_device.queue_family_index(VK_QUEUE_GRAPHICS_BIT)
     };
-    const auto queue_family_surface_support_index {
+
+    const auto queue_family_indices = std::set<int> {
+        queue_graphics_family_index,
         physical_device.queue_surface_support_index(surface)
     };
 
@@ -244,19 +250,13 @@ void triangle_application::run()
     auto logical_device = vk::logical_device_t(
                 physical_device,
                 required_device_extensions,
-                {
-                    queue_graphics_family_index,
-                    queue_family_surface_support_index
-                },
+                queue_family_indices,
                 validation_layers);
 #else
     auto logical_device = vk::logical_device_t(
                 physical_device,
                 required_device_extensions,
-                {
-                    queue_graphics_family_index,
-                    queue_family_surface_support_index
-                });
+                queue_family_indices);
 #endif
     auto graphics_queue = vk::queue_t(logical_device,
                                       queue_graphics_family_index);
@@ -268,10 +268,28 @@ void triangle_application::run()
                 choose_swap_surface_format(physical_device, surface),
                 choose_swap_present_mode(physical_device, surface),
                 choose_swap_extent(physical_device, surface, window),
-                {
-                    queue_graphics_family_index,
-                    queue_family_surface_support_index
-                });
+                queue_family_indices);
+
+    auto images = swap_chain.images();
+    std::vector<std::unique_ptr<vk::image_view_t>> image_views;
+    image_views.reserve(images.size());
+    for (auto &image: images)
+    {
+        image_views.emplace_back(new vk::image_view_t(
+                                     logical_device,
+                                     image,
+                                     VK_IMAGE_VIEW_TYPE_2D,
+                                     swap_chain.format()));
+    }
+
+    auto fragment_shader = vk::shader_t(
+                logical_device,
+                vk::shader_t::ShaderType::Fragment,
+                SHADER_PATH"/frag.spv");
+    auto vertex_shader   = vk::shader_t(
+                logical_device,
+                vk::shader_t::ShaderType::Fragment,
+                SHADER_PATH"/vert.spv");
 
     window.runMainLoop();
 }

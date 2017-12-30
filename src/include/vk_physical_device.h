@@ -194,11 +194,9 @@ namespace vk
     private:
         VkPhysicalDevice handle_ { nullptr };
 
-    public:
-        DEFAULT_MOVE(physical_device_t)
-
     private:
         DISABLE_COPY(physical_device_t)
+        DISABLE_MOVE(physical_device_t)
     };
 }
 
