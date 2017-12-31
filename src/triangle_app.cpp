@@ -19,6 +19,7 @@
 #include "vk_swap_chain.h"
 #include "vk_image_view.h"
 #include "vk_shader.h"
+#include "vk_pipeline_layout.h"
 
 using namespace triangle_application;
 
@@ -225,6 +226,155 @@ namespace
 
         return result;
     }
+
+    void create_graphics_pipeline(
+            const vk::logical_device_t &logical_device,
+            const vk::swap_chain_t &swap_chain)
+    {
+        auto fragment_shader = vk::shader_t(
+                    logical_device,
+                    vk::shader_t::ShaderType::Fragment,
+                    SHADER_PATH"/frag.spv");
+        auto vertex_shader   = vk::shader_t(
+                    logical_device,
+                    vk::shader_t::ShaderType::Fragment,
+                    SHADER_PATH"/vert.spv");
+
+        VkPipelineShaderStageCreateInfo fragment_shader_stage_info {
+            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            fragment_shader,
+            "main",
+            nullptr
+        };
+
+        VkPipelineShaderStageCreateInfo vertex_shader_stage_info {
+            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_SHADER_STAGE_VERTEX_BIT,
+            vertex_shader,
+            "main",
+            nullptr
+        };
+
+        std::array shader_stages {
+            fragment_shader_stage_info,
+            vertex_shader_stage_info
+        };
+
+        VkPipelineVertexInputStateCreateInfo vertex_input_info {
+            VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            0,
+            nullptr,
+            0,
+            nullptr
+        };
+
+        VkPipelineInputAssemblyStateCreateInfo input_assembly {
+            VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+            VK_FALSE
+        };
+
+        VkViewport viewport {
+            0.0f,
+            0.0f,
+            static_cast<float>(swap_chain.extent().width),
+            static_cast<float>(swap_chain.extent().height),
+            0.0f,
+            1.0f
+        };
+
+        VkRect2D scissor {
+            { 0, 0 },
+            swap_chain.extent()
+        };
+
+        VkPipelineViewportStateCreateInfo viewport_state {
+            VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            1,
+            &viewport,
+            1,
+            &scissor
+        };
+
+        VkPipelineRasterizationStateCreateInfo resterizer {
+            VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_FALSE,
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_BACK_BIT,
+            VK_FRONT_FACE_CLOCKWISE,
+            VK_FALSE,
+            0.0f,
+            0.0f,
+            0.0f,
+            1.0f
+        };
+
+        VkPipelineMultisampleStateCreateInfo multisampling {
+            VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_SAMPLE_COUNT_1_BIT,
+            VK_FALSE,
+            1.0f,
+            nullptr,
+            VK_FALSE,
+            VK_FALSE
+        };
+
+        VkPipelineColorBlendAttachmentState color_blend_attachment {
+            VK_FALSE,
+            VK_BLEND_FACTOR_ONE,
+            VK_BLEND_FACTOR_ZERO,
+            VK_BLEND_OP_ADD,
+            VK_BLEND_FACTOR_ONE,
+            VK_BLEND_FACTOR_ZERO,
+            VK_BLEND_OP_ADD,
+            VK_COLOR_COMPONENT_R_BIT |
+            VK_COLOR_COMPONENT_G_BIT |
+            VK_COLOR_COMPONENT_B_BIT |
+            VK_COLOR_COMPONENT_A_BIT
+        };
+
+        VkPipelineColorBlendStateCreateInfo color_blend {
+            VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_FALSE,
+            VK_LOGIC_OP_COPY,
+            1,
+            &color_blend_attachment,
+            { 0.0f, 0.0f, 0.0f, 0.0f }
+        };
+
+        const std::array dynamic_states {
+            VK_DYNAMIC_STATE_VIEWPORT,
+            VK_DYNAMIC_STATE_LINE_WIDTH
+        };
+
+        VkPipelineDynamicStateCreateInfo dynamic_state {
+            VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+            nullptr,
+            0,
+            2,
+            dynamic_states.data()
+        };
+
+
+    }
 }
 
 void triangle_application::run()
@@ -282,14 +432,7 @@ void triangle_application::run()
                                      swap_chain.format()));
     }
 
-    auto fragment_shader = vk::shader_t(
-                logical_device,
-                vk::shader_t::ShaderType::Fragment,
-                SHADER_PATH"/frag.spv");
-    auto vertex_shader   = vk::shader_t(
-                logical_device,
-                vk::shader_t::ShaderType::Fragment,
-                SHADER_PATH"/vert.spv");
+    auto pipeline_layout = vk::pipeline_layout_t(logical_device);
 
     window.runMainLoop();
 }

@@ -79,6 +79,9 @@ namespace vk
             return data_;
         }
 
+    public:
+        inline operator VkShaderModule() const { return handle_; }
+
     private:
         VkShaderModule handle_ { nullptr };
         std::vector<byte_t> data_ { };
