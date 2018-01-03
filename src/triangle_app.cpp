@@ -372,7 +372,6 @@ namespace
             rasterizer,
             multisampling,
             color_blending,
-            dynamic_state,
             render_pass,
             pipline_layout
         };
@@ -495,6 +494,54 @@ void triangle_application::run()
                 logical_device,
                 command_pool,
                 framebuffers.size());
+
+    for (std::size_t index = 0; index < command_buffer.size(); ++index)
+    {
+        const VkCommandBufferBeginInfo begin_info {
+            VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            nullptr,
+            VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+            nullptr
+        };
+
+        vkBeginCommandBuffer(command_buffer[index], &begin_info);
+
+        const VkClearValue clear_color {
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+
+        const VkRenderPassBeginInfo render_pass_info {
+            VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            nullptr,
+            render_pass,
+            *framebuffers[index].get(),
+            { { 0, 0 }, swap_chain.extent() },
+            1,
+            &clear_color
+        };
+
+        vkCmdBeginRenderPass(
+                    command_buffer[index],
+                    &render_pass_info,
+                    VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindPipeline(
+                    command_buffer[index],
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    graphics_pipeline);
+
+        vkCmdDraw(command_buffer[index], 3, 1, 0, 0);
+
+        vkCmdEndRenderPass(command_buffer[index]);
+
+        if (auto result = vkEndCommandBuffer(command_buffer[index]);
+                result != VK_SUCCESS)
+        {
+
+            LOG_FATAL("Failed to create render pass. Error: %s",
+                      vk::support::VK_RESULT_STRING.at(result));
+        }
+    }
 
     window.runMainLoop();
 }

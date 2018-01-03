@@ -42,6 +42,17 @@ namespace vk
         inline ~command_buffer_t() = default;
 
     public:
+        inline const VkCommandBuffer &operator [](std::size_t index) const
+        {
+            return buffer_[index];
+        }
+
+        std::size_t size() const
+        {
+            return buffer_.size();
+        }
+
+    public:
         inline operator std::vector<VkCommandBuffer> &()
         {
             return buffer_;

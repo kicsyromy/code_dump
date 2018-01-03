@@ -62,6 +62,9 @@ namespace vk
             vkDestroyFramebuffer(vk_logical_device_, handle_, nullptr);
         }
 
+    public:
+        inline operator VkFramebuffer() const { return handle_; }
+
     private:
         VkFramebuffer handle_ { nullptr };
         const vk::logical_device_t &vk_logical_device_;

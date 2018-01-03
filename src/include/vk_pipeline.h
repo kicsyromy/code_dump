@@ -23,7 +23,7 @@ namespace vk
                 const VkPipelineMultisampleStateCreateInfo &multisampling,
 //                const VkPipelineDepthStencilStateCreateInfo &depth_stencil
                 const VkPipelineColorBlendStateCreateInfo &color_blending,
-                const VkPipelineDynamicStateCreateInfo &dynamic_states,
+//                const VkPipelineDynamicStateCreateInfo &dynamic_states,
                 const vk::render_pass_t &render_pass,
                 const vk::pipeline_layout_t &pipeline_layout)
           : vk_logical_device_(device)
@@ -44,7 +44,7 @@ namespace vk
                 &multisampling,
                 nullptr,
                 &color_blending,
-                &dynamic_states,
+                nullptr,
                 pipeline_layout,
                 render_pass,
                 0,
