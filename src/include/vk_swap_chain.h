@@ -51,7 +51,8 @@ namespace vk
             if (queue_indices.size() > 1)
             {
                 create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-                create_info.queueFamilyIndexCount = queue_indices.size();
+                create_info.queueFamilyIndexCount =
+                        static_cast<std::uint32_t>(queue_indices.size());
                 create_info.pQueueFamilyIndices = queue_indices.data();
             }
             else
@@ -68,7 +69,8 @@ namespace vk
             create_info.oldSwapchain = nullptr;
 
             if (vkCreateSwapchainKHR(
-                        logical_device, &create_info, nullptr, &handle_))
+                        logical_device, &create_info, nullptr, &handle_)
+                    != VK_SUCCESS)
             {
                 LOG_FATAL("Failed to create swap chain");
             }

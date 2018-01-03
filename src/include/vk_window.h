@@ -19,13 +19,19 @@ namespace vk
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-            handle_ = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Window", nullptr, nullptr);
+            handle_ = glfwCreateWindow(
+                        WIDTH,
+                        HEIGHT,
+                        "Vulkan Window",
+                        nullptr,
+                        nullptr);
         }
 
         inline ~window_t()
         {
             glfwDestroyWindow(handle_);
-            glfwTerminate();
+            /* Remove this for now since it causes a crash on Windows */
+            /* glfwTerminate(); */
         }
 
     public:

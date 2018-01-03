@@ -17,7 +17,7 @@ namespace vk
                 VkFormat format)
           : vk_logical_device_(logical_device)
         {
-            VkImageViewCreateInfo create_info {
+            const VkImageViewCreateInfo create_info {
                 VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
                 nullptr,
                 0,
@@ -48,6 +48,9 @@ namespace vk
         {
             vkDestroyImageView(vk_logical_device_, handle_, nullptr);
         }
+
+    public:
+        inline operator VkImageView() const { return handle_; }
 
     private:
         VkImageView handle_ { nullptr };

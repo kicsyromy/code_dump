@@ -13,7 +13,7 @@ namespace vk
         inline pipeline_layout_t(const vk::logical_device_t &device)
           : vk_logical_device_(device)
         {
-            VkPipelineLayoutCreateInfo create_info {
+            const VkPipelineLayoutCreateInfo create_info {
                 VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 nullptr,
                 0,

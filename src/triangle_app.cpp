@@ -19,7 +19,12 @@
 #include "vk_swap_chain.h"
 #include "vk_image_view.h"
 #include "vk_shader.h"
+#include "vk_render_pass.h"
 #include "vk_pipeline_layout.h"
+#include "vk_pipeline.h"
+#include "vk_framebuffer.h"
+#include "vk_command_pool.h"
+#include "vk_command_buffer.h"
 
 using namespace triangle_application;
 
@@ -95,7 +100,10 @@ namespace
         {
             VkBool32 present_support { false };
             vkGetPhysicalDeviceSurfaceSupportKHR(
-                        device, index, surface, &present_support);
+                        device,
+                        static_cast<std::uint32_t>(index),
+                        surface,
+                        &present_support);
             ++index;
 
             return ((queue_family.queueCount > 0) && present_support &&
@@ -227,45 +235,27 @@ namespace
         return result;
     }
 
-    void create_graphics_pipeline(
-            const vk::logical_device_t &logical_device,
-            const vk::swap_chain_t &swap_chain)
+    vk::pipeline_t create_graphics_pipeline(
+            const vk::logical_device_t &device,
+            const vk::swap_chain_t &swap_chain,
+            const vk::render_pass_t &render_pass,
+            const vk::pipeline_layout_t &pipline_layout)
     {
         auto fragment_shader = vk::shader_t(
-                    logical_device,
+                    device,
                     vk::shader_t::ShaderType::Fragment,
                     SHADER_PATH"/frag.spv");
         auto vertex_shader   = vk::shader_t(
-                    logical_device,
-                    vk::shader_t::ShaderType::Fragment,
+                    device,
+                    vk::shader_t::ShaderType::Vertex,
                     SHADER_PATH"/vert.spv");
 
-        VkPipelineShaderStageCreateInfo fragment_shader_stage_info {
-            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            nullptr,
-            0,
-            VK_SHADER_STAGE_FRAGMENT_BIT,
-            fragment_shader,
-            "main",
-            nullptr
+        const std::array shader_stages {
+            fragment_shader.stage_info(),
+            vertex_shader.stage_info()
         };
 
-        VkPipelineShaderStageCreateInfo vertex_shader_stage_info {
-            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            nullptr,
-            0,
-            VK_SHADER_STAGE_VERTEX_BIT,
-            vertex_shader,
-            "main",
-            nullptr
-        };
-
-        std::array shader_stages {
-            fragment_shader_stage_info,
-            vertex_shader_stage_info
-        };
-
-        VkPipelineVertexInputStateCreateInfo vertex_input_info {
+        const VkPipelineVertexInputStateCreateInfo vertex_input_info {
             VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -275,7 +265,7 @@ namespace
             nullptr
         };
 
-        VkPipelineInputAssemblyStateCreateInfo input_assembly {
+        const VkPipelineInputAssemblyStateCreateInfo input_assembly {
             VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -283,7 +273,7 @@ namespace
             VK_FALSE
         };
 
-        VkViewport viewport {
+        const VkViewport viewport {
             0.0f,
             0.0f,
             static_cast<float>(swap_chain.extent().width),
@@ -292,12 +282,12 @@ namespace
             1.0f
         };
 
-        VkRect2D scissor {
+        const VkRect2D scissor {
             { 0, 0 },
             swap_chain.extent()
         };
 
-        VkPipelineViewportStateCreateInfo viewport_state {
+        const VkPipelineViewportStateCreateInfo viewport_state {
             VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -307,7 +297,7 @@ namespace
             &scissor
         };
 
-        VkPipelineRasterizationStateCreateInfo resterizer {
+        const VkPipelineRasterizationStateCreateInfo rasterizer {
             VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -323,7 +313,7 @@ namespace
             1.0f
         };
 
-        VkPipelineMultisampleStateCreateInfo multisampling {
+        const VkPipelineMultisampleStateCreateInfo multisampling {
             VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -335,7 +325,7 @@ namespace
             VK_FALSE
         };
 
-        VkPipelineColorBlendAttachmentState color_blend_attachment {
+        const VkPipelineColorBlendAttachmentState color_blend_attachment {
             VK_FALSE,
             VK_BLEND_FACTOR_ONE,
             VK_BLEND_FACTOR_ZERO,
@@ -349,7 +339,7 @@ namespace
             VK_COLOR_COMPONENT_A_BIT
         };
 
-        VkPipelineColorBlendStateCreateInfo color_blend {
+        const VkPipelineColorBlendStateCreateInfo color_blending {
             VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -365,7 +355,7 @@ namespace
             VK_DYNAMIC_STATE_LINE_WIDTH
         };
 
-        VkPipelineDynamicStateCreateInfo dynamic_state {
+        const VkPipelineDynamicStateCreateInfo dynamic_state {
             VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
             nullptr,
             0,
@@ -373,7 +363,52 @@ namespace
             dynamic_states.data()
         };
 
+        return {
+            device,
+            shader_stages,
+            vertex_input_info,
+            input_assembly,
+            viewport_state,
+            rasterizer,
+            multisampling,
+            color_blending,
+            dynamic_state,
+            render_pass,
+            pipline_layout
+        };
+    }
 
+    vk::render_pass_t create_render_pass(
+            const vk::logical_device_t &device,
+            const vk::swap_chain_t &swap_chain)
+    {
+        const VkAttachmentDescription color_attachment {
+            0,
+            swap_chain.format(),
+            VK_SAMPLE_COUNT_1_BIT,
+            VK_ATTACHMENT_LOAD_OP_CLEAR,
+            VK_ATTACHMENT_STORE_OP_STORE,
+            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            VK_ATTACHMENT_STORE_OP_DONT_CARE,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+        };
+
+        const VkAttachmentReference color_attachment_ref {
+            0,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        };
+
+        VkSubpassDescription subpass { };
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &color_attachment_ref;
+
+        return {
+            device,
+            std::array { color_attachment },
+            std::array { subpass }
+        };
     }
 }
 
@@ -432,7 +467,34 @@ void triangle_application::run()
                                      swap_chain.format()));
     }
 
+    auto render_pass = create_render_pass(logical_device, swap_chain);
     auto pipeline_layout = vk::pipeline_layout_t(logical_device);
+    auto graphics_pipeline = create_graphics_pipeline(
+                logical_device,
+                swap_chain,
+                render_pass,
+                pipeline_layout);
+
+    std::vector<std::unique_ptr<vk::framebuffer_t>> framebuffers;
+    framebuffers.reserve(image_views.size());
+    for (const auto &image_view: image_views)
+    {
+        framebuffers.emplace_back(new vk::framebuffer_t(
+                                      logical_device,
+                                      render_pass,
+                                      swap_chain.extent().width,
+                                      swap_chain.extent().height,
+                                      { image_view.get() }));
+    }
+
+    auto command_pool = vk::command_pool_t(
+                logical_device,
+                queue_graphics_family_index);
+
+    auto command_buffer = vk::command_buffer_t(
+                logical_device,
+                command_pool,
+                framebuffers.size());
 
     window.runMainLoop();
 }

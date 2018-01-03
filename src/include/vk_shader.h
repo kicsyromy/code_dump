@@ -46,14 +46,14 @@ namespace vk
                 }
 
                 fseek(shader.get(), 0, SEEK_END);
-                auto file_size = ftell(shader.get());
+                auto file_size = static_cast<std::size_t>(ftell(shader.get()));
                 fseek(shader.get(), 0, SEEK_SET);
 
                 data_.resize(file_size);
                 fread(data_.data(), file_size, 1, shader.get());
             }
 
-            VkShaderModuleCreateInfo create_info {
+            const VkShaderModuleCreateInfo create_info {
                 VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
                 nullptr,
                 0,
@@ -66,6 +66,9 @@ namespace vk
             {
                 LOG_FATAL("Failed to create shader module");
             }
+
+            pipeline_shader_stage_.stage = static_cast<VkShaderStageFlagBits>(type);
+            pipeline_shader_stage_.module = handle_;
         }
 
         inline ~shader_t()
@@ -74,7 +77,12 @@ namespace vk
         }
 
     public:
-        const std::vector<byte_t> &data() const
+        inline const VkPipelineShaderStageCreateInfo &stage_info() const
+        {
+            return pipeline_shader_stage_;
+        }
+
+        inline const std::vector<byte_t> &data() const
         {
             return data_;
         }
@@ -84,6 +92,15 @@ namespace vk
 
     private:
         VkShaderModule handle_ { nullptr };
+        VkPipelineShaderStageCreateInfo pipeline_shader_stage_ {
+            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            nullptr,
+            "main",
+            nullptr
+        };
         std::vector<byte_t> data_ { };
         const vk::logical_device_t &vk_logical_device_;
     };

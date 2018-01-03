@@ -12,7 +12,7 @@ namespace vk
     class logical_device_t
     {
     public:
-        template <std::size_t count, typename array_t = nullptr_t>
+        template <std::size_t count, typename array_t = decltype(nullptr)>
         inline logical_device_t(
                 const vk::physical_device_t &vk_physical_device,
                 const std::array<const char *, count> &extensions,
@@ -26,7 +26,8 @@ namespace vk
                 VkDeviceQueueCreateInfo queue_create_info { };
                 queue_create_info.sType =
                         VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                queue_create_info.queueFamilyIndex = queue_family;
+                queue_create_info.queueFamilyIndex =
+                        static_cast<std::uint32_t>(queue_family);
                 queue_create_info.queueCount = 1;
                 float queue_priority { 1.0f };
                 queue_create_info.pQueuePriorities = &queue_priority;
@@ -37,23 +38,29 @@ namespace vk
 
             VkDeviceCreateInfo device_create_info { };
             device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            device_create_info.queueCreateInfoCount = queue_create_infos.size();
+            device_create_info.queueCreateInfoCount =
+                    static_cast<std::uint32_t>(queue_create_infos.size());
             device_create_info.pQueueCreateInfos = queue_create_infos.data();
             device_create_info.pEnabledFeatures = &features;
             device_create_info.enabledExtensionCount = extensions.size();
             device_create_info.ppEnabledExtensionNames = extensions.data();
 
-            if constexpr (std::is_same_v<array_t, nullptr_t>)
+            if constexpr (std::is_same_v<array_t, decltype(nullptr)>)
             {
                 device_create_info.enabledLayerCount = 0;
             }
             else
             {
                 device_create_info.enabledLayerCount = validation_layers.size();
-                device_create_info.ppEnabledLayerNames = validation_layers.data();
+                device_create_info.ppEnabledLayerNames =
+                        validation_layers.data();
             }
 
-            if (vkCreateDevice(vk_physical_device, &device_create_info, nullptr, &handle_) != VK_SUCCESS)
+            if (vkCreateDevice(
+                        vk_physical_device,
+                        &device_create_info,
+                        nullptr,
+                        &handle_) != VK_SUCCESS)
             {
                 LOG_FATAL("Failed to create logical device");
             }

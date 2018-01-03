@@ -6,13 +6,14 @@
 #include <type_traits>
 
 #include "support.h"
+#include "logger.h"
 
 namespace vk
 {
     class instance_t
     {
     public:
-        template <typename array_t = nullptr_t>
+        template <typename array_t = decltype(nullptr)>
         inline instance_t(
                 const char *app_name,
                 const std::vector<const char *> &enabled_extensions,
@@ -20,7 +21,7 @@ namespace vk
         {
             using namespace support;
 
-            VkApplicationInfo app_info {
+            const VkApplicationInfo app_info {
                 VK_STRUCTURE_TYPE_APPLICATION_INFO,
                 nullptr,
                 app_name,
@@ -33,10 +34,11 @@ namespace vk
             VkInstanceCreateInfo create_info { };
             create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             create_info.pApplicationInfo = &app_info;
-            create_info.enabledExtensionCount = enabled_extensions.size();
+            create_info.enabledExtensionCount =
+                    static_cast<std::uint32_t>(enabled_extensions.size());
             create_info.ppEnabledExtensionNames = enabled_extensions.data();
 
-            if constexpr (std::is_same_v<array_t, nullptr_t>)
+            if constexpr (std::is_same_v<array_t, decltype(nullptr)>)
             {
                 create_info.enabledLayerCount = 0;
             }
@@ -46,9 +48,11 @@ namespace vk
                 create_info.ppEnabledLayerNames = validation_layers.data();
             }
 
-            if (auto result = vkCreateInstance(&create_info, nullptr, &handle_); result != VK_SUCCESS)
+            if (auto result = vkCreateInstance(&create_info, nullptr, &handle_);
+                    result != VK_SUCCESS)
             {
-                LOG_FATAL("Failed to create Vulkan instance. Error: %s", VK_RESULT_STRING.at(result));
+                LOG_FATAL("Failed to create Vulkan instance. Error: %s",
+                          VK_RESULT_STRING.at(result));
             }
         }
 
