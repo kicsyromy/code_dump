@@ -39,11 +39,13 @@ namespace vk
         std::uint32_t height() const { return HEIGHT; }
 
     public:
-        inline void runMainLoop()
+        template<typename draw_callable_t, typename ...Args>
+        inline void runMainLoop(draw_callable_t &&draw_call, Args &&...args)
         {
             while (!glfwWindowShouldClose(handle_))
             {
                 glfwPollEvents();
+                draw_call(std::forward<Args>(args)...);
             }
         }
 

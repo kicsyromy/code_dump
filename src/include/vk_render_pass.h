@@ -10,11 +10,15 @@ namespace vk
     class render_pass_t
     {
     public:
-        template<typename attachment_array_t, typename subpass_array_t>
+        template<
+                typename attachment_array_t,
+                typename subpass_array_t,
+                typename subpass_dependency_array_t>
         inline render_pass_t(
             const vk::logical_device_t &device,
             attachment_array_t &&attachments,
-            subpass_array_t &&subpasses)
+            subpass_array_t &&subpasses,
+            subpass_dependency_array_t &&subpass_dependencies)
           : vk_logical_device_(device)
         {
             using namespace vk::support;
@@ -27,8 +31,8 @@ namespace vk
                 attachments.data(),
                 static_cast<std::uint32_t>(subpasses.size()),
                 subpasses.data(),
-                0,
-                nullptr
+                static_cast<std::uint32_t>(subpass_dependencies.size()),
+                subpass_dependencies.data()
             };
 
             if (auto result = vkCreateRenderPass(

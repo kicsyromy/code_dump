@@ -72,6 +72,12 @@ namespace vk
         }
 
     public:
+        void wait_for_idle() const
+        {
+            vkDeviceWaitIdle(handle_);
+        }
+
+    public:
         inline const vk::physical_device_t &physical_device() const
         {
             return vk_physical_device_;

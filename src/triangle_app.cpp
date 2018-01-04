@@ -25,6 +25,7 @@
 #include "vk_framebuffer.h"
 #include "vk_command_pool.h"
 #include "vk_command_buffer.h"
+#include "vk_semaphore.h"
 
 using namespace triangle_application;
 
@@ -403,12 +404,92 @@ namespace
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &color_attachment_ref;
 
+        const VkSubpassDependency dependency {
+            VK_SUBPASS_EXTERNAL,
+            0,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            0,
+            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            0
+        };
+
         return {
             device,
             std::array { color_attachment },
-            std::array { subpass }
+            std::array { subpass },
+            std::array { dependency }
         };
     }
+}
+
+void draw_frame(
+        const vk::logical_device_t &device,
+        const vk::swap_chain_t &swap_chain,
+        const vk::command_buffer_t &command_buffer,
+        const vk::queue_t &graphics_queue,
+        const vk::queue_t &present_queue,
+        vk::semaphore_t &image_available,
+        vk::semaphore_t &render_finished)
+{
+    std::uint32_t image_index { 0 };
+    vkAcquireNextImageKHR(
+                device,
+                swap_chain,
+                std::numeric_limits<std::uint64_t>::max(),
+                image_available,
+                VK_NULL_HANDLE,
+                &image_index);
+
+    std::array wait_semaphores {
+        static_cast<VkSemaphore>(image_available)
+    };
+    std::array signal_semaphores {
+        static_cast<VkSemaphore>(render_finished)
+    };
+    std::array wait_stages {
+        static_cast<VkFlags>(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)
+    };
+
+    const VkSubmitInfo submit_info {
+        VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        nullptr,
+        static_cast<std::uint32_t>(wait_semaphores.size()),
+        wait_semaphores.data(),
+        wait_stages.data(),
+        1,
+        &command_buffer[image_index],
+        static_cast<std::uint32_t>(signal_semaphores.size()),
+        signal_semaphores.data()
+    };
+
+    if (auto result =
+            vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+            result != VK_SUCCESS)
+    {
+        LOG_FATAL("Failed to submit draw command buffer. Error: %s",
+                  vk::support::VK_RESULT_STRING.at(result));
+    }
+
+    std::array swap_chains {
+        static_cast<VkSwapchainKHR>(swap_chain)
+    };
+
+    const VkPresentInfoKHR present_info {
+        VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        nullptr,
+        static_cast<std::uint32_t>(signal_semaphores.size()),
+        signal_semaphores.data(),
+        static_cast<std::uint32_t>(swap_chains.size()),
+        swap_chains.data(),
+        &image_index,
+        nullptr
+    };
+
+    vkQueuePresentKHR(present_queue, &present_info);
+
+    present_queue.wait_for_idle();
 }
 
 void triangle_application::run()
@@ -425,9 +506,13 @@ void triangle_application::run()
         physical_device.queue_family_index(VK_QUEUE_GRAPHICS_BIT)
     };
 
+    const auto queue_present_family_index {
+        physical_device.queue_surface_support_index(surface)
+    };
+
     const auto queue_family_indices = std::set<int> {
         queue_graphics_family_index,
-        physical_device.queue_surface_support_index(surface)
+        queue_present_family_index
     };
 
 #ifndef NDEBUG
@@ -444,6 +529,8 @@ void triangle_application::run()
 #endif
     auto graphics_queue = vk::queue_t(logical_device,
                                       queue_graphics_family_index);
+    auto present_queue = vk::queue_t(logical_device,
+                                     queue_present_family_index);
 
     auto swap_chain = vk::swap_chain_t(
                 logical_device,
@@ -543,5 +630,18 @@ void triangle_application::run()
         }
     }
 
-    window.runMainLoop();
+    auto image_available = vk::semaphore_t { logical_device };
+    auto render_finished = vk::semaphore_t { logical_device };
+
+    window.runMainLoop(
+                &draw_frame,
+                logical_device,
+                swap_chain,
+                command_buffer,
+                graphics_queue,
+                present_queue,
+                image_available,
+                render_finished);
+
+    logical_device.wait_for_idle();
 }

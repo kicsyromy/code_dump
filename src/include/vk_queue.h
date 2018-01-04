@@ -15,13 +15,19 @@ namespace vk
         {
             vkGetDeviceQueue(
                 vk_logical_device,
-                queue_family_index,
+                static_cast<std::uint32_t>(queue_family_index),
                 0,
                 &handle_
             );
         }
 
         inline ~queue_t() = default;
+
+    public:
+        void wait_for_idle() const
+        {
+            vkQueueWaitIdle(handle_);
+        }
 
     public:
         inline operator VkQueue() const { return handle_; }
