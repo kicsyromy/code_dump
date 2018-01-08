@@ -85,44 +85,6 @@ bool vulkan_instance_t::extension_available(
     return (it != extensions.cend());
 }
 
-vulkan_instance_t::vulkan_instance_t(
-        const char *application_name,
-        std::uint32_t application_version,
-        const char *engine_name,
-        std::uint32_t engine_version,
-        const std::vector<const char *> &enabled_layers,
-        const std::vector<const char *> &enabled_extensions) noexcept
-{
-    const VkApplicationInfo app_info {
-        VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        nullptr,
-        application_name,
-        application_version,
-        engine_name,
-        engine_version,
-        VK_MAKE_VERSION(1, 0, 0)
-    };
-
-    const VkInstanceCreateInfo create_info {
-        VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-        nullptr,
-        0,
-        &app_info,
-        static_cast<std::uint32_t>(enabled_layers.size()),
-        enabled_layers.data(),
-        static_cast<std::uint32_t>(enabled_extensions.size()),
-        enabled_extensions.data()
-    };
-
-    if (auto r = vkCreateInstance(&create_info, nullptr, &handle_);
-             r != VK_SUCCESS)
-    {
-        handle_ = nullptr;
-        LOG_ERROR("Failed to create Vulkan instance. Error: %s",
-                  vk_result_to_string(r).data());
-    }
-}
-
 vulkan_instance_t::~vulkan_instance_t() noexcept
 {
     if (valid())
@@ -131,7 +93,8 @@ vulkan_instance_t::~vulkan_instance_t() noexcept
     }
 }
 
-std::vector<physical_device_t> vulkan_instance_t::physical_devices() const
+std::vector<physical_device_t>
+vulkan_instance_t::physical_devices() const noexcept
 {
     std::uint32_t count { 0 };
     vkEnumeratePhysicalDevices(handle_, &count, nullptr);
@@ -143,4 +106,16 @@ std::vector<physical_device_t> vulkan_instance_t::physical_devices() const
                 reinterpret_cast<VkPhysicalDevice *>(result.data()));
 
     return result;
+}
+
+void vulkan_instance_t::initialize_handle(
+        const VkInstanceCreateInfo &create_info) noexcept
+{
+    if (auto r = vkCreateInstance(&create_info, nullptr, &handle_);
+             r != VK_SUCCESS)
+    {
+        handle_ = nullptr;
+        LOG_ERROR("Failed to create Vulkan instance. Error: %s",
+                  vk_result_to_string(r).data());
+    }
 }

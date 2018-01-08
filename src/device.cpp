@@ -15,6 +15,18 @@ device_t::~device_t() noexcept
     }
 }
 
+queue_t device_t::queue(uint32_t family_index, uint32_t index) const noexcept
+{
+    queue_t result { };
+    vkGetDeviceQueue(
+                handle_,
+                family_index,
+                index,
+                reinterpret_cast<VkQueue *>(&result));
+
+    return result;
+}
+
 void device_t::initialize_device_handle(
         const physical_device_t &physical_device,
         const VkDeviceCreateInfo &create_info) noexcept

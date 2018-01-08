@@ -22,10 +22,13 @@ add_executable (
     ${SAHDERS}
 )
 
-target_link_libraries (
-    ${PROJECT_NAME} PRIVATE
-    dl
-)
+if (UNIX AND NOT APPLE)
+    target_link_libraries (
+        ${PROJECT_NAME} PRIVATE
+        dl
+    )
+endif ()
+
 
 target_include_directories (
     ${PROJECT_NAME} PRIVATE
@@ -38,6 +41,18 @@ target_compile_definitions (
     "-DSHADER_PATH=\"${PROJECT_BINARY_DIR}/shaders\""
     "-DVK_NO_PROTOTYPES"
 )
+
+if (WIN32)
+    target_compile_definitions (
+        ${PROJECT_NAME} PRIVATE
+        "-DVK_USE_PLATFORM_WIN32_KHR"
+    )
+elseif (UNIX AND NOT APPLE)
+    target_compile_definitions (
+        ${PROJECT_NAME} PRIVATE
+        "-DVK_USE_PLATFORM_XCB_KHR"
+    )
+endif ()
 
 set_target_properties (
    ${PROJECT_NAME}       PROPERTIES

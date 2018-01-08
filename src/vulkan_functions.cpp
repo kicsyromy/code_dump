@@ -1,7 +1,8 @@
+#include <algorithm>
+
 #include <vulkan.h>
 
-#if defined(_WIN32)
-#include <windows.h>
+#if defined(_WIN32) || defined(_WIN64)
 HMODULE load_vulkan_libary() { return LoadLibrary("vulkan-1.dll"); }
 #define LOAD_FUNCTION GetProcAddress
 #elif defined(__linux)
@@ -127,15 +128,26 @@ namespace vulkan_tutorial
         auto result { true };
 
         #define INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(name, extension) \
-             name = [&result, &instance]() noexcept {                      \
-                auto function = reinterpret_cast<PFN_##name>(              \
-                            vkGetInstanceProcAddr(instance, #name));       \
-                if (result = result && function != nullptr; !result)       \
-                {                                                          \
-                    LOG_ERROR("Failed to load instance function "#name     \
-                              " from extension "#extension);               \
-                }                                                          \
-                return function;                                           \
+             name = [&result, &instance]() noexcept -> PFN_##name {            \
+                if constexpr (DEBUG_BUILD) {                                   \
+                    const auto &ex = instance.enabled_extensions();            \
+                    if (auto it = std::find(ex.cbegin(), ex.cend(), extension);\
+                             it == ex.cend()) {                                \
+                        LOG_ERROR("Extension "#extension" is not enabled on "  \
+                                  "Vulkan instance %p",                        \
+                                  static_cast<VkInstance>(instance));          \
+                        result = false;                                        \
+                        return nullptr;                                        \
+                    }                                                          \
+                }                                                              \
+                auto function = reinterpret_cast<PFN_##name>(                  \
+                            vkGetInstanceProcAddr(instance, #name));           \
+                if (result = result && function != nullptr; !result)           \
+                {                                                              \
+                    LOG_ERROR("Failed to load instance function "#name         \
+                              " from extension "#extension);                   \
+                }                                                              \
+                return function;                                               \
             }();
 
         #include "vulkan_functions.inl"
@@ -172,16 +184,27 @@ namespace vulkan_tutorial
     {
         auto result { true };
 
-        #define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(name, extension) \
-             name = [&result, &device]() noexcept {                        \
-                auto function = reinterpret_cast<PFN_##name>(              \
-                            vkGetDeviceProcAddr(device, #name));           \
-                if (result = result && function != nullptr; !result)       \
-                {                                                          \
-                    LOG_ERROR("Failed to load device function "#name       \
-                              " from extension "#extension);               \
-                }                                                          \
-                return function;                                           \
+        #define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(name, extension)   \
+             name = [&result, &device]() noexcept -> PFN_##name {              \
+                if constexpr (DEBUG_BUILD) {                                   \
+                    const auto &ex = device.enabled_extensions();              \
+                    if (auto it = std::find(ex.cbegin(), ex.cend(), extension);\
+                             it == ex.cend()) {                                \
+                        LOG_ERROR("Extension "#extension" is not enabled on "  \
+                                  "logical device %p",                         \
+                                  static_cast<VkDevice>(device));              \
+                        result = false;                                        \
+                        return nullptr;                                        \
+                    }                                                          \
+                }                                                              \
+                auto function = reinterpret_cast<PFN_##name>(                  \
+                            vkGetDeviceProcAddr(device, #name));               \
+                if (result = result && function != nullptr; !result)           \
+                {                                                              \
+                    LOG_ERROR("Failed to load device function "#name           \
+                              " from extension "#extension);                   \
+                }                                                              \
+                return function;                                               \
             }();
 
         #include "vulkan_functions.inl"

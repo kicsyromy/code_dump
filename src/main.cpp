@@ -5,12 +5,18 @@
 #include "vulkan_instance.h"
 #include "physical_device.h"
 #include "device.h"
+#include "window.h"
 #include "logger.h"
 
 namespace
 {
     constexpr const auto required_extensions = std::array {
-        VK_KHR_SURFACE_EXTENSION_NAME
+        VK_KHR_SURFACE_EXTENSION_NAME,
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+        VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+#elif defined(VK_USE_PLATFORM_XCB_KHR)
+        VK_KHR_XCB_SURFACE_EXTENSION_NAME
+#endif
     };
 
     constexpr const auto required_device_extensions = std::array {
@@ -39,11 +45,8 @@ int main()
         1,
         "No engine",
         1,
-        { },
-        {
-            required_extensions.cbegin(),
-            required_extensions.cend()
-        }
+        std::array<const char *, 0> { },
+        required_extensions
     };
 
     load_instance_level_functions(vulkan_instance);
@@ -63,6 +66,8 @@ int main()
         }
     }
 
+    /* TODO: Make sure the device support geometry and compute shaders. */
+    /*       Don't just pick randomly the first available device        */
     auto physical_device = std::move(physical_devices[0]);
     auto features = physical_device.features();
     auto properties = physical_device.properties();
@@ -85,7 +90,7 @@ int main()
     }
 
     const auto device_queues = std::array {
-        device_queue_t<1> { *graphics_queue_family_index, { 1.0f }}
+        device_queue_t<1> { *graphics_queue_family_index, { 1.0f }},
     };
 
     auto logical_device = device_t(
@@ -98,6 +103,17 @@ int main()
 
     load_device_level_functions(logical_device);
     load_device_level_functions_from_extensions(logical_device);
+
+    auto graphics_queue = logical_device.queue(*graphics_queue_family_index, 0);
+    auto compute_queue = logical_device.queue(*compute_queue_family_index, 0);
+
+    auto window = window_t {
+        "Vulkan Tutorial",
+        0, 0,
+        800, 600
+    };
+
+    window.run_render_loop();
 
     return 0;
 }

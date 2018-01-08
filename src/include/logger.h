@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <io.h>
 
-static const int redirect_io_to_win_console = []() -> int {
+inline const int redirect_io_to_win_console = []() -> int {
     static constexpr WORD MAX_CONSOLE_LINES = 500;
 
     AllocConsole();

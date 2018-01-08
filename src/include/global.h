@@ -17,4 +17,10 @@
     klass(klass &&) = delete;                  \
 klass &operator=(klass &&) = delete;
 
+#ifndef NDEBUG
+inline constexpr auto DEBUG_BUILD { true };
+#else
+inline constexpr auto DEBUG_BUILD { false };
+#endif
+
 #endif // !VK_TUTORIAL_GLOBAL_H

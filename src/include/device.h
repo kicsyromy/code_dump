@@ -1,6 +1,7 @@
-#ifndef VULKAN_DEVICE_H
-#define VULKAN_DEVICE_H
+#ifndef VK_TUTORIAL_DEVICE_H
+#define VK_TUTORIAL_DEVICE_H
 
+#include <vector>
 #include <array>
 
 #include <cstdint>
@@ -8,6 +9,7 @@
 #include <vulkan.h>
 
 #include "global.h"
+#include "queue.h"
 
 namespace vulkan_tutorial
 {
@@ -32,7 +34,7 @@ namespace vulkan_tutorial
                 const physical_device_t &physical_device,
                 const device_queue_array_t &device_queues,
                 const layer_array_t &enabled_layers,
-                const extension_array_t &enabled_extenions,
+                const extension_array_t &enabled_extensions,
                 const VkPhysicalDeviceFeatures &desired_features) noexcept;
         ~device_t() noexcept;
 
@@ -40,6 +42,15 @@ namespace vulkan_tutorial
         DEFAULT_MOVE(device_t)
 
     public:
+        inline const std::vector<std::string_view> &
+        enabled_layers() const noexcept { return enabled_layers_; }
+
+        inline const std::vector<std::string_view> &
+        enabled_extensions() const noexcept { return enabled_extensions_; }
+
+        queue_t queue(
+                std::uint32_t family_index, std::uint32_t index) const noexcept;
+
         inline bool valid() const noexcept { return handle_ != nullptr; }
 
     public:
@@ -53,6 +64,8 @@ namespace vulkan_tutorial
 
     private:
         VkDevice handle_ { nullptr };
+        const std::vector<std::string_view> enabled_layers_;
+        const std::vector<std::string_view> enabled_extensions_;
 
     private:
         DISABLE_COPY(device_t)
@@ -67,8 +80,12 @@ namespace vulkan_tutorial
             const physical_device_t &physical_device,
             const device_queue_array_t &device_queues,
             const layer_array_t &enabled_layers,
-            const extension_array_t &enabled_extenions,
+            const extension_array_t &enabled_extensions,
             const VkPhysicalDeviceFeatures &desired_features) noexcept
+      : enabled_layers_ { enabled_layers.cbegin(), enabled_layers.cend() }
+      , enabled_extensions_ {
+            enabled_extensions.cbegin(), enabled_extensions.cend()
+        }
     {
         constexpr auto count = device_queues.size();
         std::array<VkDeviceQueueCreateInfo, count> device_queue_create_infos;
@@ -93,8 +110,8 @@ namespace vulkan_tutorial
             device_queue_create_infos.data(),
             static_cast<std::uint32_t>(enabled_layers.size()),
             enabled_layers.data(),
-            static_cast<std::uint32_t>(enabled_extenions.size()),
-            enabled_extenions.data(),
+            static_cast<std::uint32_t>(enabled_extensions.size()),
+            enabled_extensions.data(),
             &desired_features
         };
 
@@ -102,4 +119,4 @@ namespace vulkan_tutorial
     }
 }
 
-#endif // !VULKAN_DEVICE_H
+#endif // !VK_TUTORIAL_DEVICE_H
