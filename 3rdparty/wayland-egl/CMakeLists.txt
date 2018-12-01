@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.11)
 
-project (freetype2)
+project (wayland-egl)
 
 string (TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_PKGCONFIG_TARGET)
 
