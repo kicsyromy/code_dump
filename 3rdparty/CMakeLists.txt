@@ -8,5 +8,7 @@ add_subdirectory (glesv2)
 add_subdirectory (mir)
 add_subdirectory (nanovg)
 add_subdirectory (pthread)
+add_subdirectory (wayland-cursor)
 add_subdirectory (wayland-egl)
+add_subdirectory (wayland-server)
 

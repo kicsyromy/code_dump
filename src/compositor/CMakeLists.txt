@@ -1,23 +1,29 @@
 cmake_minimum_required (VERSION 3.11)
 
-project (harbor-panel LANGUAGES CXX)
+project (harbor-compositor LANGUAGES CXX)
+
+add_library (harbor-utilities STATIC IMPORTED)
+get_target_property (UTILITIES_INCLUDE_PATH harbor-utilities INTERFACE_INCLUDE_DIRECTORIES)
+
+message (FATAL_ERROR ${UTILITIES_INCLUDE_PATH})
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (
     ${PROJECT_NAME}_HEADER_FILES
-    include/harbor_panel.hh
+    src/include/harbor_window_manager.hh
 )
 
 set (
     ${PROJECT_NAME}_SOURCE_FILES
-    src/harbor_panel.cc
+    src/main.cc
+    src/harbor_window_manager.cc
 )
 
 set (${PROJECT_NAME}_RESOURCES)
 
-add_library(
+add_library (
     ${PROJECT_NAME} STATIC
     ${${PROJECT_NAME}_SOURCE_FILES}
     ${${PROJECT_NAME}_HEADER_FILES}
@@ -32,21 +38,10 @@ target_include_directories (
     src/include
 )
 
-target_include_directories (
-    ${PROJECT_NAME} PUBLIC
-    include
-)
-
 target_link_libraries (
-    ${PROJECT_NAME} INTERFACE
+    ${PROJECT_NAME} INTERFACE 
     harbor-utilities
-    wayland-protocols
-    3rdparty::nanovg
-    3rdparty::egl
-    3rdparty::glesv2
-    3rdparty::pthread
-    3rdparty::wayland-cursor
-    3rdparty::wayland-egl
-    3rdparty::wayland-server
+    3rdparty::miral
+    3rdparty::freetype2
 )
 
