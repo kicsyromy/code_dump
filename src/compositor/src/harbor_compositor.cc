@@ -1,3 +1,5 @@
+#include "harbor_compositor.hh"
+
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
 
@@ -7,7 +9,7 @@
 
 #include "harbor_logger.hh"
 
-int main(int argc, const char *argv[])
+int harbor::compositor::run(int argc, const char *argv[]) noexcept
 {
     using namespace harbor;
 

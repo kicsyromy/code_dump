@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <atomic>
 
 #include <cassert>
@@ -32,6 +33,8 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "xdg-shell-unstable-v6-protocol.h"
 
 #include "harbor_logger.hh"
 

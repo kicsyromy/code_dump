@@ -1,13 +1,16 @@
 cmake_minimum_required (VERSION 3.11)
 
-project (harbor LANGUAGES CXX)
+project (harbor LANGUAGES C CXX)
 
 add_subdirectory (3rdparty)
 
-add_subdirectory (src/compositor)
-add_subdirectory (src/panel)
-add_subdirectory (src/utilities)
-add_subdirectory (src/wayland-protocols)
+set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include (src/utilities/utilities.cmake)
+include (src/wayland-protocols/wayland-protocols.cmake)
+include (src/compositor/compositor.cmake)
+include (src/panel/panel.cmake)
 
 add_executable (
     ${PROJECT_NAME}
@@ -16,9 +19,8 @@ add_executable (
 
 target_link_libraries (
     ${PROJECT_NAME} PRIVATE
-    harbor-compositor
-    harbor-panel
+    ${PROJECT_NAME}::compositor
+    ${PROJECT_NAME}::panel
     3rdparty::miral
     3rdparty::freetype2
 )
-
