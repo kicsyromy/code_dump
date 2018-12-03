@@ -1,5 +1,9 @@
-#ifndef PANEL_LOGGER_HH
-#define PANEL_LOGGER_HH
+#ifndef HARBOR_LOGGER_HH
+#define HARBOR_LOGGER_HH
+
+#ifndef HARBOR_LOGGER_COMPONENT
+#define HARBOR_LOGGER_COMPONENT "main"
+#endif
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,19 +14,19 @@ constexpr const std::size_t LOG_BUFFER_SIZE{ 2048 };
 inline thread_local char LOG_BUFFER[LOG_BUFFER_SIZE];
 
 constexpr const char FORMAT_STRING_INFO[]{
-    "[%d-%d-%d %d:%d:%d] harbor:    INFO: %s: %d: ** %s **:\n%s\n"
+    "[%d-%d-%d %d:%d:%d] harbor: %s:    INFO: %s: %d: ** %s **:\n%s\n"
 };
 constexpr const char FORMAT_STRING_WARN[]{
-    "[%d-%d-%d %d:%d:%d] harbor: WARNING: %s: %d: ** %s **:\n%s\n"
+    "[%d-%d-%d %d:%d:%d] harbor: %s: WARNING: %s: %d: ** %s **:\n%s\n"
 };
 constexpr const char FORMAT_STRING_ERROR[]{
-    "[%d-%d-%d %d:%d:%d] harbor:   ERROR: %s: %d: ** %s **:\n%s\n"
+    "[%d-%d-%d %d:%d:%d] harbor: %s:   ERROR: %s: %d: ** %s **:\n%s\n"
 };
 constexpr const char FORMAT_STRING_FATAL[]{
-    "[%d-%d-%d %d:%d:%d] harbor:   FATAL: %s: %d: ** %s **:\n%s\n"
+    "[%d-%d-%d %d:%d:%d] harbor: %s:   FATAL: %s: %d: ** %s **:\n%s\n"
 };
 constexpr const char FORMAT_STRING_DEBUG[]{
-    "[%d-%d-%d %d:%d:%d] harbor:   DEBUG: %s: %d: ** %s **:\n%s\n"
+    "[%d-%d-%d %d:%d:%d] harbor: %s:   DEBUG: %s: %d: ** %s **:\n%s\n"
 };
 
 #ifdef _MSC_VER
@@ -47,7 +51,8 @@ constexpr const char FORMAT_STRING_DEBUG[]{
         HARBOR_GET_CURRENT_TIME()                                                                  \
         std::snprintf(LOG_BUFFER, LOG_BUFFER_SIZE, __VA_ARGS__);                                   \
         std::fprintf(stdout, FORMAT_STRING_INFO, year, month, day, hour, minute, second,           \
-                     std::strrchr(__FILE__, PATH_SEPARATOR) + 1, __LINE__, __func__, LOG_BUFFER);  \
+                     HARBOR_LOGGER_COMPONENT, std::strrchr(__FILE__, PATH_SEPARATOR) + 1,          \
+                     __LINE__, __func__, LOG_BUFFER);                                              \
     } while (0)
 
 #define LOG_INFO(...) LOG(__VA_ARGS__)
@@ -58,7 +63,8 @@ constexpr const char FORMAT_STRING_DEBUG[]{
         HARBOR_GET_CURRENT_TIME()                                                                  \
         std::snprintf(LOG_BUFFER, LOG_BUFFER_SIZE, __VA_ARGS__);                                   \
         std::fprintf(stderr, FORMAT_STRING_WARN, year, month, day, hour, minute, second,           \
-                     std::strrchr(__FILE__, PATH_SEPARATOR) + 1, __LINE__, __func__, LOG_BUFFER);  \
+                     HARBOR_LOGGER_COMPONENT, std::strrchr(__FILE__, PATH_SEPARATOR) + 1,          \
+                     __LINE__, __func__, LOG_BUFFER);                                              \
     } while (0)
 
 #define LOG_ERROR(...)                                                                             \
@@ -67,7 +73,8 @@ constexpr const char FORMAT_STRING_DEBUG[]{
         HARBOR_GET_CURRENT_TIME()                                                                  \
         std::snprintf(LOG_BUFFER, LOG_BUFFER_SIZE, __VA_ARGS__);                                   \
         std::fprintf(stderr, FORMAT_STRING_ERROR, year, month, day, hour, minute, second,          \
-                     std::strrchr(__FILE__, PATH_SEPARATOR) + 1, __LINE__, __func__, LOG_BUFFER);  \
+                     HARBOR_LOGGER_COMPONENT, std::strrchr(__FILE__, PATH_SEPARATOR) + 1,          \
+                     __LINE__, __func__, LOG_BUFFER);                                              \
     } while (0)
 
 #define LOG_FATAL(...)                                                                             \
@@ -76,7 +83,8 @@ constexpr const char FORMAT_STRING_DEBUG[]{
         HARBOR_GET_CURRENT_TIME()                                                                  \
         std::snprintf(LOG_BUFFER, LOG_BUFFER_SIZE, __VA_ARGS__);                                   \
         std::fprintf(stderr, FORMAT_STRING_FATAL, year, month, day, hour, minute, second,          \
-                     std::strrchr(__FILE__, PATH_SEPARATOR) + 1, __LINE__, __func__, LOG_BUFFER);  \
+                     HARBOR_LOGGER_COMPONENT, std::strrchr(__FILE__, PATH_SEPARATOR) + 1,          \
+                     __LINE__, __func__, LOG_BUFFER);                                              \
         std::exit(EXIT_FAILURE);                                                                   \
     } while (0)
 
@@ -87,10 +95,11 @@ constexpr const char FORMAT_STRING_DEBUG[]{
         HARBOR_GET_CURRENT_TIME()                                                                  \
         std::snprintf(LOG_BUFFER, LOG_BUFFER_SIZE, __VA_ARGS__);                                   \
         std::fprintf(stderr, FORMAT_STRING_DEBUG, year, month, day, hour, minute, second,          \
-                     std::strrchr(__FILE__, PATH_SEPARATOR) + 1, __LINE__, __func__, LOG_BUFFER);  \
+                     HARBOR_LOGGER_COMPONENT, std::strrchr(__FILE__, PATH_SEPARATOR) + 1,          \
+                     __LINE__, __func__, LOG_BUFFER);                                              \
     } while (0)
 #else
 #define LOG_DEBUG(...)
 #endif /* !_NDEBUG */
 
-#endif /* !PANEL_LOGGER_HH */
+#endif /* !HARBOR_LOGGER_HH */
