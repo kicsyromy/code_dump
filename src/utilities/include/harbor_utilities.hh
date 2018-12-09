@@ -2,6 +2,7 @@
 #define HARBOR_UTILITIES_UTILITIES_HH
 
 #include <array>
+#include <memory>
 #include <type_traits>
 
 namespace harbor::utilities
@@ -18,6 +19,8 @@ namespace harbor::utilities
                       "The source and target types must be pointers");
         return static_cast<Target>(static_cast<void *>(source));
     }
+
+    template <typename T> using shared_ptr_t = std::__shared_ptr<T, __gnu_cxx::_S_single>;
 } // namespace harbor::utilities
 
 #endif /* !HARBOR_UTILITIES_UTILITIES_HH */

@@ -5,18 +5,18 @@ set (CURRENT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities)
 set (
     ${COMPONENT_NAME}_HEADER_FILES
     ${CURRENT_DIRECTORY}/include/harbor_egl_config.hh
+    ${CURRENT_DIRECTORY}/include/harbor_egl_context.hh
+    ${CURRENT_DIRECTORY}/include/harbor_egl_display.hh
     ${CURRENT_DIRECTORY}/include/harbor_logger.hh
     ${CURRENT_DIRECTORY}/include/harbor_egl_surface.hh
+    ${CURRENT_DIRECTORY}/include/harbor_egl_types.hh
     ${CURRENT_DIRECTORY}/include/harbor_utilities.hh
-    ${CURRENT_DIRECTORY}/src/include/harbor_egl_config_private.hh
-    ${CURRENT_DIRECTORY}/src/include/harbor_egl_surface_private.hh
+    ${CURRENT_DIRECTORY}/include/harbor_xdg_surface.hh
 )
 
 set (
     ${COMPONENT_NAME}_SOURCE_FILES
     ${CURRENT_DIRECTORY}/src/harbor_utilities.cc
-    ${CURRENT_DIRECTORY}/src/harbor_egl_config.cc
-    ${CURRENT_DIRECTORY}/src/harbor_egl_surface.cc
 )
 
 add_library (
@@ -46,5 +46,6 @@ target_include_directories (
 
 target_link_libraries (
     ${COMPONENT_NAME} PUBLIC
+    ${PROJECT_NAME}::wayland-protocols
 )
 
