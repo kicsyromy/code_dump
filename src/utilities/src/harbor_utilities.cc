@@ -1,1 +1,2 @@
-#include "harbor_xdg_surface.hh"
+#include "wayland/harbor_wl_registry.hh"
+#include "xdg/harbor_xdg_surface.hh"

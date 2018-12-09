@@ -20,6 +20,14 @@ namespace harbor::utilities
         return static_cast<Target>(static_cast<void *>(source));
     }
 
+    template <typename Target, typename Source>
+    constexpr Target function_cast(Source source) noexcept
+    {
+        static_assert(std::is_pointer_v<Target> && std::is_pointer_v<Source>,
+                      "The source and target types must be pointers");
+        return (Target)source;
+    }
+
     template <typename T> using shared_ptr_t = std::__shared_ptr<T, __gnu_cxx::_S_single>;
 } // namespace harbor::utilities
 

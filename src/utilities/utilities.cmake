@@ -4,14 +4,15 @@ set (CURRENT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities)
 
 set (
     ${COMPONENT_NAME}_HEADER_FILES
-    ${CURRENT_DIRECTORY}/include/harbor_egl_config.hh
-    ${CURRENT_DIRECTORY}/include/harbor_egl_context.hh
-    ${CURRENT_DIRECTORY}/include/harbor_egl_display.hh
+    ${CURRENT_DIRECTORY}/include/egl/harbor_egl_config.hh
+    ${CURRENT_DIRECTORY}/include/egl/harbor_egl_context.hh
+    ${CURRENT_DIRECTORY}/include/egl/harbor_egl_display.hh
+    ${CURRENT_DIRECTORY}/include/egl/harbor_egl_surface.hh
+    ${CURRENT_DIRECTORY}/include/egl/harbor_egl_types.hh
+    ${CURRENT_DIRECTORY}/include/wayland/harbor_wl_registry.hh
+    ${CURRENT_DIRECTORY}/include/xdg/harbor_xdg_surface.hh
     ${CURRENT_DIRECTORY}/include/harbor_logger.hh
-    ${CURRENT_DIRECTORY}/include/harbor_egl_surface.hh
-    ${CURRENT_DIRECTORY}/include/harbor_egl_types.hh
     ${CURRENT_DIRECTORY}/include/harbor_utilities.hh
-    ${CURRENT_DIRECTORY}/include/harbor_xdg_surface.hh
 )
 
 set (
