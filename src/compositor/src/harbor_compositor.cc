@@ -9,6 +9,8 @@
 
 #include "harbor_logger.hh"
 
+void run_test() noexcept;
+
 int harbor::compositor::run(int argc, const char *argv[]) noexcept
 {
     using namespace harbor;
@@ -16,7 +18,8 @@ int harbor::compositor::run(int argc, const char *argv[]) noexcept
     LOG_INFO("Starting up...");
 
     miral::MirRunner runner{ argc, argv };
-    runner.add_start_callback(&panel::panel_run);
-    runner.add_stop_callback(&panel::panel_quit);
+    runner.add_start_callback(&run_test);
+    //    runner.add_start_callback(&panel::panel_run);
+    //    runner.add_stop_callback(&panel::panel_quit);
     return runner.run_with({ miral::set_window_management_policy<harbor::WindowManagerPolicy>() });
 }

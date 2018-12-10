@@ -7,8 +7,9 @@
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 
-#include <xdg-shell-unstable-v6-protocol.h>
+#include "xdg-shell-unstable-v6-protocol.h"
 
+#include "harbor_signal.hh"
 #include "harbor_utilities.hh"
 
 #undef HARBOR_LOGGER_COMPONENT
@@ -26,6 +27,8 @@ namespace harbor::utilities
 
             using global_listener_t = decltype(wl_registry_listener::global);
             using global_remove_listener_t = decltype(wl_registry_listener::global_remove);
+            using seat_capabalities_listener_t = decltype(wl_seat_listener::capabilities);
+            using seat_name_listener_t = decltype(wl_seat_listener::name);
 
         public:
             using wayland_display_t = shared_ptr_t<wl_display>;
@@ -51,7 +54,22 @@ namespace harbor::utilities
                 assert(wayland_registry != nullptr);
 
                 wl_registry_add_listener(handle_.get(), &registry_listener, this);
+                const auto display_server_roundtrip = wl_display_roundtrip(wayland_display_.get());
+                assert(display_server_roundtrip > -1);
             }
+
+        public:
+            auto wayland_display() const noexcept { return weak_ref(wayland_display_); }
+            auto wayland_display() noexcept { return weak_ref(wayland_display_); }
+            auto wayland_compositor() const noexcept { return weak_ref(wayland_compositor_); }
+            auto wayland_compositor() noexcept { return weak_ref(wayland_compositor_); }
+            auto wayland_seat() const noexcept { return weak_ref(wayland_seat_); }
+            auto wayland_seat() noexcept { return weak_ref(wayland_seat_); }
+            auto xdg_shell() const noexcept { return weak_ref(xdg_shell_); }
+            auto xdg_shell() noexcept { return weak_ref(xdg_shell_); }
+
+        signals:
+            signal(seat_capabilities_changed, std::uint32_t);
 
         private:
             static void handle_global(registry *self,
@@ -75,7 +93,7 @@ namespace harbor::utilities
                                               &wl_seat_destroy);
                     assert(self->wayland_seat_ != nullptr);
 
-                    // wl_seat_add_listener(self->wayland_seat_.get(), &seat_listener, d);
+                    wl_seat_add_listener(self->wayland_seat_.get(), &self->seat_listener, self);
                 }
                 else if (std::strcmp(interface, wl_shm_interface.name) == 0)
                 {
@@ -108,7 +126,8 @@ namespace harbor::utilities
                                            &zxdg_shell_v6_destroy);
                     assert(self->xdg_shell_ != nullptr);
 
-                    // zxdg_shell_v6_add_listener(d->shell, &xdg_shell_listener, d);
+                    zxdg_shell_v6_add_listener(self->xdg_shell_.get(), &self->xdg_shell_listener,
+                                               nullptr);
                 }
             }
 
@@ -122,6 +141,31 @@ namespace harbor::utilities
             const wl_registry_listener registry_listener{
                 function_cast<global_listener_t>(&handle_global),
                 function_cast<global_remove_listener_t>(&handle_global_remove)
+            };
+
+            static void handle_seat_capabilities(registry *self,
+                                                 [[maybe_unused]] wl_seat *wl_seat,
+                                                 std::uint32_t capabilities)
+            {
+                self->emit_seat_capabilities_changed(capabilities);
+            }
+
+            static void handle_seat_name([[maybe_unused]] registry *self,
+                                         [[maybe_unused]] wl_seat *wl_seat,
+                                         [[maybe_unused]] const char *name)
+            {
+                LOG_DEBUG("Seat names may have changed");
+            }
+
+            const wl_seat_listener seat_listener{
+                function_cast<seat_capabalities_listener_t>(&handle_seat_capabilities),
+                function_cast<seat_name_listener_t>(&handle_seat_name)
+            };
+
+            const zxdg_shell_v6_listener xdg_shell_listener{
+                [](void *, zxdg_shell_v6 *shell, std::uint32_t serial) {
+                    zxdg_shell_v6_pong(shell, serial);
+                }
             };
 
         private:

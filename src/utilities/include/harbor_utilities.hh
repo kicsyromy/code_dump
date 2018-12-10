@@ -29,6 +29,17 @@ namespace harbor::utilities
     }
 
     template <typename T> using shared_ptr_t = std::__shared_ptr<T, __gnu_cxx::_S_single>;
+    template <typename T> using weak_ptr_t = std::__weak_ptr<T, __gnu_cxx::_S_single>;
+
+    template <typename T> constexpr auto weak_ref(shared_ptr_t<T> &strong_ref) noexcept
+    {
+        return weak_ptr_t<T>{ strong_ref };
+    }
+
+    template <typename T> constexpr auto weak_ref(const shared_ptr_t<T> &strong_ref) noexcept
+    {
+        return weak_ptr_t<T>{ strong_ref };
+    }
 } // namespace harbor::utilities
 
 #endif /* !HARBOR_UTILITIES_UTILITIES_HH */

@@ -12,6 +12,7 @@ set (
     ${CURRENT_DIRECTORY}/include/wayland/harbor_wl_registry.hh
     ${CURRENT_DIRECTORY}/include/xdg/harbor_xdg_surface.hh
     ${CURRENT_DIRECTORY}/include/harbor_logger.hh
+    ${CURRENT_DIRECTORY}/include/harbor_signal.hh
     ${CURRENT_DIRECTORY}/include/harbor_utilities.hh
 )
 

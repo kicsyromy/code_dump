@@ -12,6 +12,7 @@ set (
     ${COMPONENT_NAME}_SOURCE_FILES
     ${CURRENT_DIRECTORY}/src/harbor_compositor.cc
     ${CURRENT_DIRECTORY}/src/harbor_window_manager.cc
+    ${CURRENT_DIRECTORY}/src/test.cc
 )
 
 set (${COMPONENT_NAME}_RESOURCES)

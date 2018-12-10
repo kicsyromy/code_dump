@@ -32,10 +32,13 @@ namespace harbor::utilities
                 std::make_pair("EGL_KHR_swap_buffers_with_damage", "eglSwapBuffersWithDamageKHR"));
 
         public:
-            surface(const context &context, wl_compositor *wayland_compositor) noexcept
+            surface(const context &context, weak_ptr_t<wl_compositor> wayland_compositor) noexcept
               : display_{ context.display() }, context_{ context }, config_{ context.config() }
             {
-                wayland_surface_.reset(wl_compositor_create_surface(wayland_compositor),
+                wayland_compositor_ = wayland_compositor.lock();
+                assert(wayland_compositor_ != nullptr);
+
+                wayland_surface_.reset(wl_compositor_create_surface(wayland_compositor_.get()),
                                        &wl_surface_destroy);
                 assert(wayland_surface_ != nullptr);
 
@@ -134,6 +137,7 @@ namespace harbor::utilities
             class context context_;
             class config config_;
 
+            shared_ptr_t<wl_compositor> wayland_compositor_{ nullptr };
             wl_surface_handle_t wayland_surface_{ nullptr };
             wl_window_handle_t wayland_window_{ nullptr };
 

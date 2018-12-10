@@ -22,11 +22,12 @@ namespace harbor::utilities
             static constexpr auto EGL_API{ EGL_OPENGL_ES_API };
 
         public:
-            display(wl_display *wayland_display) noexcept
+            display(weak_ptr_t<wl_display> wayland_display) noexcept
             {
-                assert(wayland_display != nullptr);
+                wayland_display_ = wayland_display.lock();
+                assert(wayland_display_ != nullptr);
 
-                auto native_display = force_cast<EGLNativeDisplayType>(wayland_display);
+                auto native_display = force_cast<EGLNativeDisplayType>(wayland_display_.get());
                 assert(native_display != nullptr);
 
                 handle_.reset(eglGetDisplay(native_display), [](EGLDisplay display) noexcept {
@@ -50,6 +51,9 @@ namespace harbor::utilities
             {
                 return handle_.get();
             }
+
+        private:
+            shared_ptr_t<wl_display> wayland_display_{ nullptr };
 
         private:
             handle_t handle_{ nullptr };

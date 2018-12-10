@@ -22,11 +22,15 @@ namespace harbor::utilities
             using xdg_toplevel_t = shared_ptr_t<zxdg_toplevel_v6>;
 
         public:
-            surface(const egl::surface &surface, zxdg_shell_v6 *xdg_shell) noexcept
+            surface(const egl::surface &surface, weak_ptr_t<zxdg_shell_v6> xdg_shell) noexcept
               : surface_{ surface }, wayland_surface_{ surface.wayland_surface() }
             {
-                handle_.reset(zxdg_shell_v6_get_xdg_surface(xdg_shell, wayland_surface_.get()),
-                              &zxdg_surface_v6_destroy);
+                xdg_shell_ = xdg_shell.lock();
+                assert(xdg_shell_ != nullptr);
+
+                handle_.reset(
+                    zxdg_shell_v6_get_xdg_surface(xdg_shell_.get(), wayland_surface_.get()),
+                    &zxdg_surface_v6_destroy);
                 zxdg_surface_v6_add_listener(handle_.get(), &xdg_surface_listener, this);
 
                 top_level_.reset(zxdg_surface_v6_get_toplevel(handle_.get()),
@@ -83,6 +87,7 @@ namespace harbor::utilities
             egl::surface::wl_surface_handle_t wayland_surface_{ nullptr };
 
             xdg_toplevel_t top_level_{ nullptr };
+            shared_ptr_t<zxdg_shell_v6> xdg_shell_{ nullptr };
 
         private:
             handle_t handle_{ nullptr };

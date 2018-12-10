@@ -36,7 +36,7 @@ namespace harbor::utilities
                                                                         EGL_BLUE_SIZE,
                                                                         1,
                                                                         EGL_ALPHA_SIZE,
-                                                                        1,
+                                                                        0,
                                                                         EGL_RENDERABLE_TYPE,
                                                                         EGL_OPENGL_ES2_BIT,
                                                                         EGL_NONE);
