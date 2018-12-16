@@ -54,19 +54,31 @@ namespace harbor::utilities
                 assert(wayland_registry != nullptr);
 
                 wl_registry_add_listener(handle_.get(), &registry_listener, this);
+
                 const auto display_server_roundtrip = wl_display_roundtrip(wayland_display_.get());
                 assert(display_server_roundtrip > -1);
             }
 
         public:
-            auto wayland_display() const noexcept { return weak_ref(wayland_display_); }
-            auto wayland_display() noexcept { return weak_ref(wayland_display_); }
-            auto wayland_compositor() const noexcept { return weak_ref(wayland_compositor_); }
-            auto wayland_compositor() noexcept { return weak_ref(wayland_compositor_); }
-            auto wayland_seat() const noexcept { return weak_ref(wayland_seat_); }
-            auto wayland_seat() noexcept { return weak_ref(wayland_seat_); }
-            auto xdg_shell() const noexcept { return weak_ref(xdg_shell_); }
-            auto xdg_shell() noexcept { return weak_ref(xdg_shell_); }
+            [[nodiscard]] auto wayland_display() const noexcept
+            {
+                return weak_ref(wayland_display_);
+            }
+            [[nodiscard]] auto wayland_display() noexcept { return weak_ref(wayland_display_); }
+            [[nodiscard]] auto wayland_compositor() const noexcept
+            {
+                return weak_ref(wayland_compositor_);
+            }
+            [[nodiscard]] auto wayland_compositor() noexcept
+            {
+                return weak_ref(wayland_compositor_);
+            }
+            [[nodiscard]] auto wayland_seat() const noexcept { return weak_ref(wayland_seat_); }
+            [[nodiscard]] auto wayland_seat() noexcept { return weak_ref(wayland_seat_); }
+            [[nodiscard]] auto xdg_shell() const noexcept { return weak_ref(xdg_shell_); }
+            [[nodiscard]] auto xdg_shell() noexcept { return weak_ref(xdg_shell_); }
+
+            [[nodiscard]] auto seat_capabilities() const noexcept { return seat_capabilities_; }
 
         signals:
             signal(seat_capabilities_changed, std::uint32_t);
@@ -147,6 +159,7 @@ namespace harbor::utilities
                                                  [[maybe_unused]] wl_seat *wl_seat,
                                                  std::uint32_t capabilities)
             {
+                self->seat_capabilities_ = capabilities;
                 self->emit_seat_capabilities_changed(capabilities);
             }
 
@@ -177,6 +190,8 @@ namespace harbor::utilities
             wayland_cursor_t wayland_cursor_{ nullptr };
 
             xdg_shell_t xdg_shell_{ nullptr };
+
+            std::uint32_t seat_capabilities_{ 0 };
 
         private:
             handle_t handle_{ nullptr };

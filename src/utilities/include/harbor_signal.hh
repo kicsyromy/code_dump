@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
+#include <string>
 #include <unordered_map>
-#include <vector>
 
 #include "harbor_utilities.hh"
 
@@ -46,8 +46,8 @@ namespace harbor::utilities
         void connect(CalleeType *callee, CallbackT callback, UserDataT *user_data) noexcept
         {
             clients_.emplace(callee, connections_.size());
-            connections_.emplace_back(function_cast<signature_t>(callback),
-                                      static_cast<void *>(user_data));
+            connections_.push_back(
+                std::pair{ function_cast<signature_t>(callback), static_cast<void *>(user_data) });
         }
 
         template <typename CalleeType> void disconnect(CalleeType *callee) noexcept
@@ -73,7 +73,7 @@ namespace harbor::utilities
         }
 
     private:
-        std::vector<std::pair<signature_t, void *>> connections_{};
+        std::basic_string<std::pair<signature_t, void *>> connections_{};
         std::unordered_map<void *, std::size_t> clients_{};
     };
 } // namespace harbor::utilities

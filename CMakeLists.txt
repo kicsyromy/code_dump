@@ -6,6 +6,7 @@ add_subdirectory (3rdparty)
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-extra-semi")
 
 include (src/utilities/utilities.cmake)
 include (src/wayland-protocols/wayland-protocols.cmake)

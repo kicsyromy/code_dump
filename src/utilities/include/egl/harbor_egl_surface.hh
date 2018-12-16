@@ -129,6 +129,11 @@ namespace harbor::utilities
                 assert(make_current_result == EGL_TRUE);
             }
 
+            void set_size(std::int32_t width, std::int32_t height)
+            {
+                wl_egl_window_resize(wayland_window_.get(), width, height, 0, 0);
+            }
+
         private:
             swap_buffers_function_t swap_buffers_function_{ nullptr };
 
