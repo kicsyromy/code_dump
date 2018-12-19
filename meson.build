@@ -20,5 +20,5 @@ wayland_egl = dependency('wayland-egl')
 wayland_server = dependency('wayland-server')
 pthread = dependency('threads')
 
-subdir('3rdparty')
+subdir('subprojects')
 subdir('src')
