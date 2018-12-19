@@ -3,7 +3,6 @@ cmake_minimum_required (VERSION 3.11)
 project (3rdparty)
 
 add_subdirectory (egl)
-add_subdirectory (freetype2)
 add_subdirectory (glesv2)
 add_subdirectory (libinput)
 add_subdirectory (nanovg)

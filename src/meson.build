@@ -13,9 +13,7 @@ executable(
     dependencies : [ 
         compositor,
         panel,
-        utilities,
-        miral,
-        freetype2
+        utilities
     ]
 )
 

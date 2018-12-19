@@ -1,3 +1,5 @@
+#include <thread>
+
 #include <GLES2/gl2.h>
 
 #include <nanovg.h>
@@ -21,63 +23,66 @@ static void on_seat_capabilities_changed(std::uint32_t capabilities, void *) noe
     LOG_DEBUG("Signal emited and caught: %d", capabilities);
 }
 
-void run_test() noexcept
+extern "C" void run_test() noexcept
 {
-    struct dummy
-    {
-    };
-    dummy d;
-
-    wl::registry wayland_registry;
-    wayland_registry.on_seat_capabilities_changed(&d, &on_seat_capabilities_changed);
-
-    egl::display egl_display{ wayland_registry.wayland_display() };
-    egl::config egl_config{ egl_display };
-    egl::context egl_context{ egl_config };
-
-    egl::surface egl_surface{ egl_context, wayland_registry.wayland_compositor() };
-    egl_surface.make_current();
-
-    xdg::surface xdg_surface{ egl_surface.wayland_surface(), wayland_registry };
-
-    auto vg_context = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
-
-    auto wayland_display = wayland_registry.wayland_display().lock().get();
-
-    while (true)
-    {
-        if (xdg_surface.is_configuring())
+    std::thread main([]() {
+        struct dummy
         {
-            wl_display_dispatch(wayland_display);
-        }
-        else
+        };
+        dummy d;
+
+        wl::registry wayland_registry;
+        wayland_registry.on_seat_capabilities_changed(&d, &on_seat_capabilities_changed);
+
+        egl::display egl_display{ wayland_registry.wayland_display() };
+        egl::config egl_config{ egl_display };
+        egl::context egl_context{ egl_config };
+
+        egl::surface egl_surface{ egl_context, wayland_registry.wayland_compositor() };
+        egl_surface.make_current();
+
+        xdg::surface xdg_surface{ egl_surface.wayland_surface(), wayland_registry };
+
+        auto vg_context = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+
+        auto wayland_display = wayland_registry.wayland_display().lock().get();
+
+        while (true)
         {
-            wl_display_dispatch_pending(wayland_display);
-
-            egl_surface.set_size(200, 200);
-
-            glViewport(0, 0, 200, 200);
-
-            glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_CULL_FACE);
-            glDisable(GL_DEPTH_TEST);
-
-            nvgBeginFrame(vg_context, 200, 200, 1);
+            if (xdg_surface.is_configuring())
             {
-                nvgBeginPath(vg_context);
-                nvgRect(vg_context, 50, 50, 100, 100);
-                nvgStrokeColor(vg_context, nvgRGBA(255, 255, 255, 255));
-                nvgStroke(vg_context);
+                wl_display_dispatch(wayland_display);
             }
-            nvgEndFrame(vg_context);
+            else
+            {
+                wl_display_dispatch_pending(wayland_display);
 
-            glEnable(GL_DEPTH_TEST);
+                egl_surface.set_size(200, 200);
 
-            egl_surface.swap_buffers();
+                glViewport(0, 0, 200, 200);
+
+                glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glEnable(GL_CULL_FACE);
+                glDisable(GL_DEPTH_TEST);
+
+                nvgBeginFrame(vg_context, 200, 200, 1);
+                {
+                    nvgBeginPath(vg_context);
+                    nvgRect(vg_context, 50, 50, 100, 100);
+                    nvgStrokeColor(vg_context, nvgRGBA(255, 255, 255, 255));
+                    nvgStroke(vg_context);
+                }
+                nvgEndFrame(vg_context);
+
+                glEnable(GL_DEPTH_TEST);
+
+                egl_surface.swap_buffers();
+            }
         }
-    }
+    });
+    main.detach();
 }

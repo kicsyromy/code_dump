@@ -14,6 +14,8 @@
 
 struct roots_server server = { 0 };
 
+extern void run_test(void);
+
 int run(int argc, char **argv) {
 	wlr_log_init(WLR_DEBUG, NULL);
 	server.config = roots_config_create_from_args(argc, argv);
@@ -70,6 +72,8 @@ int run(int argc, char **argv) {
 			execl("/bin/sh", "/bin/sh", "-c", cmd, (void *)NULL);
 		}
 	}
+
+    run_test();
 
 	wl_display_run(server.wl_display);
 #if WLR_HAS_XWAYLAND

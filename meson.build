@@ -9,9 +9,7 @@ project(
 add_global_arguments('-Wno-extra-semi', language : 'cpp')
 
 egl = dependency('egl')
-freetype2 = dependency('freetype2')
 glesv2 = dependency('glesv2')
-miral = dependency('miral')
 pixman = dependency('pixman-1')
 wayland_client = dependency('wayland-client')
 wayland_cursor = dependency('wayland-cursor')
