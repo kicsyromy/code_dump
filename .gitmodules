@@ -1,0 +1,4 @@
+[submodule "subprojects/nanovg/nanovg"]
+	path = subprojects/nanovg/nanovg
+	url = https://github.com/memononen/nanovg.git
+	branch = master

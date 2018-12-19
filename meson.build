@@ -19,6 +19,6 @@ wayland_cursor = dependency('wayland-cursor')
 wayland_egl = dependency('wayland-egl')
 wayland_server = dependency('wayland-server')
 pthread = dependency('threads')
+nanovg = dependency('nanovg', fallback: ['nanovg', 'nanovg'])
 
-subdir('subprojects')
 subdir('src')

@@ -4,12 +4,12 @@ project (nanovg LANGUAGES C)
 
 add_library (
     ${PROJECT_NAME}
-    nanovg.c
+    nanovg/src/nanovg.c
 )
 
 target_include_directories (
     ${PROJECT_NAME} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/nanovg/src
 )
 
 add_library (3rdparty::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

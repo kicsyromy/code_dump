@@ -12,7 +12,6 @@ add_custom_target (
     ${PROJECT_SOURCE_DIR}/../src/panel/meson.build
     ${PROJECT_SOURCE_DIR}/../meson.build
     ${PROJECT_SOURCE_DIR}/../subprojects/nanovg/meson.build
-    ${PROJECT_SOURCE_DIR}/../subprojects/meson.build
 )
 
 set (MESON_BUILD_TYPE "")
