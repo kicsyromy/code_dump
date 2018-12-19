@@ -5,7 +5,6 @@
 
 #include <linux/input-event-codes.h>
 
-#include "egl/harbor_egl_surface.hh"
 #include "harbor_signal.hh"
 #include "harbor_utilities.hh"
 #include "wayland/harbor_wl_registry.hh"
@@ -38,6 +37,10 @@ namespace harbor::utilities
             using pointer_handler_axis_stop_t = decltype(wl_pointer_listener::axis_stop);
             using pointer_handler_axis_discrete_t = decltype(wl_pointer_listener::axis_discrete);
 
+        private:
+            /* TODO: Figure out why this thing is needed and where it comes from */
+            static constexpr std::int32_t POINTER_COORDINATE_INVERSE_FACTOR{ 256 };
+
         public:
             using wl_pointer_t = shared_ptr_t<wl_pointer>;
             using wl_keyboard_t = shared_ptr_t<wl_keyboard>;
@@ -51,11 +54,10 @@ namespace harbor::utilities
             };
 
         public:
-            surface(const egl::surface &surface, wl::registry &wayland_registry) noexcept
-              : surface_{ surface }, wayland_surface_{ surface.wayland_surface() },
-                wayland_registry_{ wayland_registry }
+            surface(weak_ptr_t<wl_surface> wayland_surface, wl::registry &wayland_registry) noexcept
+              : wayland_registry_{ wayland_registry }, wayland_surface_{ wayland_surface },
+                xdg_shell_{ wayland_registry.xdg_shell() }
             {
-                xdg_shell_ = wayland_registry_.xdg_shell().lock();
                 assert(xdg_shell_ != nullptr);
 
                 wayland_registry_.on_seat_capabilities_changed(this,
@@ -205,10 +207,10 @@ namespace harbor::utilities
             {
                 if (surface == self->wayland_surface_.get())
                 {
-                    LOG_DEBUG("Mouse entered at: %dx%d", sx, sy);
-                    self->mouse_position.x = sx;
-                    self->mouse_position.y = sy;
-                    self->emit_mouse_entered(sx, sy);
+                    LOG_DEBUG("Mouse entered at: %dx%d", sx / 256, sy / 256);
+                    self->mouse_position.x = sx / POINTER_COORDINATE_INVERSE_FACTOR;
+                    self->mouse_position.y = sy / POINTER_COORDINATE_INVERSE_FACTOR;
+                    self->emit_mouse_entered(self->mouse_position.x, self->mouse_position.y);
                 }
             }
 
@@ -230,8 +232,10 @@ namespace harbor::utilities
                                               wl_fixed_t sx,
                                               wl_fixed_t sy) noexcept
             {
-                LOG_DEBUG("Mouse moving at %dx%d", sx, sy);
-                self->emit_mouse_moved(sx, sy);
+                LOG_DEBUG("Mouse moving at %dx%d", sx / 256, sy / 256);
+                self->mouse_position.x = sx / POINTER_COORDINATE_INVERSE_FACTOR;
+                self->mouse_position.y = sy / POINTER_COORDINATE_INVERSE_FACTOR;
+                self->emit_mouse_moved(self->mouse_position.x, self->mouse_position.y);
             }
 
             static void pointer_handle_button(surface *self,
@@ -266,15 +270,15 @@ namespace harbor::utilities
             }
 
         private:
-            egl::surface surface_;
-            egl::surface::wl_surface_handle_t wayland_surface_{ nullptr };
-
             wl::registry &wayland_registry_;
-            wl_pointer_t wayland_pointer_;
-            wl_keyboard_t wayland_keyboard_;
+
+            shared_ptr_t<wl_surface> wayland_surface_{ nullptr };
+            shared_ptr_t<zxdg_shell_v6> xdg_shell_{ nullptr };
+
+            wl_pointer_t wayland_pointer_{ nullptr };
+            wl_keyboard_t wayland_keyboard_{ nullptr };
 
             xdg_toplevel_t top_level_{ nullptr };
-            shared_ptr_t<zxdg_shell_v6> xdg_shell_{ nullptr };
 
         private:
             handle_t handle_{ nullptr };

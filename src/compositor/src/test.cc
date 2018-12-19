@@ -38,7 +38,7 @@ void run_test() noexcept
     egl::surface egl_surface{ egl_context, wayland_registry.wayland_compositor() };
     egl_surface.make_current();
 
-    xdg::surface xdg_surface{ egl_surface, wayland_registry };
+    xdg::surface xdg_surface{ egl_surface.wayland_surface(), wayland_registry };
 
     auto vg_context = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
 

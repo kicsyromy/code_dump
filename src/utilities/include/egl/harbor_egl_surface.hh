@@ -110,9 +110,9 @@ namespace harbor::utilities
         public:
             [[nodiscard]] class display display() const noexcept { return display_; }
             [[nodiscard]] class context context() const noexcept { return context_; }
-            [[nodiscard]] wl_surface_handle_t wayland_surface() const noexcept
+            [[nodiscard]] auto wayland_surface() const noexcept
             {
-                return wayland_surface_;
+                return weak_ref(wayland_surface_);
             }
 
         public:

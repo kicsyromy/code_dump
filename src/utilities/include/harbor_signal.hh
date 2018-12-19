@@ -11,46 +11,40 @@
 #define signals public
 #define signal(name, ...)                                                                          \
 private:                                                                                           \
-    harbor::utilities::signal_t<__VA_ARGS__> signal_##name##_;                                     \
-    template <typename... Args> inline void emit_##name(Args &&... args) const noexcept            \
+    using signal_##name##_t = harbor::utilities::signal_t<__VA_ARGS__>;                            \
+                                                                                                   \
+    signal_##name##_t signal_##name##_;                                                            \
+    template <typename... args_t> inline void emit_##name(args_t... args) const noexcept           \
     {                                                                                              \
-        signal_##name##_.emit(std::forward<Args>(args)...);                                        \
+        signal_##name##_.emit(args...);                                                            \
     }                                                                                              \
                                                                                                    \
 public:                                                                                            \
-    using signal_##name##_t = decltype(signal_##name##_);                                          \
-    template <typename CalleeType, typename CallbackT, typename UserDataT = void>                  \
-    inline void on_##name(CalleeType *callee, CallbackT handler,                                   \
-                          UserDataT *user_data = nullptr) noexcept                                 \
+    using signal_##name##_signature_t = signal_##name##_t::signature_t;                            \
+    template <typename callee_t, typename callback_t, typename user_data_t = void>                 \
+    inline void on_##name(callee_t *callee, callback_t handler,                                    \
+                          user_data_t *user_data = nullptr) noexcept                               \
     {                                                                                              \
         signal_##name##_.connect(callee, handler, user_data ? user_data : callee);                 \
     }                                                                                              \
-    template <typename CalleeType> inline void disconnect_##name(CalleeType *callee) noexcept      \
-    {                                                                                              \
-        signal_##name##_.disconnect(callee);                                                       \
-    }
+    inline void disconnect_##name(void *callee) noexcept { signal_##name##_.disconnect(callee); }
 
 namespace harbor::utilities
 {
-    template <typename... Args> class signal_t
+    template <typename... args_t> class signal_t
     {
     public:
-        using signature_t = void (*)(Args..., void *);
+        using signature_t = void (*)(args_t..., void *);
 
     public:
-        signal_t() = default;
-        ~signal_t() = default;
-
-    public:
-        template <typename CalleeType, typename CallbackT, typename UserDataT>
-        void connect(CalleeType *callee, CallbackT callback, UserDataT *user_data) noexcept
+        template <typename callee_t, typename callback_t, typename user_data_t>
+        void connect(callee_t *callee, callback_t callback, user_data_t *user_data) noexcept
         {
             clients_.emplace(callee, connections_.size());
-            connections_.push_back(
-                std::pair{ function_cast<signature_t>(callback), static_cast<void *>(user_data) });
+            connections_.push_back(std::pair{ function_cast<signature_t>(callback), user_data });
         }
 
-        template <typename CalleeType> void disconnect(CalleeType *callee) noexcept
+        void disconnect(void *callee) noexcept
         {
             auto it = clients_.find(callee);
             if (it != clients_.end())
@@ -61,13 +55,13 @@ namespace harbor::utilities
             }
         }
 
-        void emit(Args... args) const noexcept
+        void emit(args_t... args) const noexcept
         {
             for (const auto &connection : connections_)
             {
                 if (connection.first != nullptr)
                 {
-                    connection.first(std::forward<Args>(args)..., connection.second);
+                    connection.first(args..., connection.second);
                 }
             }
         }
