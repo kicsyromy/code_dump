@@ -2,3 +2,7 @@
 	path = subprojects/nanovg/nanovg
 	url = https://github.com/memononen/nanovg.git
 	branch = master
+[submodule "subprojects/wlroots/wlroots"]
+	path = subprojects/wlroots/wlroots
+	url = https://github.com/swaywm/wlroots.git
+	branch = master

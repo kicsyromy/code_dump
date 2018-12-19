@@ -20,5 +20,6 @@ wayland_egl = dependency('wayland-egl')
 wayland_server = dependency('wayland-server')
 pthread = dependency('threads')
 nanovg = dependency('nanovg', fallback: ['nanovg', 'nanovg'])
+wlroots = dependency('wlroots', fallback: ['wlroots/wlroots', 'wlroots'])
 
 subdir('src')
