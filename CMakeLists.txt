@@ -25,3 +25,5 @@ target_link_libraries (
     3rdparty::miral
     3rdparty::freetype2
 )
+
+add_subdirectory (meson)

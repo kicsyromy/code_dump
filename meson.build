@@ -1,4 +1,7 @@
-project('harbor', 'cpp', 'c', default_options : ['cpp_std=c++17'])
+project(
+    'harbor', 'cpp', 'c',
+    default_options : ['cpp_std=c++17']
+)
 
 cpp = meson.get_compiler('cpp')
 cpp_args = []
@@ -19,4 +22,3 @@ pthread = dependency('threads')
 
 subdir('3rdparty')
 subdir('src')
-
