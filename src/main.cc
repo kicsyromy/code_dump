@@ -1,10 +1,10 @@
-#include "harbor_compositor.hh"
 #include "harbor_logger.hh"
 
-using namespace harbor;
+extern "C" int run(int, char *[]);
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     LOG_INFO("Starting compositor...");
-    compositor::run(argc, argv);
+    run(argc, argv);
+    //    compositor::run(argc, argv);
 }

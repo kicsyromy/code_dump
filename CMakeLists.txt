@@ -3,9 +3,12 @@ cmake_minimum_required (VERSION 3.11)
 project (harbor LANGUAGES C CXX)
 
 add_subdirectory (subprojects)
+add_subdirectory (meson)
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_C_STANDARD 11)
+set (CMAKE_C_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-extra-semi")
 
 include (src/utilities/utilities.cmake)
@@ -22,8 +25,6 @@ target_link_libraries (
     ${PROJECT_NAME} PRIVATE
     ${PROJECT_NAME}::compositor
     ${PROJECT_NAME}::panel
-    3rdparty::miral
-    3rdparty::freetype2
+    3rdparty::wlroots
 )
 
-add_subdirectory (meson)

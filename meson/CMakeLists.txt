@@ -22,7 +22,7 @@ else ()
 endif ()
 
 add_custom_target (
-    build_with_meson ALL
+    build_with_meson
     meson setup --buildtype ${MESON_BUILD_TYPE} ${PROJECT_SOURCE_DIR}/.. ${PROJECT_BINARY_DIR}/../meson
     COMMAND ninja -C ${PROJECT_BINARY_DIR}/../meson
 )

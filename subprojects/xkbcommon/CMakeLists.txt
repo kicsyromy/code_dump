@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.11)
 
-project (miral)
+project (xkbcommon)
 
 string (TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_PKGCONFIG_TARGET)
 
