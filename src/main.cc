@@ -3,13 +3,7 @@
 #include <string>
 #include <iostream>
 
-#include "application_loop.hh"
-#include "event_loop.hh"
-#include "event.hh"
-#include "property.hh"
-#include "concurrent_queue.hh"
-#include "file.hh"
-#include "strings.hh"
+#include "rml.hh"
 
 #include <type_traits>
 #include <typeinfo>
@@ -40,20 +34,12 @@ std::string type_name()
     return r;
 }
 
-#include "signal.hh"
 
 using namespace rml;
 
-using event_loop_t = events::application_loop<events::event_loop<events::event, utilities::concurrent_queue<events::event>>>;
-template<typename ...Args> using signal_t = events::signal<event_loop_t, Args...>;
-template<typename value_t> using property_t = events::property<event_loop_t, value_t>;
 
 struct test
 {
-    test(event_loop_t &event_loop)
-      : test_signal{event_loop}
-    {}
-
     signal_t<int> test_signal;
 
     void testslot(int a)
@@ -98,7 +84,7 @@ int main(int argc, char *argv[])
     //     std::cout << strings::to<std::int32_t>(split_strings.back()) << '\n';
     // }
 
-    event_loop_t main_loop;
+    application_loop main_loop;
 
     // std::array<std::thread, 10> producers;
     // for (std::size_t i = 0; i < producers.size(); ++i)
@@ -162,7 +148,7 @@ int main(int argc, char *argv[])
     //     }
     // });
 
-    property_t<const std::string &> prop{main_loop};
+    property_t<const std::string &> prop;
     prop.changed.connect((void *)nullptr, &f, events::signals::connection_type::Queued);
 
     std::string a_string = "bla";

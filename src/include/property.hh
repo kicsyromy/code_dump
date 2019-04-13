@@ -1,3 +1,6 @@
+#ifndef RML_EVENTS_PROPERTY_HH
+#define RML_EVENTS_PROPERTY_HH
+
 #include <type_traits>
 
 #include "signal.hh"
@@ -13,14 +16,14 @@ namespace rml
             template<typename... Args>
             property(event_loop_t &event_loop, Args &&...args)
             : changed{ event_loop }
-            , value_{std::forward<Args>(args)...}
+            , value_{ std::forward<Args>(args)... }
             {}
 
-            explicit property(event_loop_t &event_loop, const std::decay_t<value_t> &value)
+            property(event_loop_t &event_loop, const std::decay_t<value_t> &value)
             : value_{ value }
             {}
 
-            explicit property(event_loop_t &event_loop, std::decay_t<value_t> &&value)
+            property(event_loop_t &event_loop, std::decay_t<value_t> &&value)
             : value_{ std::move(value) }
             {}
 
@@ -59,3 +62,5 @@ namespace rml
         };
     }
 }
+
+#endif /* !RML_EVENTS_PROPERTY_HH */
