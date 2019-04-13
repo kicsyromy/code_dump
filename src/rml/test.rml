@@ -1,0 +1,4 @@
+Object {
+    id: test
+    property: 3
+}
