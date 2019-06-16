@@ -1,0 +1,17 @@
+VS 2019 Cross-compile Linux:
+    Install VS2019
+    Copy: C:\Program Files (x86)\Windows Kits\10\Include\%version% -> msvc/windows_sdk/%version%/include
+          C:\Program Files (x86)\Windows Kits\10\Lib\%version% -> msvc/windows_sdk/%version%/lib
+          C:\Program Files (x86)\Windows Kits\10\Bin\%version% -> msvc/windows_sdk/%version%/bin (needed for rc.exe and mt.exe)
+          C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\%version% -> msvc/%version%
+          C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Redist\MSVC\%version% -> msvc/%version%/redist
+          
+    Create new wineprefix
+        
+    Add the bin folders from msvc and windows_sdk to path
+    C:\msvc\14.21.27702\bin\Hostx64\x64;C:\msvc\windows_sdk\10.0.18362.0\bin\x64;C:\msvc\windows_sdk\10.0.18362.0\bin\x64\ucrt;C:\msvc\14.21.27702\redist\debug_nonredist\x64\Microsoft.VC142.DebugCRT;C:\msvc\14.21.27702\redist\debug_nonredist\x64\Microsoft.VC142.DebugCXXAMP;C:\msvc\14.21.27702\redist\debug_nonredist\x64\Microsoft.VC142.DebugOpenMP
+
+    Install windbind package (needed for debug output /Zi)
+    
+    Delete vctip.exe (find . -type f -iname vctip.exe -exec rm {} \;)
+    
