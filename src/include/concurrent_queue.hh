@@ -1,8 +1,8 @@
 #ifndef RML_CONCURRENT_QUEUE_HH
 #define RML_CONCURRENT_QUEUE_HH
 
-#include <type_traits>
 #include <queue>
+#include <type_traits>
 #include <vector>
 
 #include "semaphore.hh"
@@ -11,7 +11,9 @@ namespace rml
 {
     namespace utilities
     {
-        template<typename queue_element_t, typename container_t = std::deque<queue_element_t>, std::size_t initial_capacity = 100>
+        template <typename queue_element_t,
+                  typename container_t = std::deque<queue_element_t>,
+                  std::size_t initial_capacity = 100>
         class concurrent_queue
         {
             static_assert(std::is_same_v<queue_element_t, typename container_t::value_type>);
@@ -29,8 +31,7 @@ namespace rml
                 fill_count_.increment();
             }
 
-            template<typename ...Args>
-            void emplace(Args &&...args)
+            template <typename... Args> void emplace(Args &&... args)
             {
                 semaphore_lock_t lock(binary_semaphore_);
 
@@ -38,7 +39,7 @@ namespace rml
                 fill_count_.increment();
             }
 
-            auto pop() -> queue_element_t 
+            auto pop() -> queue_element_t
             {
                 fill_count_.decrement();
 
@@ -57,7 +58,7 @@ namespace rml
             fast_semaphore binary_semaphore_{ 1 };
             fast_semaphore fill_count_{ 0 };
         };
-    }
-}
+    } // namespace utilities
+} // namespace rml
 
 #endif /* RML_CONCURRENT_QUEUE_HH */

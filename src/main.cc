@@ -4,6 +4,12 @@
 #include <iostream>
 
 #include "rml.hh"
+#include "event_loop.hh"
+#include "event.hh"
+#include "property.hh"
+#include "concurrent_queue.hh"
+#include "file.hh"
+#include "strings.hh"
 
 #include <type_traits>
 #include <typeinfo>
@@ -34,9 +40,9 @@ std::string type_name()
     return r;
 }
 
+#include "signal.hh"
 
 using namespace rml;
-
 
 struct test
 {
@@ -148,7 +154,7 @@ int main(int argc, char *argv[])
     //     }
     // });
 
-    property_t<const std::string &> prop;
+    property_t<const std::string &> prop{main_loop};
     prop.changed.connect((void *)nullptr, &f, events::signals::connection_type::Queued);
 
     std::string a_string = "bla";

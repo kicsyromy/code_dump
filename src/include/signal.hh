@@ -9,7 +9,7 @@
 
 namespace rml
 {
-    namespace events 
+    namespace events
     {
         namespace signals
         {
@@ -20,32 +20,34 @@ namespace rml
             };
         }
 
-        template<typename event_loop_t, typename... Args>
-        class signal
+        template <typename event_loop_t, typename... Args> class signal
         {
         public:
-            signal(event_loop_t &event_loop)
-              : event_loop_{ event_loop }
-            {}
+            signal(event_loop_t &event_loop) : event_loop_{ event_loop } {}
 
         public:
-            template<typename callee_t>
-            void connect(callee_t *callee, void (callee_t::*callback)(Args...), signals::connection_type type)
+            template <typename callee_t>
+            void connect(callee_t *callee,
+                         void (callee_t::*callback)(Args...),
+                         signals::connection_type type)
             {
                 clients_.emplace(callee, connections_.size());
-                connections_.emplace_back([callee, callback](Args &&...args) {
-                    ((*callee).*callback)(std::forward<Args>(args)...);
-                }, type);
+                connections_.emplace_back(
+                    [callee, callback](Args &&... args) {
+                        ((*callee).*callback)(std::forward<Args>(args)...);
+                    },
+                    type);
             }
 
-            template<typename callee_t>
+            template <typename callee_t>
             void connect(callee_t *callee, void (*callback)(Args...), signals::connection_type type)
             {
                 clients_.emplace(callee, connections_.size());
                 connections_.emplace_back(callback, type);
             }
 
-            void emit(std::decay_t<Args> &...args)
+            //            void emit(std::decay_t<Args> &... args)
+            void emit(Args &&... args)
             {
                 for (const auto &connection : connections_)
                 {
@@ -69,7 +71,9 @@ namespace rml
             };
 
             template <typename tuple_t, size_t... I>
-            inline static auto call(std::function<void(Args...)> &f, tuple_t &t, std::index_sequence<I...>) noexcept
+            inline static auto call(std::function<void(Args...)> &f,
+                                    tuple_t &t,
+                                    std::index_sequence<I...>) noexcept
             {
                 return f(std::get<I>(t)...);
             }
@@ -83,16 +87,11 @@ namespace rml
 
             void emit_queued(const std::function<void(Args...)> &f, Args &&... args) const noexcept
             {
-                auto data = new queued_data{
-                    f,
-                    std::forward_as_tuple<Args>(args)...,
-                    lifeline_
-                };
+                auto data = new queued_data{ f, std::forward_as_tuple<Args>(args)..., lifeline_ };
 
                 event_loop_.post(
                     [](void *d) {
-                        auto data =
-                            std::unique_ptr<queued_data>{ static_cast<queued_data *>(d) };
+                        auto data = std::unique_ptr<queued_data>{ static_cast<queued_data *>(d) };
 
                         if (data->lifeline.lock() != nullptr)
                         {
@@ -102,18 +101,18 @@ namespace rml
                             }
                         }
                     },
-                    data
-                );
+                    data);
             }
 
         private:
-            std::vector<std::pair<std::function<void(Args...)>, signals::connection_type>> connections_{};
+            std::vector<std::pair<std::function<void(Args...)>, signals::connection_type>>
+                connections_{};
             std::unordered_map<void *, std::size_t> clients_{};
             mutable std::shared_ptr<void> lifeline_{ std::make_shared<char>() };
 
             event_loop_t &event_loop_;
         };
-    }
-}
+    } // namespace events
+} // namespace rml
 
 #endif /* RML_UTILITIES_SIGNAL_H */

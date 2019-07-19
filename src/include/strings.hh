@@ -11,7 +11,7 @@ namespace rml
 {
     namespace strings
     {
-        template<typename output_iterator_t>
+        template <typename output_iterator_t>
         void split(std::string_view string, char delimiter, output_iterator_t first) noexcept
         {
             for_each_substring(string, delimiter, [&first](std::string_view s) -> bool {
@@ -20,8 +20,11 @@ namespace rml
             });
         }
 
-        template<std::size_t count>
-        std::array<std::string_view, count> split(std::string_view string, char delimiter, std::array<std::string_view, count> * = nullptr) noexcept
+        template <std::size_t count>
+        std::array<std::string_view, count> split(
+            std::string_view string,
+            char delimiter,
+            std::array<std::string_view, count> * = nullptr) noexcept
         {
             std::array<std::string_view, count> result;
 
@@ -35,18 +38,24 @@ namespace rml
             return result;
         }
 
-        template<typename Callback>
-        void for_each_substring(std::string_view string, char delimiter, Callback &&callback) noexcept
+        template <typename Callback>
+        void for_each_substring(std::string_view string,
+                                char delimiter,
+                                Callback &&callback) noexcept
         {
             while (string.size() > 0)
             {
                 const auto last_index = string.size() - 1;
 
-                for (int i = 0; i < string.size(); ++i)
+                for (std::size_t i = 0; i < string.size(); ++i)
                 {
                     if ((string[i] == delimiter) || (i == last_index))
                     {
-                        if (!callback(std::string_view(string.data(), (i < last_index) ? i : i + 1))) { return; }
+                        if (!callback(
+                                std::string_view(string.data(), (i < last_index) ? i : i + 1)))
+                        {
+                            return;
+                        }
 
                         string.remove_prefix(i + 1);
                         break;
@@ -55,8 +64,7 @@ namespace rml
             }
         }
 
-        template<typename T>
-        constexpr T to(const std::string_view &string, T * = nullptr) noexcept
+        template <typename T> constexpr T to(const std::string_view &string, T * = nullptr) noexcept
         {
             static_assert(std::is_default_constructible_v<T>);
 
@@ -64,7 +72,7 @@ namespace rml
             std::from_chars(string.data(), string.data() + string.size(), result);
             return result;
         }
-    }
-}
+    } // namespace strings
+} // namespace rml
 
 #endif /* RML_STRINGS_HH */
