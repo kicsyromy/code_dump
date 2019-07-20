@@ -46,7 +46,6 @@ namespace rml
                 connections_.emplace_back(callback, type);
             }
 
-            //            void emit(std::decay_t<Args> &... args)
             void emit(Args &&... args)
             {
                 for (const auto &connection : connections_)
@@ -87,7 +86,7 @@ namespace rml
 
             void emit_queued(const std::function<void(Args...)> &f, Args &&... args) const noexcept
             {
-                auto data = new queued_data{ f, std::forward_as_tuple<Args>(args)..., lifeline_ };
+                auto data = new queued_data{ f, { std::forward<Args>(args)... }, lifeline_ };
 
                 event_loop_.post(
                     [](void *d) {

@@ -11,6 +11,9 @@ namespace rml
     {
         template <typename event_loop_t, typename value_t> class property
         {
+        private:
+            using decayed_value_t = std::decay_t<value_t>;
+
         public:
             template <typename... Args>
             property(event_loop_t &event_loop, Args &&... args)
@@ -18,12 +21,12 @@ namespace rml
             {
             }
 
-            property(event_loop_t &event_loop, const std::decay_t<value_t> &value)
+            property(event_loop_t &event_loop, const decayed_value_t &value)
               : changed{ event_loop }, value_{ value }
             {
             }
 
-            property(event_loop_t &event_loop, std::decay_t<value_t> &&value)
+            property(event_loop_t &event_loop, decayed_value_t &&value)
               : changed{ event_loop }, value_{ std::move(value) }
             {
             }
@@ -32,28 +35,28 @@ namespace rml
             signal<event_loop_t, value_t> changed;
 
         public:
-            auto operator=(const std::decay_t<value_t> &value) -> property &
+            auto operator=(const decayed_value_t &value) -> property &
             {
                 value_ = value;
-                changed.emit(value_);
+                changed.emit(decayed_value_t{ value });
 
                 return *this;
             }
 
-            auto operator=(std::decay_t<value_t> &&value) -> property &
+            auto operator=(decayed_value_t &&value) -> property &
             {
-                value_ = std::move(value);
-                changed.emit(value_);
+                value_ = value;
+                changed.emit(std::move(value));
 
                 return *this;
             }
 
-            constexpr operator std::decay_t<value_t>() { return value_; }
+            constexpr operator decayed_value_t() { return value_; }
 
-            constexpr operator const std::decay_t<value_t> &() const { return value_; }
+            constexpr operator const decayed_value_t &() const { return value_; }
 
         private:
-            std::decay_t<value_t> value_;
+            decayed_value_t value_;
         };
     } // namespace events
 } // namespace rml

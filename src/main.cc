@@ -1,38 +1,31 @@
 #include <cstdio>
-#include <thread>
-#include <string>
 #include <iostream>
+#include <string>
+#include <thread>
 
-#include "rml.hh"
-#include "event_loop.hh"
-#include "event.hh"
-#include "property.hh"
 #include "concurrent_queue.hh"
+#include "event.hh"
+#include "event_loop.hh"
 #include "file.hh"
+#include "property.hh"
+#include "rml.hh"
 #include "strings.hh"
 
-#include <type_traits>
-#include <typeinfo>
-#include <memory>
-#include <string>
 #include <cstdlib>
 #include <cxxabi.h>
+#include <memory>
+#include <string>
+#include <type_traits>
+#include <typeinfo>
 
-template <class T>
-std::string type_name()
+template <class T> std::string type_name()
 {
     typedef typename std::remove_reference<T>::type TR;
-    std::unique_ptr<char, void(*)(void*)> own
-           (
-                abi::__cxa_demangle(typeid(TR).name(), nullptr,
-                                           nullptr, nullptr),
-                std::free
-           );
+    std::unique_ptr<char, void (*)(void *)> own(
+        abi::__cxa_demangle(typeid(TR).name(), nullptr, nullptr, nullptr), std::free);
     std::string r = own != nullptr ? own.get() : typeid(TR).name();
-    if (std::is_const<TR>::value)
-        r += " const";
-    if (std::is_volatile<TR>::value)
-        r += " volatile";
+    if (std::is_const<TR>::value) r += " const";
+    if (std::is_volatile<TR>::value) r += " volatile";
     if (std::is_lvalue_reference<T>::value)
         r += "&";
     else if (std::is_rvalue_reference<T>::value)
@@ -48,30 +41,16 @@ struct test
 {
     signal_t<int> test_signal;
 
-    void testslot(int a)
-    {
-        std::printf("test slot called %d\n", a);
-    }
+    void testslot(int a) { std::printf("test slot called %d\n", a); }
 };
 
-void testfreef(int a)
-{
-    std::printf("test free function called %d\n", a);
-}
+void testfreef(int a) { std::printf("test free function called %d\n", a); }
 
+void f(const std::string &s) { std::printf("test string function %s\n", s.c_str()); }
 
-void f(const std::string &s)
+template <typename... Args> struct vttest
 {
-    std::printf("test string function %s\n", s.c_str());
-}
-
-template<typename ...Args>
-struct vttest
-{
-    void f(Args ...args)
-    {
-        ((std::cout << type_name<decltype(args)>() << '\n'), ...);
-    }
+    void f(Args... args) { ((std::cout << type_name<decltype(args)>() << '\n'), ...); }
 };
 
 int main(int argc, char *argv[])
@@ -106,66 +85,72 @@ int main(int argc, char *argv[])
 
     // main_loop.run();
 
+    //    test t;
+    //    t.test_signal.connect(&t, &test::testslot, events::signals::connection_type::Queued);
+    //    t.test_signal.connect(&t, &testfreef, events::signals::connection_type::Queued);
 
-    // test t(main_loop);
-    // t.test_signal.connect(&t, &test::testslot, events::signals::connection_type::Queued);
-    // t.test_signal.connect(&t, &testfreef, events::signals::connection_type::Queued);
+    //    auto t1 = std::thread([&t]() {
+    //        int i = 0;
+    //        for (;;)
+    //        {
+    //            t.test_signal.emit(i++);
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    //        }
+    //    });
 
-    // auto t1 = std::thread([&t, &main_loop](){
-    //     int i = 0;
-    //     for (;;)
-    //     {
-    //         t.test_signal.emit(i++);
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //     }
-    // });
+    //    auto t2 = std::thread([&t]() {
+    //        int i = 100;
+    //        for (;;)
+    //        {
+    //            t.test_signal.emit(i++);
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    //        }
+    //    });
 
-    // auto t2 = std::thread([&t, &main_loop](){
-    //     int i = 100;
-    //     for (;;)
-    //     {
-    //         t.test_signal.emit(i++);
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    //     }
-    // });
+    //    // test t(main_loop);
 
-    // test t(main_loop);
+    //    property_t<int> test_property;
+    //    test_property.changed.connect(&t, &test::testslot, events::signals::connection_type::Queued);
+    //    test_property.changed.connect(&t, &testfreef, events::signals::connection_type::Queued);
 
-    // property_t<int> test_property{main_loop};
-    // test_property.changed.connect(&t, &test::testslot, events::signals::connection_type::Queued);
-    // test_property.changed.connect(&t, &testfreef, events::signals::connection_type::Queued);
+    //    auto t3 = std::thread([&test_property]() {
+    //        int i = 0;
+    //        const int prop_value = 5;
+    //        test_property = prop_value;
+    //        for (;;)
+    //        {
+    //            test_property = i++;
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    //        }
+    //    });
 
-    // auto t1 = std::thread([&test_property, &main_loop](){
-    //     int i = 0;
-    //     test_property = 5;
-    //     for (;;)
-    //     {
-    //         test_property = i++;
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //     }
-    // });
+    //    auto t4 = std::thread([&test_property]() {
+    //        int i = 100;
+    //        for (;;)
+    //        {
+    //            test_property = i++;
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    //        }
+    //    });
 
-    // auto t2 = std::thread([&test_property, &main_loop](){
-    //     int i = 100;
-    //     for (;;)
-    //     {
-    //         test_property = i++;
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    //     }
-    // });
-
-    property_t<const std::string &> prop{main_loop};
+    property_t<const std::string &> prop;
     prop.changed.connect((void *)nullptr, &f, events::signals::connection_type::Queued);
 
-    std::string a_string = "bla";
-    prop = a_string;
+    auto t5 = std::thread([&prop]() {
+        std::string a_string;
+        for (;;)
+        {
+            a_string += "bla";
+            prop = a_string;
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        }
+    });
 
     main_loop.run();
 
     // vttest<std::string, std::string &, const std::string &> t;
     // std::string asd;
     // t.f("a", asd, "c");
-
 
     return 0;
 }
