@@ -1,6 +1,8 @@
 #ifndef RML_UTILITIES_SIGNAL_H
 #define RML_UTILITIES_SIGNAL_H
 
+#include <cassert>
+
 #include <functional>
 #include <memory>
 #include <type_traits>
@@ -42,7 +44,14 @@ namespace rml
             template <typename callee_t>
             void connect(callee_t *callee, void (*callback)(Args...), signals::connection_type type)
             {
+                assert(callee != nullptr);
+
                 clients_.emplace(callee, connections_.size());
+                connections_.emplace_back(callback, type);
+            }
+
+            void connect(void (*callback)(Args...), signals::connection_type type)
+            {
                 connections_.emplace_back(callback, type);
             }
 

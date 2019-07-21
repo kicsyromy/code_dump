@@ -35,25 +35,49 @@ namespace rml
             signal<event_loop_t, value_t> changed;
 
         public:
+            auto operator=(decayed_value_t &value) -> property &
+            {
+                value_ = value;
+
+                if constexpr (std::is_lvalue_reference_v<value_t>)
+                {
+                    changed.emit(value);
+                }
+                else
+                {
+                    changed.emit(value_t{ value });
+                }
+
+                return *this;
+            }
+
             auto operator=(const decayed_value_t &value) -> property &
             {
                 value_ = value;
-                changed.emit(decayed_value_t{ value });
+
+                if constexpr (std::is_lvalue_reference_v<value_t>)
+                {
+                    changed.emit(value);
+                }
+                else
+                {
+                    changed.emit(value_t{ value });
+                }
 
                 return *this;
             }
 
             auto operator=(decayed_value_t &&value) -> property &
             {
-                value_ = value;
+                value_ = static_cast<const decayed_value_t &>(value);
                 changed.emit(std::move(value));
 
                 return *this;
             }
 
-            constexpr operator decayed_value_t() { return value_; }
+            constexpr operator decayed_value_t() noexcept { return value_; }
 
-            constexpr operator const decayed_value_t &() const { return value_; }
+            constexpr operator const decayed_value_t &() const noexcept { return value_; }
 
         private:
             decayed_value_t value_;

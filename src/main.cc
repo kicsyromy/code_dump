@@ -46,7 +46,11 @@ struct test
 
 void testfreef(int a) { std::printf("test free function called %d\n", a); }
 
-void f(const std::string &s) { std::printf("test string function %s\n", s.c_str()); }
+void f(const std::string &s)
+{
+    //    s += "bla";
+    std::printf("test string function %s\n", s.c_str());
+}
 
 template <typename... Args> struct vttest
 {
@@ -85,63 +89,59 @@ int main(int argc, char *argv[])
 
     // main_loop.run();
 
-    //    test t;
-    //    t.test_signal.connect(&t, &test::testslot, events::signals::connection_type::Queued);
-    //    t.test_signal.connect(&t, &testfreef, events::signals::connection_type::Queued);
+    test t;
+    t.test_signal.connect(&t, &test::testslot, events::signals::connection_type::Queued);
+    t.test_signal.connect(&t, &testfreef, events::signals::connection_type::Queued);
 
-    //    auto t1 = std::thread([&t]() {
-    //        int i = 0;
-    //        for (;;)
-    //        {
-    //            t.test_signal.emit(i++);
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //        }
-    //    });
-
-    //    auto t2 = std::thread([&t]() {
-    //        int i = 100;
-    //        for (;;)
-    //        {
-    //            t.test_signal.emit(i++);
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    //        }
-    //    });
-
-    //    // test t(main_loop);
-
-    //    property_t<int> test_property;
-    //    test_property.changed.connect(&t, &test::testslot, events::signals::connection_type::Queued);
-    //    test_property.changed.connect(&t, &testfreef, events::signals::connection_type::Queued);
-
-    //    auto t3 = std::thread([&test_property]() {
-    //        int i = 0;
-    //        const int prop_value = 5;
-    //        test_property = prop_value;
-    //        for (;;)
-    //        {
-    //            test_property = i++;
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //        }
-    //    });
-
-    //    auto t4 = std::thread([&test_property]() {
-    //        int i = 100;
-    //        for (;;)
-    //        {
-    //            test_property = i++;
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    //        }
-    //    });
-
-    property_t<const std::string &> prop;
-    prop.changed.connect((void *)nullptr, &f, events::signals::connection_type::Queued);
-
-    auto t5 = std::thread([&prop]() {
-        std::string a_string;
+    auto t1 = std::thread([&t]() {
+        int i = 0;
         for (;;)
         {
-            a_string += "bla";
-            prop = a_string;
+            t.test_signal.emit(i++);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    });
+
+    auto t2 = std::thread([&t]() {
+        int i = 100;
+        for (;;)
+        {
+            t.test_signal.emit(i++);
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        }
+    });
+
+    property_t<int> test_property;
+    test_property.changed.connect(&t, &test::testslot, events::signals::connection_type::Queued);
+    test_property.changed.connect(&t, &testfreef, events::signals::connection_type::Queued);
+
+    auto t3 = std::thread([&test_property]() {
+        int i = 0;
+        const int prop_value = 5;
+        test_property = prop_value;
+        for (;;)
+        {
+            test_property = i++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    });
+
+    auto t4 = std::thread([&test_property]() {
+        int i = 100;
+        for (;;)
+        {
+            test_property = i++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        }
+    });
+
+    property_t<const std::string &> prop;
+    prop.changed.connect(&f, events::signals::connection_type::Queued);
+
+    auto t5 = std::thread([&prop]() {
+        for (;;)
+        {
+            prop = std::string{ "bla" };
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
         }
     });
