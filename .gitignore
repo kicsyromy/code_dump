@@ -35,6 +35,7 @@
 *.pro.user
 CMakeLists.txt.user
 
+build/
 build-*
 *.config
 *.creator
