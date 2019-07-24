@@ -1,0 +1,8 @@
+{
+    "cmake.environment": {
+        "VERBOSE": "1"
+    },
+    "files.associations": {
+        "stdint.h": "c"
+    }
+}
