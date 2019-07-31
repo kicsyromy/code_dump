@@ -13,11 +13,13 @@ pkg_search_module (wayland-server wayland-server REQUIRED IMPORTED_TARGET)
 pkg_search_module (xkbcommon xkbcommon REQUIRED IMPORTED_TARGET)
 
 file (GLOB_RECURSE ${PROJECT_NAME}_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/include/*.*")
+file (GLOB_RECURSE ${PROJECT_NAME}_WAYLAND_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/include/wayland/*.*")
 file (GLOB_RECURSE ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.*")
 
 add_executable (
     ${PROJECT_NAME} 
     ${${PROJECT_NAME}_HEADERS}
+    ${${PROJECT_NAME}_WAYLAND_HEADERS}
     ${${PROJECT_NAME}_SOURCES}
 )
 

@@ -13,6 +13,7 @@ extern "C"
 #define static
 #include <wlr/backend.h>
 #include <wlr/render/wlr_renderer.h>
+#include <wlr/types/wlr_pointer.h>
 #include <wlr/types/wlr_seat.h>
 #include <wlr/types/wlr_xcursor_manager.h>
 #include <wlr/types/wlr_xdg_shell.h>
@@ -20,8 +21,9 @@ extern "C"
 }
 
 #include "concord_cursor.hh"
+#include "concord_output.hh"
 #include "concord_view.hh"
-#include "signal.hh"
+#include "concord_wayland_signal.hh"
 
 namespace concord
 {
@@ -43,31 +45,34 @@ namespace concord
 
     public:
         void seat_request_cursor(wl_listener *listener, void *data);
-        void server_cursor_motion(wl_listener *listener, void *data);
-        void server_cursor_motion_absolute(wl_listener *listener, void *data);
-        void server_cursor_button(wl_listener *listener, void *data);
-        void server_cursor_axis(wl_listener *listener, void *data);
-        void server_cursor_frame(wl_listener *listener, void *data);
-        void server_new_output(wl_listener *listener, void *data);
-        void server_new_xdg_surface(wlr_xdg_surface *surface);
+        void on_cursor_motion(wlr_event_pointer_motion &event);
+        void on_cursor_motion_absolute(wlr_event_pointer_motion_absolute &event);
+        void on_cursor_button(wlr_event_pointer_button &event);
+        void on_cursor_axis(wlr_event_pointer_axis &event);
+        void on_cursor_frame(char &event);
+        void on_new_output(wlr_output &output);
+        void on_new_xdg_surface(wlr_xdg_surface &surface);
 
     private:
-        wl_display *display{ wl_display_create() };
-        wlr_backend *backend{ wlr_backend_autocreate(display, nullptr) };
-        wlr_renderer *renderer{ wlr_backend_get_renderer(backend) };
+        wl_display *display;
+        wlr_backend *backend;
+        wlr_renderer *renderer;
 
-        wlr_xdg_shell *xdg_shell{ wlr_xdg_shell_create(display) };
-        // wl_listener new_xdg_surface{ };
-        events::wayland_signal<wlr_xdg_surface> new_xdg_surface{ xdg_shell->events.new_surface };
-        std::vector<std::reference_wrapper<view>> views;
+        wlr_output_layout *output_layout;
+        std::vector<output> outputs;
+        wayland::signal<wlr_output> new_output;
 
-        wlr_cursor *cursor{ wlr_cursor_create() };
-        wlr_xcursor_manager *cursor_mgr{ wlr_xcursor_manager_create(nullptr, 24) };
-        wl_listener cursor_motion;
-        wl_listener cursor_motion_absolute;
-        wl_listener cursor_button;
-        wl_listener cursor_axis;
-        wl_listener cursor_frame;
+        wlr_xdg_shell *xdg_shell;
+        wayland::signal<wlr_xdg_surface> new_xdg_surface;
+        std::vector<view> views;
+
+        wlr_cursor *cursor;
+        wlr_xcursor_manager *cursor_mgr;
+        wayland::signal<wlr_event_pointer_motion> cursor_motion;
+        wayland::signal<wlr_event_pointer_motion_absolute> cursor_motion_absolute;
+        wayland::signal<wlr_event_pointer_button> cursor_button;
+        wayland::signal<wlr_event_pointer_axis> cursor_axis;
+        wayland::signal<char> cursor_frame;
 
         wlr_seat *seat;
         wl_listener new_input;
@@ -78,10 +83,6 @@ namespace concord
         double grab_x, grab_y;
         int grab_width, grab_height;
         std::uint32_t resize_edges;
-
-        wlr_output_layout *output_layout{ wlr_output_layout_create() };
-        wl_list outputs;
-        wl_listener new_output;
     };
 } // namespace concord
 

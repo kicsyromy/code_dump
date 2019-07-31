@@ -10,17 +10,16 @@ extern "C"
 #undef static
 }
 
-namespace condord
+namespace concord
 {
     struct server;
 
     struct output
     {
-        wl_list link;
-        condord::server *server;
-        wlr_output *output;
+        concord::server *server;
+        wlr_output *handle;
         wl_listener frame;
     };
-}
+} // namespace concord
 
 #endif /* !CONCORD_OUTPUT_HH */
