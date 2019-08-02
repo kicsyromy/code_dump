@@ -14,7 +14,7 @@ namespace concord
 {
     struct server;
 
-    struct tinywl_keyboard
+    struct keyboard
     {
         static void keyboard_handle_modifiers(wl_listener* listener, void *data);
         static void keyboard_handle_key(wl_listener* listener, void *data);

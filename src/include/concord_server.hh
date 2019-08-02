@@ -24,6 +24,7 @@ extern "C"
 #include "concord_output.hh"
 #include "concord_view.hh"
 #include "concord_wayland_signal.hh"
+#include "concord_keyboard.hh"
 
 namespace concord
 {
@@ -36,7 +37,6 @@ namespace concord
         bool handle_keybinding(xkb_keysym_t sym);
         void server_new_keyboard(wlr_input_device *device);
         void server_new_pointer(wlr_input_device *device);
-        void server_new_input(void *data);
         view *desktop_view_at(
             double lx, double ly, struct wlr_surface **surface, double *sx, double *sy);
         void process_cursor_move(std::uint32_t time);
@@ -44,7 +44,10 @@ namespace concord
         void process_cursor_motion(std::uint32_t time);
 
     public:
-        void seat_request_cursor(wl_listener *listener, void *data);
+        void on_seat_request_cursor(wlr_seat_pointer_request_set_cursor_event &event);
+        void on_new_input(wlr_input_device &device);
+
+    public:
         void on_cursor_motion(wlr_event_pointer_motion &event);
         void on_cursor_motion_absolute(wlr_event_pointer_motion_absolute &event);
         void on_cursor_button(wlr_event_pointer_button &event);
@@ -75,9 +78,10 @@ namespace concord
         wayland::signal<> cursor_frame;
 
         wlr_seat *seat;
-        wl_listener new_input;
-        wl_listener request_cursor;
-        wl_list keyboards;
+        wayland::signal<wlr_input_device> new_input;
+        wayland::signal<wlr_seat_pointer_request_set_cursor_event> request_cursor;
+        std::vector<keyboard> keyboards;
+
         concord::cursor_mode cursor_mode;
         view *grabbed_view;
         double grab_x, grab_y;

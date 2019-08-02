@@ -50,7 +50,11 @@ server::server()
     ,
     cursor_mgr{ wlr_xcursor_manager_create(nullptr, 24) }, cursor_motion(cursor->events.motion),
     cursor_motion_absolute(cursor->events.motion_absolute), cursor_button(cursor->events.button),
-    cursor_axis(cursor->events.axis), cursor_frame(cursor->events.frame)
+    cursor_axis(cursor->events.axis), cursor_frame(cursor->events.frame),
+    seat{ wlr_seat_create(display, "seat0") },
+    new_input{ backend->events.new_input },
+    request_cursor{ seat->events.request_set_cursor }
+
 {
     wlr_renderer_init_wl_display(renderer, display);
 
@@ -81,6 +85,9 @@ server::server()
     cursor_button.connect(this, &server::on_cursor_button);
     cursor_axis.connect(this, &server::on_cursor_axis);
     cursor_frame.connect(this, &server::on_cursor_frame);
+
+    new_input.connect(this, &server::on_new_input);
+    request_cursor.connect(this, &server::on_seat_request_cursor);
 }
 
 bool server::handle_keybinding(xkb_keysym_t sym) {}
@@ -88,8 +95,6 @@ bool server::handle_keybinding(xkb_keysym_t sym) {}
 void server::server_new_keyboard(wlr_input_device *device) {}
 
 void server::server_new_pointer(wlr_input_device *device) {}
-
-void server::server_new_input(void *data) {}
 
 view *server::desktop_view_at(
     double lx, double ly, struct wlr_surface **surface, double *sx, double *sy)
@@ -102,7 +107,9 @@ void server::process_cursor_resize(std::uint32_t time) {}
 
 void server::process_cursor_motion(std::uint32_t time) {}
 
-void server::seat_request_cursor(wl_listener *listener, void *data) {}
+void server::on_seat_request_cursor(wlr_seat_pointer_request_set_cursor_event &event) {}
+
+void server::on_new_input(wlr_input_device &device) {}
 
 void server::on_cursor_motion(wlr_event_pointer_motion &event) {}
 
