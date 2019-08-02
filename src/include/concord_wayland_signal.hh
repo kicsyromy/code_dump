@@ -10,7 +10,10 @@ namespace concord
 {
     namespace wayland
     {
-        template <typename Arg = std::nullptr_t> class signal : public std::conditional_t<!std::is_same_v<Arg, std::nullptr_t>, events::signal<Arg &>, events::signal<>>
+        template <typename Arg = std::nullptr_t>
+        class signal : public std::conditional_t<!std::is_same_v<Arg, std::nullptr_t>,
+                                                 events::signal<Arg &>,
+                                                 events::signal<>>
         {
         private:
             using this_t = signal<Arg>;
@@ -20,6 +23,16 @@ namespace concord
             {
                 handle_.notify = &signal::on_wl_signal_triggered;
                 wl_signal_add(&signal, &handle_);
+            }
+
+            ~signal() = default;
+
+        public:
+            signal(signal &&other) : handle_{ other.handle_ } {}
+            signal &operator=(signal &&other)
+            {
+                handle_ = other.handle_;
+                return *this;
             }
 
         private:
@@ -41,7 +54,6 @@ namespace concord
 
         private:
             DISABLE_COPY(signal);
-            DISABLE_MOVE(signal);
         };
     } // namespace wayland
 } // namespace concord

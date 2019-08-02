@@ -2,13 +2,14 @@
 #define CONCORD_OUTPUT_HH
 
 #include <vector>
-#include <memory>
 
 #include <wayland-server.h>
 
 extern "C"
 {
 #define static
+#include <wlr/backend.h>
+#include <wlr/render/wlr_renderer.h>
 #include <wlr/types/wlr_output.h>
 #include <wlr/types/wlr_output_layout.h>
 #undef static
@@ -24,20 +25,32 @@ namespace concord
 
     class output_layout
     {
-    public:
-        struct output
+    private:
+        class output
         {
-            concord::server *server;
+        public:
+            output(wlr_output *handle);
+
+        public:
+            events::signal<output &> output_frame_requested;
+
+        private:
+            void on_output_frame_requested();
+
+        private:
             wlr_output *handle;
-            wl_listener frame;
+            wayland::signal<> output_frame;
+
+        public:
+            DECLARE_CONVERT_FROM_RAW_PTR(handle)
         };
 
     public:
-        output_layout(server &concord_server);
-        ~output_layout();
+        output_layout(server &server);
 
     private:
         void on_new_output_added(wlr_output &output);
+        void on_output_frame_requested(output &output);
 
     private:
         server &server_;
@@ -47,7 +60,10 @@ namespace concord
         wayland::signal<wlr_output> new_output;
 
     private:
-      std::unique_ptr<wlr_output_layout, decltype(&wlr_output_layout_destroy)> handle_{ wlr_output_layout_create(), &wlr_output_layout_destroy };
+        WLROOTS_PTR(wlr_output_layout, handle_);
+
+    public:
+        DECLARE_CONVERT_FROM_SMART_PTR(handle_)
     };
 } // namespace concord
 

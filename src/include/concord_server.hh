@@ -21,10 +21,10 @@ extern "C"
 }
 
 #include "concord_cursor.hh"
+#include "concord_keyboard.hh"
 #include "concord_output.hh"
 #include "concord_view.hh"
 #include "concord_wayland_signal.hh"
-#include "concord_keyboard.hh"
 
 namespace concord
 {
@@ -60,9 +60,7 @@ namespace concord
         wlr_backend *backend;
         wlr_renderer *renderer;
 
-        wlr_output_layout *output_layout;
-        std::vector<output_layout::output> outputs;
-        wayland::signal<wlr_output> new_output;
+        output_layout output_layout_;
 
         wlr_xdg_shell *xdg_shell;
         wayland::signal<wlr_xdg_surface> new_xdg_surface;

@@ -33,7 +33,8 @@ server::server()
     /* Creates an output layout, which a wlroots utility for working with an
      * arrangement of screens in a physical layout. */
     ,
-    output_layout{ wlr_output_layout_create() }, new_output{ backend->events.new_output }
+    output_layout_{ *this }
+
     /* Set up the xdg-shell. The xdg-shell is a Wayland
      * protocol which is used for application windows. For more detail on
      * shells, refer to the article:
@@ -50,10 +51,9 @@ server::server()
     ,
     cursor_mgr{ wlr_xcursor_manager_create(nullptr, 24) }, cursor_motion(cursor->events.motion),
     cursor_motion_absolute(cursor->events.motion_absolute), cursor_button(cursor->events.button),
-    cursor_axis(cursor->events.axis), cursor_frame(cursor->events.frame),
-    seat{ wlr_seat_create(display, "seat0") },
-    new_input{ backend->events.new_input },
-    request_cursor{ seat->events.request_set_cursor }
+    cursor_axis(cursor->events.axis),
+    cursor_frame(cursor->events.frame), seat{ wlr_seat_create(display, "seat0") },
+    new_input{ backend->events.new_input }, request_cursor{ seat->events.request_set_cursor }
 
 {
     wlr_renderer_init_wl_display(renderer, display);
@@ -65,10 +65,6 @@ server::server()
     wlr_compositor_create(display, renderer);
     wlr_data_device_manager_create(display);
 
-    /* Configure a listener to be notified when new outputs are available on the
-     * backend. */
-    new_output.connect(this, &server::on_new_output);
-
     /* Configure a listener to be notified when new surfaces appear */
     new_xdg_surface.connect(this, &server::on_new_xdg_surface);
 
@@ -76,7 +72,7 @@ server::server()
      * Attach the cursor to the output layout.
      * The cursor is a wlroots utility for tracking the cursor image shown on screen.
      */
-    wlr_cursor_attach_output_layout(cursor, output_layout);
+    wlr_cursor_attach_output_layout(cursor, output_layout_());
 
     /*  We add a cursor theme at scale factor 1 to begin with. */
     wlr_xcursor_manager_load(cursor_mgr, 1);
