@@ -9,8 +9,11 @@ namespace concord
 {
     namespace wayland
     {
-        template <typename Arg> class signal : public events::signal<Arg &>
+        template <typename Arg = std::nullptr_t> class signal : public std::conditional_t<!std::is_same_v<Arg, std::nullptr_t>, events::signal<Arg &>, events::signal<>>
         {
+        private:
+            using this_t = signal<Arg>;
+
         public:
             inline signal(wl_signal &signal) noexcept
             {
@@ -19,10 +22,17 @@ namespace concord
             }
 
         private:
-            static void on_wl_signal_triggered(wl_listener *listener, void *data)
+            static void on_wl_signal_triggered(wl_listener *listener, [[maybe_unused]] void *data)
             {
-                signal *self = wl_container_of(listener, self, handle_);
-                self->emit(*static_cast<Arg *>(data));
+                this_t *self = wl_container_of(listener, self, handle_);
+                if constexpr (std::is_same_v<Arg, std::nullptr_t>)
+                {
+                    self->emit();
+                }
+                else
+                {
+                    self->emit(*static_cast<Arg *>(data));
+                }
             }
 
         private:

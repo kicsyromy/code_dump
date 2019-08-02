@@ -112,7 +112,7 @@ void server::on_cursor_button(wlr_event_pointer_button &event) {}
 
 void server::on_cursor_axis(wlr_event_pointer_axis &event) {}
 
-void server::on_cursor_frame(char &) {}
+void server::on_cursor_frame() {}
 
 void server::on_new_output(wlr_output &output) {}
 

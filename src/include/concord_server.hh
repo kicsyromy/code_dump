@@ -49,7 +49,7 @@ namespace concord
         void on_cursor_motion_absolute(wlr_event_pointer_motion_absolute &event);
         void on_cursor_button(wlr_event_pointer_button &event);
         void on_cursor_axis(wlr_event_pointer_axis &event);
-        void on_cursor_frame(char &event);
+        void on_cursor_frame();
         void on_new_output(wlr_output &output);
         void on_new_xdg_surface(wlr_xdg_surface &surface);
 
@@ -72,7 +72,7 @@ namespace concord
         wayland::signal<wlr_event_pointer_motion_absolute> cursor_motion_absolute;
         wayland::signal<wlr_event_pointer_button> cursor_button;
         wayland::signal<wlr_event_pointer_axis> cursor_axis;
-        wayland::signal<char> cursor_frame;
+        wayland::signal<> cursor_frame;
 
         wlr_seat *seat;
         wl_listener new_input;
