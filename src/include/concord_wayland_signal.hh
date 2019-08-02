@@ -3,6 +3,7 @@
 
 #include <wayland-server.h>
 
+#include "concord_global.hh"
 #include "concord_signal.hh"
 
 namespace concord
@@ -37,6 +38,10 @@ namespace concord
 
         private:
             wl_listener handle_{};
+
+        private:
+            DISABLE_COPY(signal);
+            DISABLE_MOVE(signal);
         };
     } // namespace wayland
 } // namespace concord

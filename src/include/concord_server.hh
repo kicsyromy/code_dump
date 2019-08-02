@@ -56,13 +56,12 @@ namespace concord
         void on_new_output(wlr_output &output);
         void on_new_xdg_surface(wlr_xdg_surface &surface);
 
-    private:
         wl_display *display;
         wlr_backend *backend;
         wlr_renderer *renderer;
 
         wlr_output_layout *output_layout;
-        std::vector<output> outputs;
+        std::vector<output_layout::output> outputs;
         wayland::signal<wlr_output> new_output;
 
         wlr_xdg_shell *xdg_shell;
