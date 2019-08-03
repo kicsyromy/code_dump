@@ -23,6 +23,16 @@ namespace concord
     {
     public:
         surface(wlr_xdg_surface &surface);
+        surface(surface &&) = default;
+
+    public:
+        inline bool is_mapped() const noexcept { return mapped_; }
+
+    public:
+        bool operator==(const surface &other) const noexcept
+        {
+            return &xdg_surface_ == &other.xdg_surface_;
+        }
 
     public:
         events::signal<surface &> focus_requested;
@@ -49,6 +59,9 @@ namespace concord
         wayland::signal<> xdg_surface_destroy;
         wayland::signal<> xdg_toplevel_request_move;
         wayland::signal<wlr_xdg_toplevel_resize_event> xdg_toplevel_request_resize;
+
+    private:
+        DISABLE_COPY(surface);
 
     public:
         DECLARE_CONVERT_FROM_RAW_PTR(xdg_surface_)

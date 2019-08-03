@@ -1,5 +1,3 @@
-#include "concord_output.hh"
-
 #include <wayland-server.h>
 
 extern "C"
@@ -11,6 +9,7 @@ extern "C"
 #undef static
 }
 
+#include "concord_output.hh"
 #include "concord_renderer.hh"
 #include "concord_server.hh"
 
@@ -94,7 +93,7 @@ void output_layout::on_output_frame_requested(output_layout::output &output)
     for (auto it = server_.views.rbegin(); it != server_.views.rend(); ++it)
     {
         auto &view = *it;
-        if (!view.mapped)
+        if (!view.is_mapped())
         {
             /* An unmapped view should not be rendered. */
             continue;
@@ -107,7 +106,7 @@ void output_layout::on_output_frame_requested(output_layout::output &output)
         };
         /* This calls our render_surface function for each surface among the
          * xdg_surface's toplevel and popups. */
-        wlr_xdg_surface_for_each_surface(view.xdg_surface, nullptr, &rdata);
+        wlr_xdg_surface_for_each_surface(&view(), nullptr, &rdata);
     }
 
     /* Hardware cursors are rendered by the GPU on a separate plane, and can be

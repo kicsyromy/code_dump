@@ -15,18 +15,18 @@ extern "C"
 
 namespace concord
 {
-    struct view;
+    struct surface;
 
     struct render_data
     {
-        void render_surface(wlr_surface* surface, int sx, int sy, void* data);
-        static void output_frame(wl_listener* listener, void* data);
+        void render_surface(wlr_surface *surface, int sx, int sy, void *data);
+        static void output_frame(wl_listener *listener, void *data);
 
         wlr_output *output;
         wlr_renderer *renderer;
-        concord::view *view;
+        concord::surface *view;
         timespec *when;
     };
-}
+} // namespace concord
 
 #endif /* !CONCORD_RENDERER_HH */

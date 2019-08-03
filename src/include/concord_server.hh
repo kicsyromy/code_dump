@@ -1,7 +1,7 @@
 #ifndef CONCORD_SERVER_HH
 #define CONCORD_SERVER_HH
 
-#include <forward_list>
+#include <list>
 #include <vector>
 
 #include <cstdint>
@@ -55,7 +55,7 @@ namespace concord
         void on_cursor_button(wlr_event_pointer_button &event);
         void on_cursor_axis(wlr_event_pointer_axis &event);
         void on_cursor_frame();
-        void on_new_xdg_surface(wlr_xdg_surface &surface);
+        void on_new_xdg_surface(wlr_xdg_surface &xdg_surface);
 
         wl_display *display;
         wlr_backend *backend;
@@ -65,7 +65,7 @@ namespace concord
 
         WLROOTS_PTR(wlr_xdg_shell, xdg_shell_, display);
         wayland::signal<wlr_xdg_surface> new_xdg_surface;
-        std::forward_list<surface> views;
+        std::list<surface> views;
 
         wlr_cursor *cursor;
         wlr_xcursor_manager *cursor_mgr;
@@ -85,6 +85,12 @@ namespace concord
         double grab_x, grab_y;
         int grab_width, grab_height;
         std::uint32_t resize_edges;
+
+    private:
+        void on_surface_focus_requested(surface &surface);
+        void on_surface_move_requested(surface &surface);
+        void on_surface_resize_requested(surface &surface, const std::uint32_t edges);
+        void on_surface_destroyed(surface &surface);
     };
 } // namespace concord
 

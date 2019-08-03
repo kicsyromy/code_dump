@@ -116,4 +116,69 @@ void server::on_cursor_axis(wlr_event_pointer_axis &event) {}
 
 void server::on_cursor_frame() {}
 
-void server::on_new_xdg_surface(wlr_xdg_surface &surface) {}
+void server::on_new_xdg_surface(wlr_xdg_surface &xdg_surface)
+{
+    /* This event is raised when wlr_xdg_shell receives a new xdg surface from a
+     * client, either a toplevel (application window) or popup. */
+    if (xdg_surface.role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
+    {
+        return;
+    }
+
+    /* Listen to the various events it can emit */
+    views.emplace_back(xdg_surface);
+    auto &surface = views.back();
+    surface.focus_requested.connect(this, &server::on_surface_focus_requested);
+    surface.move_requested.connect(this, &server::on_surface_move_requested);
+    surface.resize_requested.connect(this, &server::on_surface_resize_requested);
+    surface.destroyed.connect(this, &server::on_surface_destroyed);
+}
+
+void server::on_surface_focus_requested(surface &surface)
+{
+    /* Note: this function only deals with keyboard focus. */
+    struct wlr_seat *seat = seat;
+    struct wlr_surface *prev_surface = seat->keyboard_state.focused_surface;
+    if (prev_surface == surface().surface)
+    {
+        /* Don't re-focus an already focused surface. */
+        return;
+    }
+
+    if (prev_surface)
+    {
+        /*
+         * Deactivate the previously focused surface. This lets the client know
+         * it no longer has focus and the client will repaint accordingly, e.g.
+         * stop displaying a caret.
+         */
+        struct wlr_xdg_surface *previous =
+            wlr_xdg_surface_from_wlr_surface(seat->keyboard_state.focused_surface);
+        wlr_xdg_toplevel_set_activated(previous, false);
+    }
+    struct wlr_keyboard *keyboard = wlr_seat_get_keyboard(seat);
+
+    /* Move the view to the front */
+    auto it = std::find(views.begin(), views.end(), surface);
+    if (it != views.end())
+    {
+        views.push_front(std::move(*it));
+        views.erase(it);
+
+        /* Activate the new surface */
+        wlr_xdg_toplevel_set_activated(&views.front()(), true);
+        /*
+     * Tell the seat to have the keyboard enter this surface. wlroots will keep
+     * track of this and automatically send key events to the appropriate
+     * clients without additional work on your part.
+     */
+        wlr_seat_keyboard_notify_enter(seat, views.front()().surface, keyboard->keycodes,
+                                       keyboard->num_keycodes, &keyboard->modifiers);
+    }
+}
+
+void server::on_surface_move_requested(surface &surface) {}
+
+void server::on_surface_resize_requested(surface &surface, const uint32_t edges) {}
+
+void server::on_surface_destroyed(surface &surface) {}
