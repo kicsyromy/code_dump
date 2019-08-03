@@ -22,4 +22,6 @@
 #define DECLARE_CONVERT_FROM_RAW_PTR(ptr)                                                          \
     decltype(ptr) operator()() noexcept { return ptr; }
 
+#define DECLARE_WLR_TYPE(name) extern "C" struct name
+
 #endif /* !CONCORD_GLOBAL_HH */

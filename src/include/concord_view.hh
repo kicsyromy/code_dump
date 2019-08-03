@@ -1,6 +1,8 @@
 #ifndef CONCORD_VIEW_HH
 #define CONCORD_VIEW_HH
 
+#include <cstdint>
+
 #include <wayland-server.h>
 
 extern "C"
@@ -11,39 +13,46 @@ extern "C"
 }
 
 #include "concord_cursor.hh"
+#include "concord_global.hh"
+#include "concord_signal.hh"
+#include "concord_wayland_signal.hh"
 
 namespace concord
 {
-    struct server;
-
-    struct view
+    class surface
     {
-        void focus_view(wlr_surface* surface);
-        bool view_at(double lx,
-            double ly,
-            struct wlr_surface** surface,
-            double* sx,
-            double* sy);
-        void begin_interactive(cursor_mode mode, uint32_t edges);
+    public:
+        surface(wlr_xdg_surface &surface);
 
-        static void xdg_surface_map(wl_listener* listener, void* data);
-        static void xdg_surface_unmap(wl_listener *listener, void *data);
-        static void xdg_surface_destroy(wl_listener *listener, void *data);
-        static void xdg_toplevel_request_move(wl_listener* listener, void* data);
-        static void xdg_toplevel_request_resize(wl_listener* listener, void* data);
+    public:
+        events::signal<surface &> focus_requested;
+        events::signal<surface &> move_requested;
+        events::signal<surface &, const std::uint32_t> resize_requested;
+        events::signal<surface &> destroyed;
 
-        concord::server *server;
+    private:
+        void on_xdg_surface_map();
+        void on_xdg_surface_unmap();
+        void on_xdg_surface_destroy();
+        void on_xdg_toplevel_request_move();
+        void on_xdg_toplevel_request_resize(wlr_xdg_toplevel_resize_event &event);
 
-        wl_list link;
-        wlr_xdg_surface *xdg_surface;
-        wl_listener map;
-        wl_listener unmap;
-        wl_listener destroy;
-        wl_listener request_move;
-        wl_listener request_resize;
-        bool mapped;
-        int x, y;
+    private:
+        wlr_xdg_surface &xdg_surface_;
+
+        int x_{ 0 };
+        int y_{ 0 };
+        bool mapped_{ false };
+
+        wayland::signal<> xdg_surface_map;
+        wayland::signal<> xdg_surface_unmap;
+        wayland::signal<> xdg_surface_destroy;
+        wayland::signal<> xdg_toplevel_request_move;
+        wayland::signal<wlr_xdg_toplevel_resize_event> xdg_toplevel_request_resize;
+
+    public:
+        DECLARE_CONVERT_FROM_RAW_PTR(xdg_surface_)
     };
-}
+} // namespace concord
 
 #endif /* !CONCORD_VIEW_HH */

@@ -24,7 +24,6 @@ namespace concord
             template <typename callee_t>
             auto connect(callee_t *callee, void (callee_t::*callback)(Args...))
             {
-                clients_.emplace(callee, connections_.size());
                 connections_.push_back([callee, callback](Args &&... args) {
                     ((*callee).*callback)(std::forward<Args>(args)...);
                 });
@@ -33,8 +32,6 @@ namespace concord
             template <typename callee_t> void connect(callee_t *callee, void (*callback)(Args...))
             {
                 assert(callee != nullptr);
-
-                clients_.emplace(callee, connections_.size());
                 connections_.push_back(callback);
             }
 
@@ -50,7 +47,6 @@ namespace concord
 
         private:
             std::vector<std::function<void(Args...)>> connections_{};
-            std::unordered_map<void *, std::size_t> clients_{};
         };
     } // namespace events
 } // namespace concord

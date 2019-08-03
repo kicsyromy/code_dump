@@ -3,14 +3,9 @@
 
 #include <vector>
 
-#include <wayland-server.h>
-
 extern "C"
 {
 #define static
-#include <wlr/backend.h>
-#include <wlr/render/wlr_renderer.h>
-#include <wlr/types/wlr_output.h>
 #include <wlr/types/wlr_output_layout.h>
 #undef static
 }

@@ -1,5 +1,16 @@
 #include "concord_output.hh"
 
+#include <wayland-server.h>
+
+extern "C"
+{
+#define static
+#include <wlr/backend.h>
+#include <wlr/render/wlr_renderer.h>
+#include <wlr/types/wlr_output.h>
+#undef static
+}
+
 #include "concord_renderer.hh"
 #include "concord_server.hh"
 

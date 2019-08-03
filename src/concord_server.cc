@@ -42,8 +42,7 @@ server::server()
      * https://drewdevault.com/2018/07/29/Wayland-shells.html
      */
     ,
-    xdg_shell{ wlr_xdg_shell_create(display) },
-    new_xdg_surface{ xdg_shell->events.new_surface }, cursor{ wlr_cursor_create() }
+    new_xdg_surface{ xdg_shell_->events.new_surface }, cursor{ wlr_cursor_create() }
     /* Creates an xcursor manager, another wlroots utility which loads up
      * Xcursor themes to source cursor images from and makes sure that cursor
      * images are available at all scale factors on the screen (necessary for
@@ -92,7 +91,7 @@ void server::server_new_keyboard(wlr_input_device *device) {}
 
 void server::server_new_pointer(wlr_input_device *device) {}
 
-view *server::desktop_view_at(
+surface *server::desktop_view_at(
     double lx, double ly, struct wlr_surface **surface, double *sx, double *sy)
 {
 }
@@ -116,7 +115,5 @@ void server::on_cursor_button(wlr_event_pointer_button &event) {}
 void server::on_cursor_axis(wlr_event_pointer_axis &event) {}
 
 void server::on_cursor_frame() {}
-
-void server::on_new_output(wlr_output &output) {}
 
 void server::on_new_xdg_surface(wlr_xdg_surface &surface) {}
