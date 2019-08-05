@@ -3,6 +3,10 @@
 
 #include <cstdint>
 
+#include "concord_global.hh"
+#include "concord_signal.hh"
+#include "concord_wayland_signal.hh"
+
 extern "C"
 {
 #define static
@@ -11,16 +15,12 @@ extern "C"
 #undef static
 }
 
-#include "concord_global.hh"
-#include "concord_signal.hh"
-#include "concord_wayland_signal.hh"
-
 namespace concord
 {
     class cursor
     {
     public:
-        enum class cursor_mode
+        enum class mode
         {
             Passthrough,
             Move,
@@ -38,15 +38,28 @@ namespace concord
 
     public:
         events::signal<const motion_type, const double, const double> moved;
-        events::signal<const std::uint32_t> button_pressed;
-        events::signal<const std::uint32_t> button_released;
+        events::signal<const std::uint32_t, const std::uint32_t> button_pressed;
+        events::signal<const std::uint32_t, const std::uint32_t> button_released;
+        events::signal<const std::uint32_t,
+                       const wlr_axis_orientation,
+                       const std::int32_t,
+                       const wlr_axis_source>
+            axis_changed;
+        events::signal<> frame_event;
+
+    private:
+        void on_cursor_motion(wlr_event_pointer_motion &event);
+        void on_cursor_motion_absolute(wlr_event_pointer_motion_absolute &event);
+        void on_cursor_button(wlr_event_pointer_button &event);
+        void on_cursor_axis(wlr_event_pointer_axis &event);
+        void on_cursor_frame();
 
     private:
         /* Creates an xcursor manager, another wlroots utility which loads up
          * Xcursor themes to source cursor images from and makes sure that cursor
          * images are available at all scale factors on the screen (necessary for
          * HiDPI support). We add a cursor theme at scale factor 1 to begin with. */
-        WLROOTS_PTR(wlr_cursor, handle_);
+        wayland_ptr<wlr_cursor> handle_;
         WLROOTS_PTR(wlr_xcursor_manager, manager_, nullptr, 24);
 
         /*

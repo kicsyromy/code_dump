@@ -80,7 +80,7 @@ namespace concord
         wayland::signal<wlr_seat_pointer_request_set_cursor_event> request_cursor;
         std::vector<keyboard> keyboards;
 
-        concord::cursor_mode cursor_mode;
+        concord::cursor::mode cursor_mode;
         surface *grabbed_view;
         double grab_x, grab_y;
         int grab_width, grab_height;
