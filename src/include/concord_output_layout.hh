@@ -48,14 +48,14 @@ namespace concord
         void on_output_frame_requested(output &output);
 
     private:
+        wayland_ptr<wlr_output_layout> handle_;
+
+    private:
         server &server_;
 
     private:
         std::vector<output> outputs_{};
         wayland::signal<wlr_output> new_output;
-
-    private:
-        WLROOTS_PTR(wlr_output_layout, handle_);
 
     public:
         DECLARE_CONVERT_FROM_SMART_PTR(handle_)

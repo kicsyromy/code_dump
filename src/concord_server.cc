@@ -42,6 +42,7 @@ server::server()
      * https://drewdevault.com/2018/07/29/Wayland-shells.html
      */
     ,
+    xdg_shell_{ &wlr_xdg_shell_create, &wlr_xdg_shell_destroy, static_cast<wl_display *>(display) },
     new_xdg_surface{ xdg_shell_->events.new_surface }, cursor{ wlr_cursor_create() }
     /* Creates an xcursor manager, another wlroots utility which loads up
      * Xcursor themes to source cursor images from and makes sure that cursor

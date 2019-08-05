@@ -63,7 +63,7 @@ namespace concord
 
         output_layout output_layout_;
 
-        WLROOTS_PTR(wlr_xdg_shell, xdg_shell_, display);
+        wayland_ptr<wlr_xdg_shell> xdg_shell_;
         wayland::signal<wlr_xdg_surface> new_xdg_surface;
         std::list<surface> views;
 

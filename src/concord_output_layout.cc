@@ -23,7 +23,9 @@ output_layout::output::output(wlr_output *handle) : output_frame(handle->events.
 void output_layout::output::on_output_frame_requested() { output_frame_requested.emit(*this); }
 
 output_layout::output_layout(server &server)
-  : server_{ server }, new_output{ server.backend->events.new_output }
+  : handle_{ &wlr_output_layout_create, &wlr_output_layout_destroy }, server_{ server }, new_output{
+        server.backend->events.new_output
+    }
 {
     /* Configure a listener to be notified when new outputs are available on the
      * backend. */
@@ -56,7 +58,7 @@ void output_layout::on_new_output_added(wlr_output &output)
      * from left-to-right in the order they appear. A more sophisticated
      * compositor would let the user configure the arrangement of outputs in the
      * layout. */
-    wlr_output_layout_add_auto(handle_.get(), &output);
+    wlr_output_layout_add_auto(handle_, &output);
 
     /* Creating the global adds a wl_output global to the display, which Wayland
      * clients can see to find out information about the output (such as
