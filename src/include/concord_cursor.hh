@@ -60,7 +60,7 @@ namespace concord
          * images are available at all scale factors on the screen (necessary for
          * HiDPI support). We add a cursor theme at scale factor 1 to begin with. */
         wayland_ptr<wlr_cursor> handle_;
-        WLROOTS_PTR(wlr_xcursor_manager, manager_, nullptr, 24);
+        wayland_ptr<wlr_xcursor_manager> manager_;
 
         /*
          * wlr_cursor *only* displays an image on screen. It does not move around
