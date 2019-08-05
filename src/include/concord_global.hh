@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include <wayland-server.h>
+
 #define DISABLE_COPY(klass)                                                                        \
     klass(const klass &other) = delete;                                                            \
     klass &operator=(const klass &other) = delete

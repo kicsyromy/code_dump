@@ -79,6 +79,9 @@ namespace concord
         wayland::signal<wlr_event_pointer_button> button;
         wayland::signal<wlr_event_pointer_axis> axis;
         wayland::signal<> frame;
+
+    public:
+        DECLARE_CONVERT_FROM_SMART_PTR(handle_)
     };
 } // namespace concord
 

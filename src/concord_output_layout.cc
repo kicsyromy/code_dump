@@ -1,4 +1,9 @@
+
 #include <wayland-server.h>
+
+#include "concord_output_layout.hh"
+#include "concord_renderer.hh"
+#include "concord_server.hh"
 
 extern "C"
 {
@@ -9,15 +14,11 @@ extern "C"
 #undef static
 }
 
-#include "concord_output_layout.hh"
-#include "concord_renderer.hh"
-#include "concord_server.hh"
-
 using namespace concord;
 
 output_layout::output::output(wlr_output *handle) : output_frame(handle->events.frame)
 {
-    output_frame.connect(this, &output::on_output_frame_requested);
+    output_frame.connect(sigc::mem_fun(this, &output::on_output_frame_requested));
 }
 
 void output_layout::output::on_output_frame_requested() { output_frame_requested.emit(*this); }
@@ -29,7 +30,7 @@ output_layout::output_layout(server &server)
 {
     /* Configure a listener to be notified when new outputs are available on the
      * backend. */
-    new_output.connect(this, &output_layout::on_new_output_added);
+    new_output.connect(sigc::mem_fun(this, &output_layout::on_new_output_added));
 }
 
 void output_layout::on_new_output_added(wlr_output &output)
@@ -52,7 +53,8 @@ void output_layout::on_new_output_added(wlr_output &output)
     outputs_.emplace_back(&output);
 
     /* Sets up a listener for the frame notify event. */
-    outputs_.back().output_frame_requested.connect(this, &output_layout::on_output_frame_requested);
+    outputs_.back().output_frame_requested.connect(
+        sigc::mem_fun(this, &output_layout::on_output_frame_requested));
 
     /* Adds this to the output layout. The add_auto function arranges outputs
      * from left-to-right in the order they appear. A more sophisticated

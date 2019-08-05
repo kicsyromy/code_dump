@@ -3,11 +3,10 @@
 using namespace concord;
 
 cursor::cursor()
-  : handle_{ &wlr_cursor_create, &wlr_cursor_destroy }, manager_{ &wlr_xcursor_manager_create,
-                                                                  &wlr_xcursor_manager_destroy,
-                                                                  static_cast<const char *>(
-                                                                      nullptr),
-                                                                  24u },
+  : handle_{ &wlr_cursor_create, &wlr_cursor_destroy },
+    /*  We add a cursor theme at scale factor 1 to begin with. */
+    manager_{ &wlr_xcursor_manager_create, &wlr_xcursor_manager_destroy,
+              static_cast<const char *>(nullptr), 24u },
     motion{ handle_->events.motion }, motion_absolute{ handle_->events.motion_absolute },
     button{ handle_->events.button }, axis{ handle_->events.axis }, frame{ handle_->events.frame }
 {

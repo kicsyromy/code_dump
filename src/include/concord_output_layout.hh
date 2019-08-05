@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <sigc++/sigc++.h>
+
 extern "C"
 {
 #define static

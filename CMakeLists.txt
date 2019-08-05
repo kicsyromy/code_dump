@@ -11,6 +11,7 @@ find_package (PkgConfig QUIET REQUIRED)
 pkg_search_module (wlroots wlroots REQUIRED IMPORTED_TARGET) 
 pkg_search_module (wayland-server wayland-server REQUIRED IMPORTED_TARGET) 
 pkg_search_module (xkbcommon xkbcommon REQUIRED IMPORTED_TARGET)
+pkg_search_module (sigc++ sigc++-2.0 REQUIRED IMPORTED_TARGET)
 
 file (GLOB_RECURSE ${PROJECT_NAME}_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/include/*.*")
 file (GLOB_RECURSE ${PROJECT_NAME}_WAYLAND_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/include/wayland/*.*")
@@ -43,5 +44,6 @@ target_link_libraries (
     PkgConfig::wlroots
     PkgConfig::wayland-server
     PkgConfig::xkbcommon
+    PkgConfig::sigc++
     xdg-shell-protocol
 )

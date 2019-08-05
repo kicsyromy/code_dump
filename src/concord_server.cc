@@ -43,18 +43,8 @@ server::server()
      */
     ,
     xdg_shell_{ &wlr_xdg_shell_create, &wlr_xdg_shell_destroy, static_cast<wl_display *>(display) },
-    new_xdg_surface{ xdg_shell_->events.new_surface }, cursor{ wlr_cursor_create() }
-    /* Creates an xcursor manager, another wlroots utility which loads up
-     * Xcursor themes to source cursor images from and makes sure that cursor
-     * images are available at all scale factors on the screen (necessary for
-     * HiDPI support). */
-    ,
-    cursor_mgr{ wlr_xcursor_manager_create(nullptr, 24) }, cursor_motion(cursor->events.motion),
-    cursor_motion_absolute(cursor->events.motion_absolute), cursor_button(cursor->events.button),
-    cursor_axis(cursor->events.axis),
-    cursor_frame(cursor->events.frame), seat{ wlr_seat_create(display, "seat0") },
-    new_input{ backend->events.new_input }, request_cursor{ seat->events.request_set_cursor }
-
+    new_xdg_surface{ xdg_shell_->events.new_surface }, new_input{ backend->events.new_input },
+    request_cursor{ seat->events.request_set_cursor }
 {
     wlr_renderer_init_wl_display(renderer, display);
 
@@ -66,24 +56,16 @@ server::server()
     wlr_data_device_manager_create(display);
 
     /* Configure a listener to be notified when new surfaces appear */
-    new_xdg_surface.connect(this, &server::on_new_xdg_surface);
+    new_xdg_surface.connect(sigc::mem_fun(this, &server::on_new_xdg_surface));
 
     /*
      * Attach the cursor to the output layout.
      * The cursor is a wlroots utility for tracking the cursor image shown on screen.
      */
-    wlr_cursor_attach_output_layout(cursor, output_layout_());
+    wlr_cursor_attach_output_layout(cursor_(), output_layout_());
 
-    /*  We add a cursor theme at scale factor 1 to begin with. */
-    wlr_xcursor_manager_load(cursor_mgr, 1);
-    cursor_motion.connect(this, &server::on_cursor_motion);
-    cursor_motion_absolute.connect(this, &server::on_cursor_motion_absolute);
-    cursor_button.connect(this, &server::on_cursor_button);
-    cursor_axis.connect(this, &server::on_cursor_axis);
-    cursor_frame.connect(this, &server::on_cursor_frame);
-
-    new_input.connect(this, &server::on_new_input);
-    request_cursor.connect(this, &server::on_seat_request_cursor);
+    new_input.connect(sigc::mem_fun(this, &server::on_new_input));
+    request_cursor.connect(sigc::mem_fun(this, &server::on_seat_request_cursor));
 }
 
 bool server::handle_keybinding(xkb_keysym_t sym) {}
@@ -129,10 +111,10 @@ void server::on_new_xdg_surface(wlr_xdg_surface &xdg_surface)
     /* Listen to the various events it can emit */
     views.emplace_back(xdg_surface);
     auto &surface = views.back();
-    surface.focus_requested.connect(this, &server::on_surface_focus_requested);
-    surface.move_requested.connect(this, &server::on_surface_move_requested);
-    surface.resize_requested.connect(this, &server::on_surface_resize_requested);
-    surface.destroyed.connect(this, &server::on_surface_destroyed);
+    surface.focus_requested.connect(sigc::mem_fun(this, &server::on_surface_focus_requested));
+    surface.move_requested.connect(sigc::mem_fun(this, &server::on_surface_move_requested));
+    surface.resize_requested.connect(sigc::mem_fun(this, &server::on_surface_resize_requested));
+    surface.destroyed.connect(sigc::mem_fun(this, &server::on_surface_destroyed));
 }
 
 void server::on_surface_focus_requested(surface &surface)

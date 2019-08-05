@@ -67,13 +67,7 @@ namespace concord
         wayland::signal<wlr_xdg_surface> new_xdg_surface;
         std::list<surface> views;
 
-        wlr_cursor *cursor;
-        wlr_xcursor_manager *cursor_mgr;
-        wayland::signal<wlr_event_pointer_motion> cursor_motion;
-        wayland::signal<wlr_event_pointer_motion_absolute> cursor_motion_absolute;
-        wayland::signal<wlr_event_pointer_button> cursor_button;
-        wayland::signal<wlr_event_pointer_axis> cursor_axis;
-        wayland::signal<> cursor_frame;
+        cursor cursor_;
 
         wlr_seat *seat;
         wayland::signal<wlr_input_device> new_input;

@@ -25,5 +25,5 @@ void surface::on_xdg_toplevel_request_move() { move_requested.emit(*this); }
 
 void surface::on_xdg_toplevel_request_resize(wlr_xdg_toplevel_resize_event &event)
 {
-    resize_requested.emit(*this, static_cast<const std::uint32_t>(event.edges));
+    resize_requested.emit(*this, event.edges);
 }

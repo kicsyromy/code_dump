@@ -5,17 +5,17 @@
 
 #include <wayland-server.h>
 
+#include "concord_cursor.hh"
+#include "concord_global.hh"
+#include "concord_signal.hh"
+#include "concord_wayland_signal.hh"
+
 extern "C"
 {
 #define static
 #include <wlr/types/wlr_xdg_shell.h>
 #undef static
 }
-
-#include "concord_cursor.hh"
-#include "concord_global.hh"
-#include "concord_signal.hh"
-#include "concord_wayland_signal.hh"
 
 namespace concord
 {
