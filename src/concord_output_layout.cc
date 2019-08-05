@@ -9,7 +9,7 @@ extern "C"
 #undef static
 }
 
-#include "concord_output.hh"
+#include "concord_output_layout.hh"
 #include "concord_renderer.hh"
 #include "concord_server.hh"
 

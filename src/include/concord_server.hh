@@ -24,8 +24,8 @@ extern "C"
 #include "concord_cursor.hh"
 #include "concord_global.hh"
 #include "concord_keyboard.hh"
-#include "concord_output.hh"
-#include "concord_view.hh"
+#include "concord_output_layout.hh"
+#include "concord_surface.hh"
 #include "concord_wayland_signal.hh"
 
 namespace concord

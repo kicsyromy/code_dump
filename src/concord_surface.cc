@@ -1,4 +1,4 @@
-#include "concord_view.hh"
+#include "concord_surface.hh"
 
 using namespace concord;
 
