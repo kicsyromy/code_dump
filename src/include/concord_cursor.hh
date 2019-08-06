@@ -42,6 +42,7 @@ namespace concord
         events::signal<const std::uint32_t, const std::uint32_t> button_released;
         events::signal<const std::uint32_t,
                        const wlr_axis_orientation,
+                       const double,
                        const std::int32_t,
                        const wlr_axis_source>
             axis_changed;

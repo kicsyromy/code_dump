@@ -27,7 +27,7 @@ namespace concord
     template <typename T> struct wayland_ptr
     {
         template <typename... Args>
-        inline wayland_ptr(T *(*constructor)(Args...), void (*destructor)(T *), Args &&... args)
+        inline wayland_ptr(T *(*constructor)(Args...), void (*destructor)(T *), Args... args)
           : handle_{ constructor(std::forward<Args>(args)...), destructor }
         {
         }
