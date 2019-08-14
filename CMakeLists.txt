@@ -20,6 +20,7 @@ add_executable (
 target_compile_definitions (
     ${PROJECT_NAME} PUBLIC
     -DPROJECT_NAME="${PROJECT_NAME}"
+    -DASSET_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets"
 )
 
 target_include_directories (

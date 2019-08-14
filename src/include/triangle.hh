@@ -11,9 +11,29 @@
 struct triangle
 {
     std::array<vector3f, 3> vertices;
+    sf::Color color;
 
     template <utils::Axis axis_v>
     constexpr vector3f::element_t &vertex_axis(std::size_t index_v) noexcept
+    {
+        using namespace utils;
+
+        if constexpr (axis_v == Axis::X)
+        {
+            return vertices[index_v].x();
+        }
+        else if constexpr (axis_v == Axis::Y)
+        {
+            return vertices[index_v].y();
+        }
+        else
+        {
+            return vertices[index_v].z();
+        }
+    }
+
+    template <utils::Axis axis_v>
+    constexpr vector3f::element_t vertex_axis(std::size_t index_v) const noexcept
     {
         using namespace utils;
 
@@ -87,6 +107,11 @@ struct triangle
         const auto lbz = vertices[2].elements[2] - vertices[0].elements[2];
 
         return utils::cross_product({ { lax, lay, laz } }, { { lbx, lby, lbz } });
+    }
+
+    template <utils::Axis axis_v> inline float mid_point() const noexcept
+    {
+        return (vertex_axis<axis_v>(0) + vertex_axis<axis_v>(1) + vertex_axis<axis_v>(2)) / 3.f;
     }
 
     inline triangle project(const float fov,

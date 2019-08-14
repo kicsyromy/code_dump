@@ -5,7 +5,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "file.hh"
 #include "matrix.hh"
+#include "strings.hh"
 #include "vector.hh"
 
 namespace utils
@@ -42,8 +44,10 @@ namespace utils
     inline sf::Color get_color(const float luminescence,
                                const sf::Color &base_color = sf::Color::White)
     {
-        return { base_color.r, base_color.g, base_color.b,
-                 static_cast<std::uint8_t>(std::clamp(luminescence, 0.f, 1.f) * 255) };
+        const auto l = std::clamp(luminescence, 0.f, 1.f);
+        return { static_cast<std::uint8_t>(base_color.r * l),
+                 static_cast<std::uint8_t>(base_color.g * l),
+                 static_cast<std::uint8_t>(base_color.b * l) };
     }
 
     template <Axis axis_v> constexpr auto rotation_matrix(const float angle) noexcept
