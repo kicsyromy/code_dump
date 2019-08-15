@@ -19,4 +19,12 @@ constexpr linalg::vec<value_t, rows> operator*(const linalg::mat<value_t, rows, 
     return linalg::mul(m, v);
 }
 
+template <typename value_t, int rows, int columns_lhs, int columns_rhs>
+constexpr linalg::mat<value_t, rows, columns_rhs> operator*(
+    const linalg::mat<value_t, rows, columns_lhs> &m1,
+    const linalg::mat<value_t, columns_lhs, columns_rhs> &m2) noexcept
+{
+    return linalg::mul(m1, m2);
+}
+
 #endif /* !MATRIX_HH */

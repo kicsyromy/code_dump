@@ -52,44 +52,35 @@ struct triangle
         }
     }
 
-    template <utils::Axis axis_v> inline triangle rotate(const float angle) const noexcept
+    inline triangle apply_matrix(const matrix4x4f &mat) const noexcept
     {
-        using namespace utils;
-
         triangle result;
 
         for (auto i = 0ull; i < vertices.size(); ++i)
         {
             const auto &vertex = vertices[i];
-            result.vertices[i] =
-                apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f }, rotation_matrix<axis_v>(angle));
+            result.vertices[i] = utils::apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f }, mat);
         }
 
         return result;
+    }
+
+    template <utils::Axis axis_v> inline triangle rotate(const float angle) const noexcept
+    {
+        return apply_matrix(utils::rotation_matrix<axis_v>(angle));
     }
 
     inline triangle scale(const float scale_x, const float scale_y, const float scale_z = 1.f) const
         noexcept
     {
-        using namespace utils;
-
-        triangle result;
-
-        for (auto i = 0ull; i < vertices.size(); ++i)
-        {
-            const auto &vertex = vertices[i];
-            result.vertices[i] = apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f },
-                                              scaling_matrix(scale_x, scale_y, scale_z));
-        }
-
-        return result;
+        return apply_matrix(utils::scaling_matrix(scale_x, scale_y, scale_z));
     }
 
     template <utils::Axis axis_v> inline triangle translate(const float offset) const noexcept
     {
-        using namespace utils;
-
         const auto axis_translation_matrix = [offset]() {
+            using namespace utils;
+
             if constexpr (axis_v == Axis::X)
             {
                 return translation_matrix(offset, 0, 0);
@@ -108,16 +99,15 @@ struct triangle
             }
         }();
 
-        triangle result;
+        return apply_matrix(axis_translation_matrix);
+    }
 
-        for (auto i = 0ull; i < vertices.size(); ++i)
-        {
-            const auto &vertex = vertices[i];
-            result.vertices[i] =
-                apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f }, axis_translation_matrix);
-        }
-
-        return result;
+    inline triangle project(const float fov,
+                            const float z_far,
+                            const float z_near,
+                            const float aspect_ratio) const noexcept
+    {
+        return apply_matrix(utils::projection_matrix(fov, z_far, z_near, aspect_ratio));
     }
 
     constexpr vector3f normal() const noexcept
@@ -136,20 +126,78 @@ struct triangle
         return (vertex_axis<axis_v>(0) + vertex_axis<axis_v>(1) + vertex_axis<axis_v>(2)) / 3.f;
     }
 
-    inline triangle project(const float fov,
-                            const float z_far,
-                            const float z_near,
-                            const float aspect_ratio) const noexcept
+    std::vector<triangle> clip_against_plane(const vector3f &plane_point,
+                                             const vector3f &plane_normal) const noexcept
     {
-        using namespace utils;
+        std::vector<triangle> result;
+        result.reserve(3);
 
-        triangle result;
+        auto copy = *this;
 
-        for (auto i = 0ull; i < vertices.size(); ++i)
+        const auto normal = linalg::normalize(plane_normal);
+
+        const auto distance = [&plane_point, &normal ](vector3f & point) noexcept
         {
-            const auto &vertex = vertices[i];
-            result.vertices[i] = apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f },
-                                              projection_matrix(fov, z_far, z_near, aspect_ratio));
+            point = linalg::normalize(point);
+            return (normal.x * point.x + normal.y * point.y + normal.z * point.z -
+                    linalg::dot(normal, plane_point));
+        };
+
+        std::array<vector3f *, 3> inside_points;
+        std::size_t inside_point_count{ 0 };
+
+        std::array<vector3f *, 3> outside_points;
+        std::size_t outside_point_count{ 0 };
+
+        const std::array<float, 3> distances{ distance(copy.vertices[0]),
+                                              distance(copy.vertices[1]),
+                                              distance(copy.vertices[2]) };
+        for (auto i = 0ull; i < distances.size(); ++i)
+        {
+            if (distances[i] >= 0)
+            {
+                inside_points[inside_point_count++] = &copy.vertices[i];
+            }
+            else
+            {
+                outside_points[outside_point_count++] = &copy.vertices[i];
+            }
+        }
+
+        if (inside_point_count == 1 && outside_point_count == 2)
+        {
+            auto new_triangle = result.emplace_back();
+            new_triangle.color = color;
+
+            new_triangle.vertices[0] = *inside_points[0];
+            new_triangle.vertices[1] = utils::intersect_with_plane(
+                plane_point, normal, *inside_points[0], *outside_points[0]);
+            new_triangle.vertices[2] = utils::intersect_with_plane(
+                plane_point, normal, *inside_points[0], *outside_points[1]);
+        }
+
+        if (inside_point_count == 2 && outside_point_count == 1)
+        {
+            auto &new_triangle1 = result.emplace_back();
+            auto &new_triangle2 = result.emplace_back();
+
+            new_triangle1.color = color;
+            new_triangle2.color = color;
+
+            new_triangle1.vertices[0] = *inside_points[0];
+            new_triangle1.vertices[1] = *inside_points[1];
+            new_triangle1.vertices[2] = utils::intersect_with_plane(
+                plane_point, normal, *inside_points[0], *outside_points[0]);
+
+            new_triangle1.vertices[0] = *inside_points[1];
+            new_triangle1.vertices[1] = new_triangle1.vertices[2];
+            new_triangle1.vertices[2] = utils::intersect_with_plane(
+                plane_point, normal, *inside_points[1], *outside_points[0]);
+        }
+
+        if (inside_point_count == 3)
+        {
+            result.push_back(*this);
         }
 
         return result;

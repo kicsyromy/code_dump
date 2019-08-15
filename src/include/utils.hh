@@ -130,7 +130,32 @@ namespace utils
         // clang-format on
     }
 
-    inline auto apply_matrix(const vector4f &coordinates, const matrix4x4f &matrix) noexcept
+    inline auto point_at_matrix(const vector3f &position,
+                                const vector3f &target,
+                                const vector3f &up) noexcept
+    {
+        const auto forward = linalg::normalize(target - position);
+        const auto newUp = linalg::normalize(up - (forward * linalg::dot(up, forward)));
+        const auto right = linalg::cross(newUp, forward);
+
+        // clang-format off
+        return matrix4x4f {
+            {    right.x,    right.y,    right.z, 0 },
+            {    newUp.x,    newUp.y,    newUp.z, 0 },
+            {  forward.x,  forward.y,  forward.z, 0 },
+            { position.x, position.y, position.z, 1 }
+        };
+        // clang-format on
+    }
+
+    inline auto look_at_matrix(const vector3f &position,
+                               const vector3f &target,
+                               const vector3f &up) noexcept
+    {
+        return linalg::inverse(point_at_matrix(position, target, up));
+    }
+
+    constexpr auto apply_matrix(const vector4f &coordinates, const matrix4x4f &matrix) noexcept
     {
         const auto result = matrix * coordinates;
         if (result[3] != 0.f)
@@ -142,6 +167,31 @@ namespace utils
             return vector3f{ 0, 0, 0 };
         }
     };
+
+    constexpr auto apply_matrix(const vector3f &coordinates, const matrix4x4f &matrix) noexcept
+    {
+        return apply_matrix({ coordinates.x, coordinates.y, coordinates.z, 1.f }, matrix);
+    }
+
+    vector3f intersect_with_plane(const vector3f &point_in_plane,
+                                  const vector3f &plane_normal,
+                                  const vector3f &line_start,
+                                  const vector3f &line_end) noexcept
+    {
+        const auto normal = linalg::normalize(plane_normal);
+        const auto plane_dot_product = -linalg::dot(normal, point_in_plane);
+
+        const auto ad = linalg::dot(line_start, normal);
+        const auto bd = linalg::dot(line_end, normal);
+
+        const auto t = (-plane_dot_product - ad) / (bd - ad);
+
+        const vector3f line_start_end = line_end - line_start;
+        const vector3f line_to_intersect = line_start_end * t;
+
+        return line_start + line_to_intersect;
+    }
+
 } // namespace utils
 
 #endif /* !UTILS_HH */
