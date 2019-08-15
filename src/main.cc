@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <linalg/linalg.h>
 
 #include "file.hh"
 #include "frame_clock.hh"
@@ -34,40 +35,10 @@ static void initilize_scene()
 {
     using v3f = vector3f;
 
-    //    static mesh mesh_cube{ {
-    //        // clang-format off
-
-    //        // SOUTH
-    //        { v3f{ { -0.5f, -0.5f, -0.5f } }, v3f{ { -0.5f, 0.5f, -0.5f } },  v3f{ { 0.5f, 0.5f, -0.5f } } },
-    //        { v3f{ { -0.5f, -0.5f, -0.5f } }, v3f{ { 0.5f, 0.5f, -0.5f } },   v3f{ { 0.5f, -0.5f, -0.5f } } },
-
-    //        // EAST
-    //        { v3f{ { 0.5f, -0.5f, -0.5f } },  v3f{ { 0.5f, 0.5f, -0.5f } },   v3f{ { 0.5f, 0.5f, 0.5f } } },
-    //        { v3f{ { 0.5f, -0.5f, -0.5f } },  v3f{ { 0.5f, 0.5f, 0.5f } },    v3f{ { 0.5f, -0.5f, 0.5f } } },
-
-    //        // NORTH
-    //        { v3f{ { 0.5f, -0.5f, 0.5f } },   v3f{ { 0.5f, 0.5f, 0.5f } },    v3f{ { -0.5f, 0.5f, 0.5f } } },
-    //        { v3f{ { 0.5f, -0.5f, 0.5f } },   v3f{ { -0.5f, 0.5f, 0.5f } },   v3f{ { -0.5f, -0.5f, 0.5f } } },
-
-    //        // WEST
-    //        { v3f{ { -0.5f, -0.5f, 0.5f } },  v3f{ { -0.5f, 0.5f, 0.5f } },   v3f{ { -0.5f, 0.5f, -0.5f } } },
-    //        { v3f{ { -0.5f, -0.5f, 0.5f } },  v3f{ { -0.5f, 0.5f, -0.5f } },  v3f{ { -0.5f, -0.5f, -0.5f } } },
-
-    //        // TOP
-    //        { v3f{ { -0.5f, 0.5f, -0.5f } },  v3f{ { -0.5f, 0.5f, 0.5f } },   v3f{ { 0.5f, 0.5f, 0.5f } } },
-    //        { v3f{ { -0.5f, 0.5f, -0.5f } },  v3f{ { 0.5f, 0.5f, 0.5f } },    v3f{ { 0.5f, 0.5f, -0.5f } } },
-
-    //        // BOTTOM
-    //        { v3f{ { 0.5f, -0.5f, 0.5f } },   v3f{ { -0.5f, -0.5f, 0.5f } },  v3f{ { -0.5f, -0.5f, -0.5f } } },
-    //        { v3f{ { 0.5f, -0.5f, 0.5f } },   v3f{ { -0.5f, -0.5f, -0.5f } }, v3f{ { 0.5f, -0.5f, -0.5f } } }
-
-    //        // clang-format on
-
-    //    } };
     static mesh mesh_cube = mesh::load_from_object_file(ASSET_PATH "/space_ship.obj");
     ::mesh_cube = &mesh_cube;
 
-    static vector3f camera{ { 0, 0, 0 } };
+    static vector3f camera{ 0, 0, 0 };
     ::camera = &camera;
 }
 
@@ -76,7 +47,7 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
 {
     using namespace utils;
 
-    static constexpr vector3f light_direction{ { 0.f, 0.f, -1.f } };
+    static constexpr vector3f light_direction{ 0.f, 0.f, -1.f };
 
     static auto rotation_angle = 0.f;
     rotation_angle += 1.f * elapsed_time;
@@ -85,24 +56,26 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
 
     for (const auto &triangle : mesh_cube->triangles)
     {
-        const auto translated_triangle = triangle.rotate<Axis::X>(rotation_angle)
-                                             .rotate<Axis::Y>(rotation_angle * 0.1f)
-                                             .rotate<Axis::Z>(rotation_angle * 0.5f)
-                                             .translate<Axis::Z>(10.0f);
+        const auto translated_triangle =
+            triangle
+                .rotate<Axis::X>(rotation_angle)
+                //                                             .rotate<Axis::Y>(rotation_angle * 0.1f)
+                .rotate<Axis::Z>(rotation_angle * 0.5f)
+                .translate<Axis::Z>(8.0f);
 
-        const auto normal = translated_triangle.normal().normalized();
+        const auto normal = linalg::normalize(translated_triangle.normal());
 
-        if (normal.dot_product({ { translated_triangle.vertices[0].x() - camera->x(),
-                                   translated_triangle.vertices[0].y() - camera->y(),
-                                   translated_triangle.vertices[0].z() - camera->z() } }) < 0.f)
+        if (linalg::dot(normal, { translated_triangle.vertices[0].x - camera->x,
+                                  translated_triangle.vertices[0].y - camera->y,
+                                  translated_triangle.vertices[0].z - camera->z }) < 0.f)
         {
 
             auto projected_triangle = translated_triangle.project(90.f, 1000.f, 0.1f, 1)
-                                          .scale(20, 20)
+                                          .scale(200, 200)
                                           .translate<Axis::X>(SCREEN_WIDTH / 2)
                                           .translate<Axis::Y>(SCREEN_HEIGHT / 2);
 
-            const auto dp = normal.dot_product(light_direction.normalized());
+            const auto dp = linalg::dot(normal, linalg::normalize(light_direction));
             projected_triangle.color = get_color(dp, sf::Color::Red);
 
             toRasterize.push_back(projected_triangle);

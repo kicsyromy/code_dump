@@ -10,44 +10,45 @@
 
 struct triangle
 {
+    using vertex_axis_t = decltype(vector3f::x);
+
     std::array<vector3f, 3> vertices;
     sf::Color color;
 
-    template <utils::Axis axis_v>
-    constexpr vector3f::element_t &vertex_axis(std::size_t index_v) noexcept
+    template <utils::Axis axis_v> constexpr vertex_axis_t &vertex_axis(std::size_t index_v) noexcept
     {
         using namespace utils;
 
         if constexpr (axis_v == Axis::X)
         {
-            return vertices[index_v].x();
+            return vertices[index_v].x;
         }
         else if constexpr (axis_v == Axis::Y)
         {
-            return vertices[index_v].y();
+            return vertices[index_v].y;
         }
         else
         {
-            return vertices[index_v].z();
+            return vertices[index_v].z;
         }
     }
 
     template <utils::Axis axis_v>
-    constexpr vector3f::element_t vertex_axis(std::size_t index_v) const noexcept
+    constexpr vertex_axis_t vertex_axis(std::size_t index_v) const noexcept
     {
         using namespace utils;
 
         if constexpr (axis_v == Axis::X)
         {
-            return vertices[index_v].x();
+            return vertices[index_v].x;
         }
         else if constexpr (axis_v == Axis::Y)
         {
-            return vertices[index_v].y();
+            return vertices[index_v].y;
         }
         else
         {
-            return vertices[index_v].z();
+            return vertices[index_v].z;
         }
     }
 
@@ -60,8 +61,8 @@ struct triangle
         for (auto i = 0ull; i < vertices.size(); ++i)
         {
             const auto &vertex = vertices[i];
-            result.vertices[i] = apply_matrix({ { vertex.x(), vertex.y(), vertex.z(), 1.f } },
-                                              rotation_matrix<axis_v>(angle));
+            result.vertices[i] =
+                apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f }, rotation_matrix<axis_v>(angle));
         }
 
         return result;
@@ -77,7 +78,7 @@ struct triangle
         for (auto i = 0ull; i < vertices.size(); ++i)
         {
             const auto &vertex = vertices[i];
-            result.vertices[i] = apply_matrix({ { vertex.x(), vertex.y(), vertex.z(), 1.f } },
+            result.vertices[i] = apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f },
                                               scaling_matrix(scale_x, scale_y, scale_z));
         }
 
@@ -86,27 +87,48 @@ struct triangle
 
     template <utils::Axis axis_v> inline triangle translate(const float offset) const noexcept
     {
-        triangle result = *this;
+        using namespace utils;
+
+        const auto axis_translation_matrix = [offset]() {
+            if constexpr (axis_v == Axis::X)
+            {
+                return translation_matrix(offset, 0, 0);
+            }
+
+            if constexpr (axis_v == Axis::Y)
+            {
+
+                return translation_matrix(0, offset, 0);
+            }
+
+            if constexpr (axis_v == Axis::Z)
+            {
+
+                return translation_matrix(0, 0, offset);
+            }
+        }();
+
+        triangle result;
 
         for (auto i = 0ull; i < vertices.size(); ++i)
         {
-            result.vertex_axis<axis_v>(i) += offset;
+            const auto &vertex = vertices[i];
+            result.vertices[i] =
+                apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f }, axis_translation_matrix);
         }
 
         return result;
     }
 
-    vector3f normal() const noexcept
+    constexpr vector3f normal() const noexcept
     {
-        const auto lax = vertices[1].elements[0] - vertices[0].elements[0];
-        const auto lay = vertices[1].elements[1] - vertices[0].elements[1];
-        const auto laz = vertices[1].elements[2] - vertices[0].elements[2];
+        const vector3f line_a{ vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y,
+                               vertices[1].z - vertices[0].z };
 
-        const auto lbx = vertices[2].elements[0] - vertices[0].elements[0];
-        const auto lby = vertices[2].elements[1] - vertices[0].elements[1];
-        const auto lbz = vertices[2].elements[2] - vertices[0].elements[2];
+        const vector3f line_b{ vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y,
+                               vertices[2].z - vertices[0].z };
 
-        return utils::cross_product({ { lax, lay, laz } }, { { lbx, lby, lbz } });
+        return linalg::cross(line_a, line_b);
     }
 
     template <utils::Axis axis_v> inline float mid_point() const noexcept
@@ -126,7 +148,7 @@ struct triangle
         for (auto i = 0ull; i < vertices.size(); ++i)
         {
             const auto &vertex = vertices[i];
-            result.vertices[i] = apply_matrix({ { vertex.x(), vertex.y(), vertex.z(), 1.f } },
+            result.vertices[i] = apply_matrix({ vertex.x, vertex.y, vertex.z, 1.f },
                                               projection_matrix(fov, z_far, z_near, aspect_ratio));
         }
 

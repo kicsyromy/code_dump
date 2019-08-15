@@ -25,6 +25,7 @@ target_compile_definitions (
 
 target_include_directories (
     ${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
     ${CMAKE_CURRENT_SOURCE_DIR}/src/include
 )
 

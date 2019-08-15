@@ -41,7 +41,7 @@ struct mesh
                     const auto y = strings::to<float>(split_line[2]);
                     const auto z = strings::to<float>(split_line[3]);
 
-                    vertex_cache.push_back({ { x, y, z } });
+                    vertex_cache.emplace_back(x, y, z);
                 }
                 break;
                 case 'f':
