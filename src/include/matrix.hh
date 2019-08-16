@@ -15,36 +15,64 @@ template <vector3f::axis axis_v> constexpr auto rotation_matrix(const float angl
     if constexpr (axis_v == vector3f::X)
     {
         // clang-format off
-            return matrix4x4f {
-                { 1,                0,               0, 0 },
-                { 0,  std::cos(angle), std::sin(angle), 0 },
-                { 0, -std::sin(angle), std::cos(angle), 0 },
-                { 0,                0,               0, 1 }
-            };
+        return matrix4x4f {
+            { 1,                0,               0, 0 },
+            { 0,  std::cos(angle), std::sin(angle), 0 },
+            { 0, -std::sin(angle), std::cos(angle), 0 },
+            { 0,                0,               0, 1 }
+        };
         // clang-format on
     }
     else if constexpr (axis_v == vector3f::Y)
     {
         // clang-format off
-            return matrix4x4f {
-                {  std::cos(angle), 0, std::sin(angle), 0 },
-                {                0, 1,               0, 0 },
-                { -std::sin(angle), 0, std::cos(angle), 0 },
-                {                0, 0,               0, 1 }
-            };
+        return matrix4x4f {
+            {  std::cos(angle), 0, std::sin(angle), 0 },
+            {                0, 1,               0, 0 },
+            { -std::sin(angle), 0, std::cos(angle), 0 },
+            {                0, 0,               0, 1 }
+        };
         // clang-format on
     }
     else
     {
         // clang-format off
-            return matrix4x4f {
-                {  std::cos(angle), std::sin(angle), 0, 0 },
-                { -std::sin(angle), std::cos(angle), 0, 0 },
-                {                0,               0, 1, 0 },
-                {                0,               0, 0, 1 }
-            };
+        return matrix4x4f {
+            {  std::cos(angle), std::sin(angle), 0, 0 },
+            { -std::sin(angle), std::cos(angle), 0, 0 },
+            {                0,               0, 1, 0 },
+            {                0,               0, 0, 1 }
+        };
         // clang-format on
     }
+}
+
+constexpr auto scaling_matrix(const float scale_x,
+                              const float scale_y,
+                              const float scale_z = 1.f) noexcept
+{
+    // clang-format off
+    return matrix4x4f {
+        { scale_x,       0,       0, 0 },
+        {       0, scale_y,       0, 0 },
+        {       0,       0, scale_z, 0 },
+        {       0,       0,       0, 1 }
+    };
+    // clang-format on
+}
+
+constexpr auto translation_matrix(const float offset_x,
+                                  const float offset_y,
+                                  const float offset_z) noexcept
+{
+    // clang-format off
+    return matrix4x4f {
+        {        1,        0,        0, 0 },
+        {        0,        1,        0, 0 },
+        {        0,        0,        1, 0 },
+        { offset_x, offset_y, offset_z, 1 }
+    };
+    // clang-format on
 }
 
 constexpr auto projection_matrix(const float fov,

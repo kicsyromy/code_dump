@@ -52,6 +52,16 @@ namespace utils
 
         return { result.x, result.y, result.z };
     }
+
+    constexpr vector3f normalize(const vector3f &v, const float f) noexcept
+    {
+        if (f != 0.f)
+        {
+            return { v.x() / f, v.y() / f, v.z() / f };
+        }
+
+        return { v.x(), v.y(), v.z() };
+    }
 } // namespace utils
 
 #endif /* !UTILS_HH */
