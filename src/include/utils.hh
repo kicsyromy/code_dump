@@ -1,27 +1,18 @@
 #ifndef UTILS_HH
 #define UTILS_HH
 
-#include <cmath>
 #include <cstdint>
+
+#include <array>
 
 #include <SFML/Graphics.hpp>
 #include <linalg/linalg.h>
 
-#include "file.hh"
-#include "matrix.hh"
-#include "strings.hh"
 #include "vector.hh"
 
 namespace utils
 {
     constexpr auto PI = static_cast<float>(M_PI);
-
-    enum class Axis
-    {
-        X,
-        Y,
-        Z
-    };
 
     template <typename draw_function_t, std::size_t vertex_count>
     static inline void draw_model(draw_function_t &draw,
@@ -46,152 +37,6 @@ namespace utils
                  static_cast<std::uint8_t>(base_color.g * l),
                  static_cast<std::uint8_t>(base_color.b * l) };
     }
-
-    template <Axis axis_v> constexpr auto rotation_matrix(const float angle) noexcept
-    {
-        if constexpr (axis_v == Axis::X)
-        {
-            // clang-format off
-            return matrix4x4f {
-                { 1,                0,               0, 0 },
-                { 0,  std::cos(angle), std::sin(angle), 0 },
-                { 0, -std::sin(angle), std::cos(angle), 0 },
-                { 0,                0,               0, 1 }
-            };
-            // clang-format on
-        }
-        else if constexpr (axis_v == Axis::Y)
-        {
-            // clang-format off
-            return matrix4x4f {
-                {  std::cos(angle), 0, std::sin(angle), 0 },
-                {                0, 1,               0, 0 },
-                { -std::sin(angle), 0, std::cos(angle), 0 },
-                {                0, 0,               0, 1 }
-            };
-            // clang-format on
-        }
-        else
-        {
-            // clang-format off
-            return matrix4x4f {
-                {  std::cos(angle), std::sin(angle), 0, 0 },
-                { -std::sin(angle), std::cos(angle), 0, 0 },
-                {                0,               0, 1, 0 },
-                {                0,               0, 0, 1 }
-            };
-            // clang-format on
-        }
-    }
-
-    constexpr auto scaling_matrix(const float scale_x,
-                                  const float scale_y,
-                                  const float scale_z = 1.f) noexcept
-    {
-        // clang-format off
-        return matrix4x4f {
-            { scale_x,       0,       0, 0 },
-            {       0, scale_y,       0, 0 },
-            {       0,       0, scale_z, 0 },
-            {       0,       0,       0, 1 }
-        };
-        // clang-format on
-    }
-
-    constexpr auto translation_matrix(const float offset_x,
-                                      const float offset_y,
-                                      const float offset_z) noexcept
-    {
-        // clang-format off
-        return matrix4x4f {
-            {        1,        0,        0, 0 },
-            {        0,        1,        0, 0 },
-            {        0,        0,        1, 0 },
-            { offset_x, offset_y, offset_z, 1 }
-        };
-        // clang-format on
-    }
-
-    constexpr auto projection_matrix(const float fov,
-                                     const float z_far,
-                                     const float z_near,
-                                     const float aspect_ratio) noexcept
-    {
-        const float projection_function_v = 1.f / std::tan(fov * 0.5f / 180.f * PI);
-        const float fov_function_v = z_far / (z_far - z_near);
-
-        // clang-format off
-        return matrix4x4f {
-            { aspect_ratio * projection_function_v ,                      0,                            0, 0 },
-            {                                      0, projection_function_v,                            0, 0 },
-            {                                      0,                     0,               fov_function_v, 1 },
-            {                                      0,                     0, -1 * z_near * fov_function_v, 0 }
-        };
-        // clang-format on
-    }
-
-    inline auto point_at_matrix(const vector3f &position,
-                                const vector3f &target,
-                                const vector3f &up) noexcept
-    {
-        const auto forward = linalg::normalize(target - position);
-        const auto newUp = linalg::normalize(up - (forward * linalg::dot(up, forward)));
-        const auto right = linalg::cross(newUp, forward);
-
-        // clang-format off
-        return matrix4x4f {
-            {    right.x,    right.y,    right.z, 0 },
-            {    newUp.x,    newUp.y,    newUp.z, 0 },
-            {  forward.x,  forward.y,  forward.z, 0 },
-            { position.x, position.y, position.z, 1 }
-        };
-        // clang-format on
-    }
-
-    inline auto look_at_matrix(const vector3f &position,
-                               const vector3f &target,
-                               const vector3f &up) noexcept
-    {
-        return linalg::inverse(point_at_matrix(position, target, up));
-    }
-
-    constexpr auto apply_matrix(const vector4f &coordinates, const matrix4x4f &matrix) noexcept
-    {
-        const auto result = matrix * coordinates;
-        if (result[3] != 0.f)
-        {
-            return vector3f{ result[0] / result[3], result[1] / result[3], result[2] / result[3] };
-        }
-        else
-        {
-            return vector3f{ 0, 0, 0 };
-        }
-    };
-
-    constexpr auto apply_matrix(const vector3f &coordinates, const matrix4x4f &matrix) noexcept
-    {
-        return apply_matrix({ coordinates.x, coordinates.y, coordinates.z, 1.f }, matrix);
-    }
-
-    vector3f intersect_with_plane(const vector3f &point_in_plane,
-                                  const vector3f &plane_normal,
-                                  const vector3f &line_start,
-                                  const vector3f &line_end) noexcept
-    {
-        const auto normal = linalg::normalize(plane_normal);
-        const auto plane_dot_product = -linalg::dot(normal, point_in_plane);
-
-        const auto ad = linalg::dot(line_start, normal);
-        const auto bd = linalg::dot(line_end, normal);
-
-        const auto t = (-plane_dot_product - ad) / (bd - ad);
-
-        const vector3f line_start_end = line_end - line_start;
-        const vector3f line_to_intersect = line_start_end * t;
-
-        return line_start + line_to_intersect;
-    }
-
 } // namespace utils
 
 #endif /* !UTILS_HH */
