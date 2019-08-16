@@ -22,6 +22,14 @@ struct vector3f
     {
     }
 
+    constexpr vector3f(const linalg::vec<float, 3> &v) noexcept : coordinates{ v.x, v.y, v.z, 1.f }
+    {
+    }
+
+    constexpr vector3f(const linalg::vec<float, 4> &v) noexcept : coordinates{ v.x, v.y, v.z, v.w }
+    {
+    }
+
     constexpr float &x() noexcept { return coordinates[axis::X]; }
     constexpr float x() const noexcept { return coordinates[axis::X]; }
     constexpr float &y() noexcept { return coordinates[axis::Y]; }

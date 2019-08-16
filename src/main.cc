@@ -20,41 +20,14 @@ namespace
 {
 } // namespace
 
-inline mesh *mesh_cube = nullptr;
+inline mesh *mesh = nullptr;
 inline float rotation_angle = 0.f;
+inline vector3f camera{ 0.f, 0.f, 0.f };
 
 static void initilize_scene()
 {
-    using v3f = vector3f;
-
-    static mesh mesh_cube{ {
-
-        // SOUTH
-        { { -0.5f, -0.5f, -0.5f }, { -0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f } },
-        { { -0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f } },
-
-        // EAST
-        { { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f } },
-        { { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, -0.5f, 0.5f } },
-
-        // NORTH
-        { { 0.5f, -0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f } },
-        { { 0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f }, { -0.5f, -0.5f, 0.5f } },
-
-        // WEST
-        { { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f }, { -0.5f, 0.5f, -0.5f } },
-        { { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f } },
-
-        // TOP
-        { { -0.5f, 0.5f, -0.5f }, { -0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f } },
-        { { -0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, -0.5f } },
-
-        // BOTTOM
-        { { 0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f } },
-        { { 0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f } }
-
-    } };
-    ::mesh_cube = &mesh_cube;
+    static auto space_ship = mesh::load_from_object_file(ASSET_PATH "/space_ship.obj");
+    ::mesh = &space_ship;
 }
 
 template <typename draw_vertex_array_function_t>
@@ -71,8 +44,11 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
     const auto x_rotation_matrix = rotation_matrix<vector3f::X>(rotation_angle * 0.5f);
     const auto projection_matrix_v = projection_matrix(fov, z_far, z_near, aspect_ratio);
 
-    for (const auto &t : mesh_cube->triangles)
+    std::vector<triangle> to_rasterize;
+
+    for (const auto &t : mesh->triangles)
     {
+        /* Rotate the triangle to put perspective on it */
         const triangle z_rotated_triangle{
             utils::multiply_and_normalize(z_rotation_matrix, t.vertices[0]),
             utils::multiply_and_normalize(z_rotation_matrix, t.vertices[1]),
@@ -85,32 +61,65 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
             utils::multiply_and_normalize(x_rotation_matrix, z_rotated_triangle.vertices[2])
         };
 
+        /* Translate the triangle into the view in 3D space */
         triangle translated_triangle = x_rotated_triangle;
-        translated_triangle.vertices[0].z() += 3.f;
-        translated_triangle.vertices[1].z() += 3.f;
-        translated_triangle.vertices[2].z() += 3.f;
+        translated_triangle.vertices[0].z() += 8.f;
+        translated_triangle.vertices[1].z() += 8.f;
+        translated_triangle.vertices[2].z() += 8.f;
 
-        triangle projected_triangle{
-            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[0]),
-            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[1]),
-            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[2])
-        };
+        const vector3f normal{ linalg::normalize(translated_triangle.normal().as_v3f()) };
 
-        projected_triangle.vertices[0].x() += 1.f;
-        projected_triangle.vertices[0].y() += 1.f;
-        projected_triangle.vertices[1].x() += 1.f;
-        projected_triangle.vertices[1].y() += 1.f;
-        projected_triangle.vertices[2].x() += 1.f;
-        projected_triangle.vertices[2].y() += 1.f;
+        if (linalg::dot(normal.as_v3f(),
+                        translated_triangle.vertices[0].as_v3f() - camera.as_v3f()) < 0.f)
+        {
+            const vector3f light_direction{ linalg::normalize(
+                linalg::vec<float, 3>{ 0.f, 0.f, -1.f }) };
+            const auto luminescence = linalg::dot(normal.as_v3f(), light_direction.as_v3f());
+            const auto color = utils::get_color(luminescence);
 
-        projected_triangle.vertices[0].x() *= 0.5f * SCREEN_WIDTH;
-        projected_triangle.vertices[0].y() *= 0.5f * SCREEN_HEIGHT;
-        projected_triangle.vertices[1].x() *= 0.5f * SCREEN_WIDTH;
-        projected_triangle.vertices[1].y() *= 0.5f * SCREEN_HEIGHT;
-        projected_triangle.vertices[2].x() *= 0.5f * SCREEN_WIDTH;
-        projected_triangle.vertices[2].y() *= 0.5f * SCREEN_HEIGHT;
+            translated_triangle.color = color;
 
-        utils::draw_model(draw_vertex_array, projected_triangle.vertices);
+            /* Project the triangle from 3D to 2D */
+            triangle projected_triangle{
+                utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[0]),
+                utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[1]),
+                utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[2])
+            };
+            projected_triangle.color = color;
+
+            /* Move the triangle into view in 2D space*/
+            projected_triangle.vertices[0].x() += 1.f;
+            projected_triangle.vertices[0].y() += 1.f;
+            projected_triangle.vertices[1].x() += 1.f;
+            projected_triangle.vertices[1].y() += 1.f;
+            projected_triangle.vertices[2].x() += 1.f;
+            projected_triangle.vertices[2].y() += 1.f;
+
+            /* Scale it up based on windows size */
+            projected_triangle.vertices[0].x() *= 0.5f * SCREEN_WIDTH;
+            projected_triangle.vertices[0].y() *= 0.5f * SCREEN_HEIGHT;
+            projected_triangle.vertices[1].x() *= 0.5f * SCREEN_WIDTH;
+            projected_triangle.vertices[1].y() *= 0.5f * SCREEN_HEIGHT;
+            projected_triangle.vertices[2].x() *= 0.5f * SCREEN_WIDTH;
+            projected_triangle.vertices[2].y() *= 0.5f * SCREEN_HEIGHT;
+
+            to_rasterize.push_back(projected_triangle);
+        }
+    }
+
+    std::sort(
+        to_rasterize.begin(), to_rasterize.end(),
+        [](const triangle &t1, const triangle &t2) noexcept {
+            const float z1 = (t1.vertices[0].z() + t1.vertices[1].z() + t1.vertices[2].z()) / 3.f;
+            const float z2 = (t2.vertices[0].z() + t2.vertices[1].z() + t2.vertices[2].z()) / 3.f;
+
+            return z1 > z2;
+        });
+
+    for (const auto &t : to_rasterize)
+    {
+        utils::draw_model(draw_vertex_array, t.vertices, sf::TriangleStrip, t.color);
+        //        utils::draw_model(draw_vertex_array, t.vertices, sf::LineStrip, sf::Color::Black);
     }
 }
 
