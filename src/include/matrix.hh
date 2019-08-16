@@ -75,6 +75,32 @@ constexpr auto translation_matrix(const float offset_x,
     // clang-format on
 }
 
+inline auto point_at_matrix(const vector3f &position,
+                            const vector3f &target,
+                            const vector3f &up) noexcept
+{
+    const auto forward = linalg::normalize(target.as_v3f() - position.as_v3f());
+    const auto newUp =
+        linalg::normalize(up.as_v3f() - (forward * linalg::dot(up.as_v3f(), forward)));
+    const auto right = linalg::cross(newUp, forward);
+
+    // clang-format off
+    return matrix4x4f {
+        {      right.x,      right.y,      right.z, 0 },
+        {      newUp.x,      newUp.y,      newUp.z, 0 },
+        {    forward.x,    forward.y,    forward.z, 0 },
+        { position.x(), position.y(), position.z(), 1 }
+    };
+    // clang-format on
+}
+
+inline auto look_at_matrix(const vector3f &position,
+                           const vector3f &target,
+                           const vector3f &up) noexcept
+{
+    return linalg::inverse(point_at_matrix(position, target, up));
+}
+
 constexpr auto projection_matrix(const float fov,
                                  const float z_far,
                                  const float z_near,

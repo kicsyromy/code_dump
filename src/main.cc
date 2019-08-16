@@ -23,7 +23,9 @@ namespace
 inline mesh *mesh = nullptr;
 inline float rotation_angle = 0.f;
 inline vector3f camera{ 0.f, 0.f, 0.f };
+inline vector3f look_direction{ 0.f, 0.f, 1.f };
 inline matrix4x4f *projection_matrix_v = nullptr;
+inline float player_y_rotation = 0.f;
 
 static void initilize_scene()
 {
@@ -35,31 +37,80 @@ static void initilize_scene()
     static auto projection_matrix_v = projection_matrix(fov, z_far, z_near, aspect_ratio);
     ::projection_matrix_v = &projection_matrix_v;
 
-    static auto space_ship = mesh::load_from_object_file(ASSET_PATH "/teapot.obj");
+    static auto space_ship = mesh::load_from_object_file(ASSET_PATH "/axis.obj");
     ::mesh = &space_ship;
 }
 
 template <typename draw_vertex_array_function_t>
 inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array, float elapsed_time)
 {
-    rotation_angle += 1.f * elapsed_time;
+    {
+        using k = sf::Keyboard;
+
+        if (k::isKeyPressed(k::Up))
+        {
+            camera.y() += 8.f * elapsed_time;
+        }
+
+        if (k::isKeyPressed(k::Down))
+        {
+            camera.y() -= 8.f * elapsed_time;
+        }
+
+        if (k::isKeyPressed(k::Left))
+        {
+            camera.x() += 8.f * elapsed_time;
+        }
+
+        if (k::isKeyPressed(k::Right))
+        {
+            camera.x() -= 8.f * elapsed_time;
+        }
+
+        if (k::isKeyPressed(k::A))
+        {
+            player_y_rotation -= 2.f * elapsed_time;
+        }
+
+        if (k::isKeyPressed(k::D))
+        {
+            player_y_rotation += 2.f * elapsed_time;
+        }
+
+        const vector3f forward_vector{ look_direction.as_v3f() * 8.f * elapsed_time };
+
+        if (k::isKeyPressed(k::W))
+        {
+            camera = camera.as_v3f() + forward_vector.as_v3f();
+        }
+
+        if (k::isKeyPressed(k::S))
+        {
+            camera = camera.as_v3f() - forward_vector.as_v3f();
+        }
+    }
 
     const auto z_rotation_matrix = rotation_matrix<vector3f::Z>(rotation_angle);
     const auto x_rotation_matrix = rotation_matrix<vector3f::X>(rotation_angle * 0.5f);
-    const auto translation_matrix_v = translation_matrix(0.f, 0.f, 8.f);
+    const auto translation_matrix_v = translation_matrix(0.f, 0.f, 4.f);
 
     const auto world_matrix =
         linalg::mul(translation_matrix_v, linalg::mul(z_rotation_matrix, x_rotation_matrix));
+
+    vector3f up_vector{ 0.f, 1.f, 0.f };
+    vector3f target_vector{ 0.f, 0.f, 1.f };
+    const auto camera_rotation_matrix = rotation_matrix<vector3f::Y>(player_y_rotation);
+    look_direction = linalg::mul(camera_rotation_matrix, target_vector.as_v4f());
+    target_vector = camera.as_v3f() + look_direction.as_v3f();
+
+    const auto camera_matrix = point_at_matrix(camera, target_vector, up_vector);
+    const auto view_matrix = linalg::inverse(camera_matrix);
 
     std::vector<triangle> to_rasterize;
 
     for (const auto &t : mesh->triangles)
     {
-        triangle transformed_triangle{
-            vector3f{ linalg::mul(world_matrix, t.vertices[0].as_v4f()) },
-            vector3f{ linalg::mul(world_matrix, t.vertices[1].as_v4f()) },
-            vector3f{ linalg::mul(world_matrix, t.vertices[2].as_v4f()) }
-        };
+        triangle transformed_triangle = t.multiply_by(world_matrix);
 
         const vector3f normal{ linalg::normalize(transformed_triangle.normal().as_v3f()) };
 
@@ -69,23 +120,17 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
             const vector3f light_direction{ linalg::normalize(
                 linalg::vec<float, 3>{ 0.f, 0.f, -1.f }) };
             const auto luminescence = linalg::dot(normal.as_v3f(), light_direction.as_v3f());
-            const auto color = utils::get_color(luminescence);
+            const auto color = utils::get_color(luminescence, sf::Color::Cyan);
 
             transformed_triangle.color = color;
 
-            /* Project the triangle from 3D to 2D */
-            triangle projected_triangle{
-                linalg::mul(*projection_matrix_v, transformed_triangle.vertices[0].as_v4f()),
-                linalg::mul(*projection_matrix_v, transformed_triangle.vertices[1].as_v4f()),
-                linalg::mul(*projection_matrix_v, transformed_triangle.vertices[2].as_v4f()), color
-            };
+            const triangle viewed_triangle =
+                static_cast<const triangle &>(transformed_triangle).multiply_by(view_matrix);
 
-            projected_triangle.vertices[0] = utils::normalize(projected_triangle.vertices[0],
-                                                              projected_triangle.vertices[0].w());
-            projected_triangle.vertices[1] = utils::normalize(projected_triangle.vertices[1],
-                                                              projected_triangle.vertices[1].w());
-            projected_triangle.vertices[2] = utils::normalize(projected_triangle.vertices[2],
-                                                              projected_triangle.vertices[2].w());
+            /* Project the triangle from 3D to 2D */
+            triangle projected_triangle = viewed_triangle.multiply_by(*projection_matrix_v);
+            projected_triangle.normalize_by_w();
+            projected_triangle.color = color;
 
             /* Move the triangle into view in 2D space*/
             projected_triangle.vertices[0].x() += 1.f;
@@ -119,7 +164,7 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
     for (const auto &t : to_rasterize)
     {
         utils::draw_model(draw_vertex_array, t.vertices, sf::TriangleStrip, t.color);
-        //utils::draw_model(draw_vertex_array, t.vertices, sf::LineStrip, sf::Color::Black);
+        utils::draw_model(draw_vertex_array, t.vertices, sf::LineStrip, sf::Color::Black);
     }
 }
 
@@ -131,7 +176,7 @@ int main()
     auto view = window.getDefaultView();
     view.rotate(180);
     window.setView(view);
-    window.setFramerateLimit(60);
+    //    window.setFramerateLimit(60);
 
     std::array<char, 256> window_title;
     window_title.fill(0);

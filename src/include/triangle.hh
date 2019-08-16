@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <linalg/linalg.h>
 
+#include "matrix.hh"
+#include "utils.hh"
 #include "vector.hh"
 
 struct triangle
@@ -44,6 +46,36 @@ struct triangle
         const auto result = linalg::cross(line_a, line_b);
 
         return { result.x, result.y, result.z };
+    }
+
+    inline triangle multiply_by(const matrix4x4f &m) const noexcept
+    {
+        return { vector3f{ linalg::mul(m, vertices[0].as_v4f()) },
+                 vector3f{ linalg::mul(m, vertices[1].as_v4f()) },
+                 vector3f{ linalg::mul(m, vertices[2].as_v4f()) } };
+    }
+
+    inline void multiply_by(const matrix4x4f &m) noexcept
+    {
+        for (auto i = 0ull; i < vertices.size(); ++i)
+        {
+            vertices[i] = linalg::mul(m, vertices[i].as_v4f());
+        }
+    }
+
+    inline triangle normalize_by_w() const noexcept
+    {
+        return { utils::normalize(vertices[0], vertices[0].w()),
+                 utils::normalize(vertices[1], vertices[1].w()),
+                 utils::normalize(vertices[2], vertices[2].w()) };
+    }
+
+    inline void normalize_by_w() noexcept
+    {
+        for (auto i = 0ull; i < vertices.size(); ++i)
+        {
+            vertices[i] = utils::normalize(vertices[i], vertices[i].w());
+        }
     }
 };
 
