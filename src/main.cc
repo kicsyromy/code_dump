@@ -10,18 +10,108 @@
 #include <sfx/frame_clock.h>
 
 #include "constants.hh"
+#include "matrix.hh"
+#include "mesh.hh"
 #include "triangle.hh"
+#include "utils.hh"
 #include "vector.hh"
 
 namespace
 {
 } // namespace
 
-static void initilize_scene() {}
+inline mesh *mesh_cube = nullptr;
+inline float rotation_angle = 0.f;
+
+static void initilize_scene()
+{
+    using v3f = vector3f;
+
+    static mesh mesh_cube{ {
+
+        // SOUTH
+        { { -0.5f, -0.5f, -0.5f }, { -0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f } },
+        { { -0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f } },
+
+        // EAST
+        { { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f } },
+        { { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, -0.5f, 0.5f } },
+
+        // NORTH
+        { { 0.5f, -0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f } },
+        { { 0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f }, { -0.5f, -0.5f, 0.5f } },
+
+        // WEST
+        { { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f }, { -0.5f, 0.5f, -0.5f } },
+        { { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f } },
+
+        // TOP
+        { { -0.5f, 0.5f, -0.5f }, { -0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f } },
+        { { -0.5f, 0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, -0.5f } },
+
+        // BOTTOM
+        { { 0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f } },
+        { { 0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f } }
+
+    } };
+    ::mesh_cube = &mesh_cube;
+}
 
 template <typename draw_vertex_array_function_t>
 inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array, float elapsed_time)
 {
+    const auto z_near = 0.1f;
+    const auto z_far = 1000.f;
+    const auto fov = 90.f;
+    const auto aspect_ratio = ASPECT_RATIO;
+
+    rotation_angle += 1.f * elapsed_time;
+
+    const auto z_rotation_matrix = rotation_matrix<vector3f::Z>(rotation_angle);
+    const auto x_rotation_matrix = rotation_matrix<vector3f::X>(rotation_angle * 0.5f);
+    const auto projection_matrix_v = projection_matrix(fov, z_far, z_near, aspect_ratio);
+
+    for (const auto &t : mesh_cube->triangles)
+    {
+        const triangle z_rotated_triangle{
+            utils::multiply_and_normalize(z_rotation_matrix, t.vertices[0]),
+            utils::multiply_and_normalize(z_rotation_matrix, t.vertices[1]),
+            utils::multiply_and_normalize(z_rotation_matrix, t.vertices[2])
+        };
+
+        const triangle x_rotated_triangle{
+            utils::multiply_and_normalize(x_rotation_matrix, z_rotated_triangle.vertices[0]),
+            utils::multiply_and_normalize(x_rotation_matrix, z_rotated_triangle.vertices[1]),
+            utils::multiply_and_normalize(x_rotation_matrix, z_rotated_triangle.vertices[2])
+        };
+
+        triangle translated_triangle = x_rotated_triangle;
+        translated_triangle.vertices[0].z() += 3.f;
+        translated_triangle.vertices[1].z() += 3.f;
+        translated_triangle.vertices[2].z() += 3.f;
+
+        triangle projected_triangle{
+            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[0]),
+            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[1]),
+            utils::multiply_and_normalize(projection_matrix_v, translated_triangle.vertices[2])
+        };
+
+        projected_triangle.vertices[0].x() += 1.f;
+        projected_triangle.vertices[0].y() += 1.f;
+        projected_triangle.vertices[1].x() += 1.f;
+        projected_triangle.vertices[1].y() += 1.f;
+        projected_triangle.vertices[2].x() += 1.f;
+        projected_triangle.vertices[2].y() += 1.f;
+
+        projected_triangle.vertices[0].x() *= 0.5f * SCREEN_WIDTH;
+        projected_triangle.vertices[0].y() *= 0.5f * SCREEN_HEIGHT;
+        projected_triangle.vertices[1].x() *= 0.5f * SCREEN_WIDTH;
+        projected_triangle.vertices[1].y() *= 0.5f * SCREEN_HEIGHT;
+        projected_triangle.vertices[2].x() *= 0.5f * SCREEN_WIDTH;
+        projected_triangle.vertices[2].y() *= 0.5f * SCREEN_HEIGHT;
+
+        utils::draw_model(draw_vertex_array, projected_triangle.vertices);
+    }
 }
 
 int main()

@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <linalg/linalg.h>
 
+#include "matrix.hh"
 #include "vector.hh"
 
 namespace utils
@@ -23,9 +24,9 @@ namespace utils
         std::array<sf::Vertex, vertex_count + 1> shape;
         for (auto i = 0ull; i < vertex_count; ++i)
         {
-            shape[i] = sf::Vertex{ sf::Vector2f{ model[i].x, model[i].y }, color };
+            shape[i] = sf::Vertex{ sf::Vector2f{ model[i].x(), model[i].y() }, color };
         }
-        shape[vertex_count] = sf::Vertex{ sf::Vector2f{ model[0].x, model[0].y }, color };
+        shape[vertex_count] = sf::Vertex{ sf::Vector2f{ model[0].x(), model[0].y() }, color };
         draw(shape.data(), shape.size(), shape_type);
     }
 
@@ -36,6 +37,20 @@ namespace utils
         return { static_cast<std::uint8_t>(base_color.r * l),
                  static_cast<std::uint8_t>(base_color.g * l),
                  static_cast<std::uint8_t>(base_color.b * l) };
+    }
+
+    constexpr vector3f multiply_and_normalize(const matrix4x4f &m, const vector3f &v) noexcept
+    {
+        auto result = linalg::mul(m, v.as_v4f());
+
+        if (result.w != 0.f)
+        {
+            result.x /= result.w;
+            result.y /= result.w;
+            result.z /= result.w;
+        }
+
+        return { result.x, result.y, result.z };
     }
 } // namespace utils
 

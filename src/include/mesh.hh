@@ -3,8 +3,9 @@
 
 #include <vector>
 
+#include "file.hh"
+#include "strings.hh"
 #include "triangle.hh"
-#include "utils.hh"
 
 struct mesh
 {
@@ -46,11 +47,14 @@ struct mesh
                 break;
                 case 'f':
                 {
-                    const auto vertex_a = vertex_cache[strings::to<int>(split_line[1]) - 1];
-                    const auto vertex_b = vertex_cache[strings::to<int>(split_line[2]) - 1];
-                    const auto vertex_c = vertex_cache[strings::to<int>(split_line[3]) - 1];
+                    const auto vertex_a =
+                        vertex_cache[static_cast<std::size_t>(strings::to<int>(split_line[1]) - 1)];
+                    const auto vertex_b =
+                        vertex_cache[static_cast<std::size_t>(strings::to<int>(split_line[2]) - 1)];
+                    const auto vertex_c =
+                        vertex_cache[static_cast<std::size_t>(strings::to<int>(split_line[3]) - 1)];
 
-                    result.triangles.push_back({ vertex_a, vertex_b, vertex_c });
+                    result.triangles.emplace_back(vertex_a, vertex_b, vertex_c);
                 }
                 break;
             }
