@@ -62,6 +62,25 @@ namespace utils
 
         return { v.x(), v.y(), v.z() };
     }
+
+    inline vector3f intersect_with_plane(const vector3f &point_in_plane,
+                                         const vector3f &plane_normal,
+                                         const vector3f &line_start,
+                                         const vector3f &line_end) noexcept
+    {
+        const auto normal = linalg::normalize(plane_normal.as_v3f());
+        const auto plane_dot_product = -linalg::dot(normal, point_in_plane.as_v3f());
+
+        const auto ad = linalg::dot(line_start.as_v3f(), normal);
+        const auto bd = linalg::dot(line_end.as_v3f(), normal);
+
+        const auto t = (-plane_dot_product - ad) / (bd - ad);
+
+        const vector3f line_start_end = line_end.as_v3f() - line_start.as_v3f();
+        const vector3f line_to_intersect = line_start_end.as_v3f() * t;
+
+        return line_start.as_v3f() + line_to_intersect.as_v3f();
+    }
 } // namespace utils
 
 #endif /* !UTILS_HH */

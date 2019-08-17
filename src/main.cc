@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <list>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -16,28 +17,19 @@
 #include "utils.hh"
 #include "vector.hh"
 
-namespace
-{
-} // namespace
-
 inline mesh *mesh = nullptr;
 inline float rotation_angle = 0.f;
 inline vector3f camera{ 0.f, 0.f, 0.f };
 inline vector3f look_direction{ 0.f, 0.f, 1.f };
-inline matrix4x4f *projection_matrix_v = nullptr;
+inline const matrix4x4f *projection_matrix_v = nullptr;
 inline float player_y_rotation = 0.f;
 
 static void initilize_scene()
 {
-    const auto z_near = 0.1f;
-    const auto z_far = 1000.f;
-    const auto fov = 90.f;
-    const auto aspect_ratio = ASPECT_RATIO;
-
-    static auto projection_matrix_v = projection_matrix(fov, z_far, z_near, aspect_ratio);
+    static const auto projection_matrix_v = projection_matrix(FOV, Z_FAR, Z_NEAR, ASPECT_RATIO);
     ::projection_matrix_v = &projection_matrix_v;
 
-    static auto space_ship = mesh::load_from_object_file(ASSET_PATH "/axis.obj");
+    static auto space_ship = mesh::load_from_object_file(ASSET_PATH "/mountains.obj");
     ::mesh = &space_ship;
 }
 
@@ -127,28 +119,36 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
             const triangle viewed_triangle =
                 static_cast<const triangle &>(transformed_triangle).multiply_by(view_matrix);
 
-            /* Project the triangle from 3D to 2D */
-            triangle projected_triangle = viewed_triangle.multiply_by(*projection_matrix_v);
-            projected_triangle.normalize_by_w();
-            projected_triangle.color = color;
+            /* Clip triangles that moves beyond the near plane */
+            const vector3f z_near_vector{ 0.f, 0.f, Z_NEAR };
+            const vector3f z_normal{ 0.f, 0.f, 1.f };
+            auto clipped_triangles = viewed_triangle.clip(z_near_vector, z_normal);
 
-            /* Move the triangle into view in 2D space*/
-            projected_triangle.vertices[0].x() += 1.f;
-            projected_triangle.vertices[0].y() += 1.f;
-            projected_triangle.vertices[1].x() += 1.f;
-            projected_triangle.vertices[1].y() += 1.f;
-            projected_triangle.vertices[2].x() += 1.f;
-            projected_triangle.vertices[2].y() += 1.f;
+            for (const auto &clipped_triangle : clipped_triangles)
+            {
+                /* Project the triangle from 3D to 2D */
+                triangle projected_triangle = clipped_triangle.multiply_by(*projection_matrix_v);
+                projected_triangle.normalize_by_w();
+                projected_triangle.color = color;
 
-            /* Scale it up based on windows size */
-            projected_triangle.vertices[0].x() *= 0.5f * SCREEN_WIDTH;
-            projected_triangle.vertices[0].y() *= 0.5f * SCREEN_HEIGHT;
-            projected_triangle.vertices[1].x() *= 0.5f * SCREEN_WIDTH;
-            projected_triangle.vertices[1].y() *= 0.5f * SCREEN_HEIGHT;
-            projected_triangle.vertices[2].x() *= 0.5f * SCREEN_WIDTH;
-            projected_triangle.vertices[2].y() *= 0.5f * SCREEN_HEIGHT;
+                /* Move the triangle into view in 2D space*/
+                projected_triangle.vertices[0].x() += 1.f;
+                projected_triangle.vertices[0].y() += 1.f;
+                projected_triangle.vertices[1].x() += 1.f;
+                projected_triangle.vertices[1].y() += 1.f;
+                projected_triangle.vertices[2].x() += 1.f;
+                projected_triangle.vertices[2].y() += 1.f;
 
-            to_rasterize.push_back(projected_triangle);
+                /* Scale it up based on windows size */
+                projected_triangle.vertices[0].x() *= 0.5f * SCREEN_WIDTH;
+                projected_triangle.vertices[0].y() *= 0.5f * SCREEN_HEIGHT;
+                projected_triangle.vertices[1].x() *= 0.5f * SCREEN_WIDTH;
+                projected_triangle.vertices[1].y() *= 0.5f * SCREEN_HEIGHT;
+                projected_triangle.vertices[2].x() *= 0.5f * SCREEN_WIDTH;
+                projected_triangle.vertices[2].y() *= 0.5f * SCREEN_HEIGHT;
+
+                to_rasterize.push_back(projected_triangle);
+            }
         }
     }
 
@@ -161,10 +161,63 @@ inline static void update_view(draw_vertex_array_function_t &&draw_vertex_array,
             return z1 > z2;
         });
 
-    for (const auto &t : to_rasterize)
+    /* Clip triangles against all four screen edges, this could yield */
+    /* a bunch of triangles, so create a queue that we traverse to    */
+    /* ensure we only test new triangles generated against planes     */
+    for (const auto &to_clip : to_rasterize)
     {
-        utils::draw_model(draw_vertex_array, t.vertices, sf::TriangleStrip, t.color);
-        utils::draw_model(draw_vertex_array, t.vertices, sf::LineStrip, sf::Color::Black);
+        std::list<triangle> triangle_list;
+
+        triangle_list.push_back(to_clip);
+        std::size_t new_triangle_count = 1;
+
+        for (auto p = 0ull; p < 4; ++p)
+        {
+            while (new_triangle_count > 0)
+            {
+                const auto test = triangle_list.front();
+                triangle_list.pop_front();
+                --new_triangle_count;
+
+                // Clip it against a plane. We only need to test each
+                // subsequent plane, against subsequent new triangles
+                // as all triangles after a plane clip are guaranteed
+                // to lie on the inside of the plane. I like how this
+                // comment is almost completely and utterly justified
+                auto clipped_triangles = [&test, &p]() -> std::vector<triangle> {
+                    switch (p)
+                    {
+                        case 0:
+                            return test.clip({ 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+                        case 1:
+                            return test.clip({ 0.0f, SCREEN_HEIGHT - 1, 0.0f },
+                                             { 0.0f, -1.0f, 0.0f });
+                        case 2:
+                            return test.clip({ 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f });
+                        case 3:
+                            return test.clip({ SCREEN_WIDTH - 1, 0.0f, 0.0f },
+                                             { -1.0f, 0.0f, 0.0f });
+                        default:
+                            return {};
+                    }
+                }();
+
+                // Clipping may yield a variable number of triangles, so
+                // add these new ones to the back of the queue for subsequent
+                // clipping against next planes
+                for (auto &t : clipped_triangles)
+                {
+                    triangle_list.push_back(std::move(t));
+                }
+            }
+            new_triangle_count = triangle_list.size();
+        }
+
+        for (const auto &t : triangle_list)
+        {
+            utils::draw_model(draw_vertex_array, t.vertices, sf::TriangleStrip, t.color);
+            //            utils::draw_model(draw_vertex_array, t.vertices, sf::LineStrip, sf::Color::Red);
+        }
     }
 }
 

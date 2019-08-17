@@ -12,7 +12,9 @@
 
 struct triangle
 {
-    std::array<vector3f, 3> vertices;
+    static constexpr auto vertex_count{ 3ull };
+
+    std::array<vector3f, vertex_count> vertices;
     sf::Color color;
 
     inline triangle() = default;
@@ -76,6 +78,76 @@ struct triangle
         {
             vertices[i] = utils::normalize(vertices[i], vertices[i].w());
         }
+    }
+
+    inline std::vector<triangle> clip(const vector3f &point_in_plane,
+                                      const vector3f &plane_normal) const noexcept
+    {
+        const auto normal = linalg::normalize(plane_normal.as_v3f());
+
+        const auto distance = [&normal, &point_in_plane ](const auto &point) noexcept
+        {
+            const auto n_point = linalg::normalize(point);
+            return normal.x * n_point.x + normal.y * n_point.y + normal.z * n_point.z -
+                   linalg::dot(normal, point_in_plane.as_v3f());
+        };
+
+        std::array<const vector3f *, vertex_count> inside_points;
+        std::size_t inside_point_count{ 0 };
+
+        std::array<const vector3f *, vertex_count> outside_points;
+        std::size_t outside_point_count{ 0 };
+
+        for (auto i = 0ull; i < inside_points.size(); ++i)
+        {
+            if (distance(vertices[i].as_v3f()) > 0.f)
+            {
+                inside_points[inside_point_count++] = &vertices[i];
+            }
+            else
+            {
+                outside_points[outside_point_count++] = &vertices[i];
+            }
+        }
+
+        if (inside_point_count == 0)
+        {
+            return {};
+        }
+
+        if (inside_point_count == 1)
+        {
+            triangle new_t{ *inside_points[0],
+                            utils::intersect_with_plane(point_in_plane, normal, *inside_points[0],
+                                                        *outside_points[0]),
+                            utils::intersect_with_plane(point_in_plane, normal, *inside_points[0],
+                                                        *outside_points[1]),
+                            color };
+
+            return { std::move(new_t) };
+        }
+
+        if (inside_point_count == 2)
+        {
+            triangle new_t1{ *inside_points[0], *inside_points[1],
+                             utils::intersect_with_plane(point_in_plane, normal, *inside_points[0],
+                                                         *outside_points[0]),
+                             color };
+
+            triangle new_t2{ *inside_points[1], new_t1.vertices[2],
+                             utils::intersect_with_plane(point_in_plane, normal, *inside_points[1],
+                                                         *outside_points[0]),
+                             color };
+
+            return { std::move(new_t1), std::move(new_t2) };
+        }
+
+        if (inside_point_count == 3)
+        {
+            return { *this };
+        }
+
+        return {};
     }
 };
 
