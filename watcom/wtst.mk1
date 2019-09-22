@@ -1,0 +1,27 @@
+!define BLANK ""
+Z:\home\kicsyromy\workspace\watcom-test\watcom\main.obj : Z:\home\kicsyromy\&
+workspace\watcom-test\src\main.c .AUTODEPEND
+ @Z:
+ cd Z:\home\kicsyromy\workspace\watcom-test\watcom
+ *wcc386 ..\src\main.c -i="C:\WATCOM/h" -i="..\3rdparty\allegro\include" -i=&
+"..\3rdparty\linalg\include" -w4 -e25 -zq -od -s -d2 -3s -bt=dos -fo=.obj -m&
+f
+
+Z:\home\kicsyromy\workspace\watcom-test\watcom\test.obj : Z:\home\kicsyromy\&
+workspace\watcom-test\src\test.c .AUTODEPEND
+ @Z:
+ cd Z:\home\kicsyromy\workspace\watcom-test\watcom
+ *wcc386 ..\src\test.c -i="C:\WATCOM/h" -i="..\3rdparty\allegro\include" -i=&
+"..\3rdparty\linalg\include" -w4 -e25 -zq -od -s -d2 -3s -bt=dos -fo=.obj -m&
+f
+
+Z:\home\kicsyromy\workspace\watcom-test\watcom\wtst.exe : Z:\home\kicsyromy\&
+workspace\watcom-test\watcom\main.obj Z:\home\kicsyromy\workspace\watcom-tes&
+t\watcom\test.obj .AUTODEPEND
+ @Z:
+ cd Z:\home\kicsyromy\workspace\watcom-test\watcom
+ @%write wtst.lk1 FIL main.obj,test.obj
+ @%append wtst.lk1 
+ *wlink name wtst d all sys dos4g op m libr ..\3rdparty\allegro\lib\alleg.li&
+b op maxe=25 op q op symf @wtst.lk1
+
