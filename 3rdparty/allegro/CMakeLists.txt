@@ -1,0 +1,5 @@
+if (PLATFORM_DJGPP)
+	add_subdirectory (djgpp)
+else ()
+	add_subdirectory (universal)
+endif ()
