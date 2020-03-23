@@ -4,6 +4,7 @@
 #include <bgfx/platform.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
+#include <nanovg/nanovg.h>
 #include <spdlog/spdlog.h>
 
 #include <cstdint>
@@ -51,7 +52,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     bgfx::setPlatformData(pd);
 
     bgfx::Init init;
-    init.type     = bgfx::RendererType::OpenGLES;
+    init.type     = bgfx::RendererType::Vulkan;
     init.vendorId = BGFX_PCI_ID_INTEL;
     init.resolution.width  = WIDTH;
     init.resolution.height = HEIGHT;
@@ -76,6 +77,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     // if no other draw calls are submitted to view 0.
     bgfx::touch(0);
 
+    auto vg = nvgCreate(1, 0);
+
     // Poll for events and wait till user closes window
     bool quit = false;
     SDL_Event currentEvent;
@@ -85,12 +88,20 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
                 quit = true;
             }
 
+            nvgBeginFrame(vg, float(WIDTH), float(HEIGHT), 1.0f);
+
+            nvgBeginPath(vg);
+            nvgRect(vg, 100,100, 120,30);
+            nvgCircle(vg, 120,120, 5);
+            nvgPathWinding(vg, NVG_HOLE);	// Mark circle as a hole.
+            nvgFillColor(vg, nvgRGBA(255,192,0,255));
+            nvgFill(vg);
+
+            nvgEndFrame(vg);
+
             // Use debug font to print information about this example.
             bgfx::dbgTextClear();
-            bgfx::dbgTextImage(
-                    std::max<uint16_t>(uint16_t(WIDTH / 2 / 8), 20) - 20,
-                    std::max<uint16_t>(uint16_t(HEIGHT / 2 / 16), 6) - 6, 40, 12, s_logo, 160
-            );
+
             bgfx::dbgTextPrintf(0, 1, 0x0f,
                                 "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
 
@@ -109,6 +120,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             bgfx::frame();
         }
     }
+
+    nvgDelete(vg);
 
     // Shutdown bgfx.
     bgfx::shutdown();

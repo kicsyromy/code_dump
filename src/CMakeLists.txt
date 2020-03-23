@@ -14,6 +14,6 @@ target_link_libraries (
     project_warnings
     spdlog::spdlog
     docopt_s
-    bgfx
+    nanovg-bgfx
     SDL2-static
 )

@@ -14,6 +14,9 @@ add_subdirectory (docopt.cpp)
 ## bgfx.cmake (git master)
 add_subdirectory (bgfx)
 
+## nanovg-bgfx (from bgfx git master)
+add_subdirectory (nanovg-bgfx)
+
 ## SDL2
 add_subdirectory (SDL2-2.0.12)
 
