@@ -2,7 +2,7 @@
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Catch2-2.11.3/contrib/")
 add_subdirectory (Catch2-2.11.3)
 
-## fmt 
+## fmt
 add_subdirectory (fmt-6.1.2)
 
 ## spdlog
@@ -16,6 +16,9 @@ add_subdirectory (bgfx)
 
 ## nanovg-bgfx (from bgfx git master)
 add_subdirectory (nanovg-bgfx)
+
+## nanovg-bgfx (from bgfx git master)
+add_subdirectory (imgui-bgfx)
 
 ## SDL2
 add_subdirectory (SDL2-2.0.12)

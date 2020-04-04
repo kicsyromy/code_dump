@@ -15,5 +15,6 @@ target_link_libraries (
     spdlog::spdlog
     docopt_s
     nanovg-bgfx
+    imgui-bgfx
     SDL2-static
 )

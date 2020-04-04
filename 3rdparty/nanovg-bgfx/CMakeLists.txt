@@ -5,22 +5,22 @@ file (GLOB NANOVG_SOURCES ${NANOVG_SRC_DIR}/*.c ${NANOVG_SRC_DIR}/*.cpp ${NANOVG
 
 add_library (
     nanovg-bgfx STATIC
-	${NANOVG_SOURCES}
+    ${NANOVG_SOURCES}
 )
 
 target_include_directories (
-	nanovg-bgfx SYSTEM PUBLIC
+    nanovg-bgfx SYSTEM PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_compile_definitions (
-	nanovg-bgfx PRIVATE
-	"-D_CRT_SECURE_NO_WARNINGS"
-	"-D__STDC_FORMAT_MACROS"
+    nanovg-bgfx PRIVATE
+    "-D_CRT_SECURE_NO_WARNINGS"
+    "-D__STDC_FORMAT_MACROS"
 )
 
 target_link_libraries (
-	nanovg-bgfx PUBLIC
+    nanovg-bgfx PUBLIC
     bgfx
-    stb
+    stb-nanovg
 )

@@ -1,9 +1,9 @@
 add_library (
-    stb STATIC
+    stb-nanovg STATIC
     stb_truetype.cc
 )
 
 target_include_directories (
-    stb SYSTEM PUBLIC
+    stb-nanovg SYSTEM PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/
 )
