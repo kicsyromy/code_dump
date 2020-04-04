@@ -1,6 +1,10 @@
 add_executable (
     graphics_base
+    data_bus.cc     include/data_bus.hh
+    cpu6502.cc      include/cpu6502.hh
     main.cc
+                    include/register.hh
+    renderer.cc     include/renderer.hh
 )
 
 target_include_directories (
