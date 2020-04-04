@@ -22,6 +22,8 @@ public:
         Negative          = (1 << 7)
         /* clang-format on */
     };
+
+public:
     Register8Bit accumulator{ 0 };
     Register8Bit x{ 0 };
     Register8Bit y{ 0 };
@@ -35,9 +37,9 @@ public:
     Cpu6502(DataBus &bus) noexcept;
     ~Cpu6502() noexcept;
 
-private:
+public:
     void write(std::uint16_t address, std::uint8_t data) noexcept;
-    std::uint8_t read(std::uint16_t address) noexcept;
+    std::uint8_t read(std::uint16_t address) const noexcept;
 
 private:
     DataBus &data_bus_;

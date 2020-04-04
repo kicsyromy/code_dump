@@ -13,7 +13,7 @@ void Cpu6502::write(std::uint16_t address, std::uint8_t data) noexcept
     data_bus_.write(address, data);
 }
 
-std::uint8_t Cpu6502::read(std::uint16_t address) noexcept
+std::uint8_t Cpu6502::read(std::uint16_t address) const noexcept
 {
     return data_bus_.read(address, false);
 }

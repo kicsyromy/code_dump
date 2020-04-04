@@ -1,5 +1,7 @@
 #include "renderer.hh"
 #include "register.hh"
+#include "fps.hh"
+#include "address_modes.hh"
 
 #include <cstdint>
 
@@ -14,8 +16,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
     bool my_tool_active = true;
     float my_color[4];
+    fps_counter counter{};
+    counter.update();
 
-    renderer::init([&my_tool_active, &my_color](NVGcontext *nvg) {
+    renderer::init([&my_tool_active, &my_color, &counter](NVGcontext *nvg) {
         nvgBeginPath(nvg);
         nvgRect(nvg, 100, 100, 120, 30);
         nvgCircle(nvg, 120, 120, 5);
@@ -57,24 +61,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
         // Use debug font to print information about this example.
         bgfx::dbgTextClear();
 
-        bgfx::dbgTextPrintf(0,
-            1,
-            0x0f,
-            "Color can be changed with ANSI "
-            "\x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
+        bgfx::dbgTextPrintf(0, 1, 0x0f, fmt::format("FPS: {}", counter.get()).c_str());
 
-        bgfx::dbgTextPrintf(80,
-            1,
-            0x0f,
-            "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m "
-            "   \x1b[; 7m    \x1b[0m");
-        bgfx::dbgTextPrintf(80,
-            2,
-            0x0f,
-            "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m "
-            "   \x1b[;15m    \x1b[0m");
-
-        const bgfx::Stats *stats = bgfx::getStats();
+        const auto *stats = bgfx::getStats();
         bgfx::dbgTextPrintf(0,
             2,
             0x0f,
@@ -83,6 +72,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             stats->height,
             stats->textWidth,
             stats->textHeight);
+
+        counter.update();
     });
 
     renderer::run();

@@ -1,7 +1,10 @@
 add_executable (
     graphics_base
+                    include/address_modes.hh
     data_bus.cc     include/data_bus.hh
     cpu6502.cc      include/cpu6502.hh
+                    include/fps.hh
+                    include/instruction.hh
     main.cc
                     include/register.hh
     renderer.cc     include/renderer.hh
