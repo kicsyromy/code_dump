@@ -16,13 +16,14 @@ template<typename ValueType> struct Register
         static_assert(std::is_integral_v<ValueType>);
         static_assert(std::is_convertible_v<InitialValueType, ValueType>);
 
-        set(static_cast<ValueType>(value));
+        set_value(static_cast<ValueType>(value));
     }
 
     constexpr ValueType &get() noexcept
     {
         return *static_cast<ValueType *>(static_cast<void *>(data_.data()));
     }
+
     constexpr const ValueType &get() const noexcept
     {
         return *static_cast<const ValueType *>(static_cast<const void *>(data_.data()));
@@ -63,6 +64,50 @@ template<typename ValueType> struct Register
     {
         static_assert(std::is_integral_v<IndexType>);
         set_flag(1 << bit_index, value);
+    }
+
+    constexpr std::uint8_t &high_byte() noexcept
+    {
+        if constexpr (sizeof(ValueType) == 2) { return data_[1]; }
+        else
+        {
+            return data_[0];
+        }
+    }
+
+    constexpr const std::uint8_t &high_byte() const noexcept
+    {
+        if constexpr (sizeof(ValueType) == 2) { return data_[1]; }
+        else
+        {
+            return data_[0];
+        }
+    }
+
+    constexpr std::uint8_t &low_byte() noexcept { return data_[0]; }
+
+    constexpr const std::uint8_t &low_byte() const noexcept { return data_[0]; }
+
+private:
+    constexpr ValueType get_value() noexcept
+    {
+        ValueType result{ 0 };
+        for (int i = static_cast<int>(sizeof(ValueType)) - 1; i >= 0; --i)
+        {
+            result = static_cast<ValueType>(result << 8);
+            result = static_cast<ValueType>(result | data_[static_cast<std::size_t>(i)]);
+        }
+
+        return result;
+    }
+
+    constexpr void set_value(ValueType value) noexcept
+    {
+        for (std::size_t i = 0; i < sizeof(ValueType); ++i)
+        {
+            data_[i] = static_cast<std::uint8_t>(value & 0xFF);
+            value = static_cast<ValueType>(value >> 8);
+        }
     }
 
 private:

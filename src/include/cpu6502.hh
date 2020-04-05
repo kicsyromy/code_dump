@@ -6,10 +6,28 @@
 #include <array>
 #include <cstdint>
 
+template<typename Number> constexpr std::uint8_t u8(Number value) noexcept
+{
+    static_assert(std::is_integral_v<Number>);
+    return static_cast<std::uint8_t>(value);
+}
+
+template<typename Number> constexpr std::uint16_t u16(Number value) noexcept
+{
+    static_assert(std::is_integral_v<Number>);
+    return static_cast<std::uint16_t>(value);
+}
+
 class DataBus;
 
 class Cpu6502
 {
+public:
+    static constexpr std::uint16_t STACK_POINTER_OFFSET{ 0x0100 };
+    static constexpr std::uint16_t RESET_ADDRESS_LOCATION{ 0xFFFC };
+    static constexpr std::uint16_t IRQ_USER_TABLE_ADDRESS{ 0xFFFE };
+    static constexpr std::uint16_t IRQ_NMI_TABLE_ADDRESS{ 0xFFFA };
+
 public:
     enum StatusFlags : std::uint8_t
     {

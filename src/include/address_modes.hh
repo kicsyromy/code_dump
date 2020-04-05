@@ -41,7 +41,7 @@ constexpr inline State address_mode_immediate(const Cpu6502 &cpu) noexcept
 
     State result;
     result.data.address_absolute = pc;
-    result.program_counter = static_cast<std::uint16_t>(pc + 1);
+    result.processed = 1;
     return result;
 }
 
@@ -55,7 +55,7 @@ inline State address_mode_zero_page(const Cpu6502 &cpu) noexcept
 
     State result;
     result.data.address_absolute = cpu.read(pc);
-    result.program_counter = static_cast<std::uint16_t>(pc + 1);
+    result.processed = 1;
     result.data.address_absolute &= 0x00FF;
     return result;
 }
@@ -67,8 +67,7 @@ inline State address_mode_zero_page(const Cpu6502 &cpu) noexcept
 inline State address_mode_zero_page_x_offset(const Cpu6502 &cpu) noexcept
 {
     State result = address_mode_zero_page(cpu);
-    result.data.address_absolute =
-        static_cast<std::uint16_t>(result.data.address_absolute + cpu.x.get());
+    result.data.address_absolute = u16(result.data.address_absolute + cpu.x.get());
     result.data.address_absolute &= 0x00FF;
     return result;
 }
@@ -78,8 +77,7 @@ inline State address_mode_zero_page_x_offset(const Cpu6502 &cpu) noexcept
 inline State address_mode_zero_page_y_offset(const Cpu6502 &cpu) noexcept
 {
     State result = address_mode_zero_page(cpu);
-    result.data.address_absolute =
-        static_cast<std::uint16_t>(result.data.address_absolute + cpu.y.get());
+    result.data.address_absolute = u16(result.data.address_absolute + cpu.y.get());
     result.data.address_absolute &= 0x00FF;
     return result;
 }
@@ -94,7 +92,7 @@ constexpr inline State address_mode_relative(const Cpu6502 &cpu) noexcept
 
     State result;
     result.data.address_relative = pc;
-    result.program_counter = static_cast<std::uint16_t>(pc + 1);
+    result.processed = 1;
     if (result.data.address_relative & 0x80) result.data.address_relative |= 0xFF00;
     return result;
 }
@@ -105,12 +103,12 @@ inline State address_mode_absolute(const Cpu6502 &cpu) noexcept
 {
     const auto pc = cpu.program_counter.get();
 
-    const auto low_byte = static_cast<std::uint16_t>(cpu.read(pc));
-    const auto high_byte = static_cast<std::uint16_t>(cpu.read(pc + 1));
+    const auto low_byte = u16(cpu.read(pc));
+    const auto high_byte = u16(cpu.read(u16(pc + 1)));
 
     State result;
-    result.data.address_absolute = static_cast<std::uint16_t>((high_byte << 8) | low_byte);
-    result.program_counter = static_cast<std::uint16_t>(pc + 2);
+    result.data.address_absolute = u16((high_byte << 8) | low_byte);
+    result.processed = 2;
     return result;
 }
 
@@ -121,13 +119,12 @@ inline State address_mode_absolute(const Cpu6502 &cpu) noexcept
 inline State address_mode_absolute_x_offset(const Cpu6502 &cpu) noexcept
 {
     State result = address_mode_absolute(cpu);
-    const auto high_byte = static_cast<std::uint16_t>(result.data.address_absolute >> 8);
-    result.data.address_absolute =
-        static_cast<std::uint16_t>(result.data.address_absolute + cpu.x.get());
+    const auto high_byte = u16(result.data.address_absolute >> 8);
+    result.data.address_absolute = u16(result.data.address_absolute + cpu.x.get());
     if ((result.data.address_absolute & 0xFF00) != (high_byte << 8))
-        result.cycles = 1;
+        result.additional_cycles_used = 1;
     else
-        result.cycles = 0;
+        result.additional_cycles_used = 0;
     return result;
 }
 
@@ -138,13 +135,12 @@ inline State address_mode_absolute_x_offset(const Cpu6502 &cpu) noexcept
 inline State address_mode_absolute_y_offset(const Cpu6502 &cpu) noexcept
 {
     State result = address_mode_absolute(cpu);
-    const auto high_byte = static_cast<std::uint16_t>(result.data.address_absolute >> 8);
-    result.data.address_absolute =
-        static_cast<std::uint16_t>(result.data.address_absolute + cpu.y.get());
+    const auto high_byte = u16(result.data.address_absolute >> 8);
+    result.data.address_absolute = u16(result.data.address_absolute + cpu.y.get());
     if ((result.data.address_absolute & 0xFF00) != (high_byte << 8))
-        result.cycles = 1;
+        result.additional_cycles_used = 1;
     else
-        result.cycles = 0;
+        result.additional_cycles_used = 0;
     return result;
 }
 
@@ -160,23 +156,23 @@ inline State address_mode_indirect(const Cpu6502 &cpu) noexcept
 {
     const auto pc = cpu.program_counter.get();
 
-    const auto low_byte = static_cast<std::uint16_t>(cpu.read(pc));
-    const auto high_byte = static_cast<std::uint16_t>(cpu.read(pc + 1));
+    const auto low_byte = u16(cpu.read(pc));
+    const auto high_byte = u16(cpu.read(u16(pc + 1)));
 
-    const auto pointer = static_cast<std::uint16_t>((high_byte << 8) | low_byte);
+    const auto pointer = u16((high_byte << 8) | low_byte);
 
     State result;
     if (low_byte == 0x00FF) /* Simulate page boundary hardware bug */
     {
         result.data.address_absolute =
-            static_cast<std::uint16_t>((cpu.read(pointer & 0xFF00) << 8) | cpu.read(pointer + 0));
+            u16((cpu.read(pointer & 0xFF00) << 8) | cpu.read(pointer + 0));
     }
     else
     {
-        result.data.address_absolute = static_cast<std::uint16_t>(
-            (cpu.read(static_cast<std::uint16_t>(pointer + 1)) << 8) | cpu.read(pointer + 0));
+        result.data.address_absolute =
+            u16((cpu.read(u16(pointer + 1)) << 8) | cpu.read(pointer + 0));
     }
-    result.program_counter = static_cast<std::uint16_t>(pc + 2);
+    result.processed = 2;
     return result;
 }
 
@@ -188,15 +184,13 @@ inline State address_mode_indirect_x(const Cpu6502 &cpu) noexcept
 {
     auto pc = cpu.program_counter.get();
 
-    const auto t = static_cast<std::uint16_t>(cpu.read(pc));
-    const auto low_byte = cpu.read(
-        static_cast<std::uint16_t>((t + static_cast<std::uint16_t>(cpu.x.get())) & 0x00FF));
-    const auto high_byte =
-        cpu.read(static_cast<std::uint16_t>((t + static_cast<uint16_t>(cpu.x.get() + 1)) & 0x00FF));
+    const auto t = u16(cpu.read(pc));
+    const auto low_byte = cpu.read(u16((t + u16(cpu.x.get())) & 0x00FF));
+    const auto high_byte = cpu.read(u16((t + static_cast<uint16_t>(cpu.x.get() + 1)) & 0x00FF));
 
     State result;
-    result.data.address_absolute = static_cast<std::uint16_t>((high_byte << 8) | low_byte);
-    result.program_counter = static_cast<std::uint16_t>(pc + 1);
+    result.data.address_absolute = u16((high_byte << 8) | low_byte);
+    result.processed = 1;
     return result;
 }
 
@@ -209,18 +203,16 @@ inline State address_mode_indirect_y(const Cpu6502 &cpu) noexcept
 {
     auto pc = cpu.program_counter.get();
 
-    const auto t = static_cast<std::uint16_t>(cpu.read(pc));
-    const auto low_byte = cpu.read(static_cast<std::uint16_t>(t & 0x00FF));
-    const auto high_byte =
-        cpu.read(static_cast<std::uint16_t>(static_cast<std::uint16_t>(t + 1) & 0x00FF));
+    const auto t = u16(cpu.read(pc));
+    const auto low_byte = cpu.read(u16(t & 0x00FF));
+    const auto high_byte = cpu.read(u16(u16(t + 1) & 0x00FF));
 
     State result;
-    result.data.address_absolute =
-        static_cast<std::uint16_t>(((high_byte << 8) | low_byte) + cpu.y.get());
-    result.program_counter = static_cast<std::uint16_t>(pc + 1);
+    result.data.address_absolute = u16(((high_byte << 8) | low_byte) + cpu.y.get());
+    result.processed = 1;
     if ((result.data.address_absolute & 0xFF00) != (high_byte << 8))
-        result.cycles = 1;
+        result.additional_cycles_used = 1;
     else
-        result.cycles = 0;
+        result.additional_cycles_used = 0;
     return result;
 }

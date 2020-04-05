@@ -87,17 +87,90 @@ void Cpu6502::clock() noexcept
 {
     if (remaining_cycles == 0)
     {
-        // do work
+        const auto opcode = read(program_counter.get());
+
+        status.set_flag(Unused, true);
+
+        ++(program_counter.get());
+
+        remaining_cycles = instuction_set_[opcode].cycles;
+        auto state = instuction_set_[opcode].address_mode(*this);
+        instuction_set_[opcode].operation(*this, opcode, state);
+
+        program_counter.get() = u16(program_counter.get() + state.processed);
+        remaining_cycles = u8(remaining_cycles + state.additional_cycles_used);
+
+        status.set_flag(Unused, true);
     }
 
     remaining_cycles--;
 }
 
-void Cpu6502::reset() noexcept {}
+void Cpu6502::reset() noexcept
+{
+    accumulator.set(0);
+    x.set(0);
+    y.set(0);
+    stack_pointer.set(0xFD);
+    status.set(0x00 | Unused);
 
-void Cpu6502::irq() noexcept {}
+    const std::uint16_t low_byte = read(RESET_ADDRESS_LOCATION + 0);
+    const std::uint16_t high_byte = read(RESET_ADDRESS_LOCATION + 1);
 
-void Cpu6502::nmi() noexcept {}
+    program_counter.set(u16((high_byte << 8) | (low_byte & 0x00FF)));
+
+    remaining_cycles = 8;
+}
+
+void Cpu6502::irq() noexcept
+{
+    if (!status.is_flag_set(DisableInterrupts))
+    {
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), program_counter.high_byte());
+        --(stack_pointer.get());
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), program_counter.low_byte());
+        --(stack_pointer.get());
+
+        status.set_flag(Break, false);
+        status.set_flag(Unused, true);
+        status.set_flag(DisableInterrupts, true);
+
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), status.get());
+        --(stack_pointer.get());
+
+        const auto low_byte = read(u8(IRQ_USER_TABLE_ADDRESS + 0));
+        const std::uint16_t high_byte = read(u8(IRQ_USER_TABLE_ADDRESS + 1));
+
+        program_counter.set(u16((high_byte << 8) | low_byte));
+
+        remaining_cycles = 7;
+    }
+}
+
+void Cpu6502::nmi() noexcept
+{
+    if (!status.is_flag_set(DisableInterrupts))
+    {
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), program_counter.high_byte());
+        --(stack_pointer.get());
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), program_counter.low_byte());
+        --(stack_pointer.get());
+
+        status.set_flag(Break, false);
+        status.set_flag(Unused, true);
+        status.set_flag(DisableInterrupts, true);
+
+        write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), status.get());
+        --(stack_pointer.get());
+
+        const auto low_byte = read(u8(IRQ_NMI_TABLE_ADDRESS + 0));
+        const std::uint16_t high_byte = read(u8(IRQ_NMI_TABLE_ADDRESS + 1));
+
+        program_counter.set(u16((high_byte << 8) | low_byte));
+
+        remaining_cycles = 8;
+    }
+}
 
 void Cpu6502::write(std::uint16_t address, std::uint8_t data) noexcept
 {

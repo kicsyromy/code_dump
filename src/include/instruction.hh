@@ -7,8 +7,8 @@ struct State
 {
     constexpr State() noexcept
       : data{}
-      , cycles{ 0 }
-      , program_counter{ 0 }
+      , additional_cycles_used{ 0 }
+      , processed{ 0 }
     {}
 
     union
@@ -17,8 +17,8 @@ struct State
         std::uint16_t address_absolute;
         std::uint16_t address_relative;
     } data;
-    std::uint8_t cycles;
-    std::uint16_t program_counter;
+    std::uint8_t additional_cycles_used;
+    std::uint16_t processed;
 };
 
 template<typename Cpu> struct Instruction
