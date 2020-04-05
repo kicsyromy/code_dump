@@ -19,32 +19,23 @@ template<typename ValueType> struct Register
         set(static_cast<ValueType>(value));
     }
 
-    constexpr ValueType value() const noexcept
+    constexpr ValueType &get() noexcept
     {
-        ValueType result{ 0 };
-        for (int i = static_cast<int>(sizeof(ValueType)) - 1; i >= 0; --i)
-        {
-            result = static_cast<ValueType>(result << 8);
-            result = static_cast<ValueType>(result | data_[static_cast<std::size_t>(i)]);
-        }
-
-        return result;
+        return *static_cast<ValueType *>(static_cast<void *>(data_.data()));
+    }
+    constexpr const ValueType &get() const noexcept
+    {
+        return *static_cast<const ValueType *>(static_cast<const void *>(data_.data()));
     }
 
-    constexpr void set(ValueType value) noexcept
-    {
-        for (std::size_t i = 0; i < sizeof(ValueType); ++i)
-        {
-            data_[i] = static_cast<std::uint8_t>(value & 0xFF);
-            value = static_cast<ValueType>(value >> 8);
-        }
-    }
+    constexpr void set(ValueType value) noexcept { get() = value; }
 
     template<typename FlagType> constexpr bool is_flag_set(FlagType flag) const noexcept
     {
-        static_assert(std::is_integral_v<FlagType>);
+        static_assert(sizeof(FlagType) <= sizeof(ValueType));
+        static_assert(std::is_convertible_v<FlagType, std::uint64_t>);
 
-        const auto v = value();
+        const auto v = get();
         return static_cast<bool>(v & flag);
     }
 
@@ -57,9 +48,10 @@ template<typename ValueType> struct Register
 
     template<typename FlagType> constexpr void set_flag(FlagType flag, bool value) noexcept
     {
-        static_assert(std::is_integral_v<FlagType>);
+        static_assert(sizeof(FlagType) <= sizeof(ValueType));
+        static_assert(std::is_convertible_v<FlagType, std::uint64_t>);
 
-        const auto v = Register::value();
+        const auto v = get();
 
         if (value)
             set(static_cast<ValueType>(v | flag));

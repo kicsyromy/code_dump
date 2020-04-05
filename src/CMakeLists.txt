@@ -5,6 +5,7 @@ add_executable (
     cpu6502.cc      include/cpu6502.hh
                     include/fps.hh
                     include/instruction.hh
+                    include/instruction_set.hh
     main.cc
                     include/register.hh
     renderer.cc     include/renderer.hh
