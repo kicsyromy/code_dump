@@ -65,7 +65,7 @@ namespace renderer
 
         bgfx::Init init;
         init.type = bgfx::RendererType::Vulkan;
-        init.vendorId = BGFX_PCI_ID_INTEL;
+        init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
         init.resolution.reset = BGFX_RESET_VSYNC;

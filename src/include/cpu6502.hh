@@ -66,7 +66,6 @@ private:
 private:
     void write(std::uint16_t address, std::uint8_t data) noexcept;
     std::uint8_t read(std::uint16_t address) const noexcept;
-    std::uint8_t fetch(std::uint8_t opcode, const State &state) const noexcept;
 
 private:
     DataBus &data_bus_;
@@ -74,6 +73,7 @@ private:
 
     const std::array<Instruction<Cpu6502>, 256> instuction_set_;
 
+    /* Addressing modes */
 private:
     friend constexpr State IMP(const Cpu6502 &) noexcept;
     friend constexpr State IMM(const Cpu6502 &) noexcept;
@@ -88,61 +88,66 @@ private:
     friend State IZX(const Cpu6502 &) noexcept;
     friend State IZY(const Cpu6502 &) noexcept;
 
+    /* Instructions */
 private:
-    friend State &ADC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &AND(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &ASL(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BCC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BCS(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BEQ(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BIT(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BMI(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BNE(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BPL(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BRK(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BVC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &BVS(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CLC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CLD(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CLI(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CLV(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CMP(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CPX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &CPY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &DEC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &DEX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &DEY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &EOR(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &INC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &INX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &INY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &JMP(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &JSR(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &LDA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &LDX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &LDY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &LSR(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &NOP(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &ORA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &PHA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &PHP(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &PLA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &PLP(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &ROL(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &ROR(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &RTI(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &RTS(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &SBC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &SEC(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &SED(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &SEI(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &STA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &STX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &STY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TAX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TAY(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TSX(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TXA(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TXS(Cpu6502 &, std::uint8_t, State &) noexcept;
-    friend State &TYA(Cpu6502 &, std::uint8_t, State &) noexcept;
+    friend std::uint8_t fetch_argument_data(Cpu6502 &cpu, std::uint8_t, const State &) noexcept;
+
+    friend std::uint8_t RTI(Cpu6502 &) noexcept;
+    friend std::uint8_t RTS(Cpu6502 &) noexcept;
+
+    friend std::uint8_t BRK(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t JSR(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t PHA(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t PHP(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t PLA(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t PLP(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t STA(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t STX(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t STY(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TAX(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TAY(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TSX(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TXA(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TXS(Cpu6502 &, const State &) noexcept;
+    friend std::uint8_t TYA(Cpu6502 &, const State &) noexcept;
+
+    friend std::uint8_t ADC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t AND(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t ASL(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BCC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BCS(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BEQ(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BIT(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BMI(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BNE(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BPL(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BVC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t BVS(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CLC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CLD(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CLI(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CLV(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CMP(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CPX(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t CPY(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t DEC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t DEX(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t DEY(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t EOR(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t INC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t INX(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t INY(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t JMP(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t LDA(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t LDX(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t LDY(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t LSR(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t NOP(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t ORA(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t ROL(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t ROR(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t SBC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t SEC(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t SED(Cpu6502 &, std::uint8_t, const State &) noexcept;
+    friend std::uint8_t SEI(Cpu6502 &, std::uint8_t, const State &) noexcept;
 };

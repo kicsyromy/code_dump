@@ -8,6 +8,12 @@
 #define instruction(ins, addr_mode, cycle_cnt) { #ins, &ins, &addr_mode, cycle_cnt }
 /* clang-format on */
 
+template<class... Ts> struct overload : Ts...
+{
+    using Ts::operator()...;
+};
+template<class... Ts> overload(Ts...)->overload<Ts...>;
+
 Cpu6502::Cpu6502(DataBus &bus) noexcept
   : data_bus_{ bus }
   , instuction_set_{ {
@@ -93,12 +99,24 @@ void Cpu6502::clock() noexcept
 
         ++(program_counter.get());
 
-        remaining_cycles = instuction_set_[opcode].cycles;
-        auto state = instuction_set_[opcode].address_mode(*this);
-        instuction_set_[opcode].operation(*this, opcode, state);
+        const auto &instruction = instuction_set_[opcode];
 
-        program_counter.get() = u16(program_counter.get() + state.processed);
-        remaining_cycles = u8(remaining_cycles + state.additional_cycles_used);
+        const auto state = instruction.address_mode(*this);
+        /* clang-format off */
+        const auto additional_cycles = std::visit(overload {
+                [this, opcode, &state](const Instruction<Cpu6502>::instruction_f &f) {
+                    return f(*this, opcode, state);
+                },
+                [this, &state](const Instruction<Cpu6502>::instruction_no_opcode &f) {
+                    return f(*this, state);
+                },
+                [this](const Instruction<Cpu6502>::instruction_no_params &f) {
+                    return f(*this);
+                },
+            }, instruction.operation
+        );
+        /* clang-format on */
+        remaining_cycles = u8(instuction_set_[opcode].cycles + additional_cycles);
 
         status.set_flag(Unused, true);
     }
@@ -180,11 +198,4 @@ void Cpu6502::write(std::uint16_t address, std::uint8_t data) noexcept
 std::uint8_t Cpu6502::read(std::uint16_t address) const noexcept
 {
     return data_bus_.read(address, false);
-}
-
-uint8_t Cpu6502::fetch(uint8_t opcode, const State &state) const noexcept
-{
-    if (instuction_set_[opcode].address_mode != &address_mode_implied)
-    { return read(state.data.address_absolute); }
-    return state.data.fetched;
 }

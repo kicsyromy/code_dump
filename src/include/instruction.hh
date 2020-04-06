@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string_view>
+#include <variant>
 
 struct State
 {
@@ -23,8 +24,12 @@ struct State
 
 template<typename Cpu> struct Instruction
 {
+    using instruction_f = std::uint8_t (*)(Cpu &, std::uint8_t, const State &) noexcept;
+    using instruction_no_opcode = std::uint8_t (*)(Cpu &, const State &) noexcept;
+    using instruction_no_params = std::uint8_t (*)(Cpu &) noexcept;
+
     const std::string_view name;
-    State &(*operation)(Cpu &cpu, std::uint8_t opcode, State &state) noexcept;
+    std::variant<instruction_f, instruction_no_opcode, instruction_no_params> operation;
     State (*address_mode)(const Cpu &cpu) noexcept;
     std::uint8_t cycles;
 };

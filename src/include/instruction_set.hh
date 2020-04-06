@@ -62,9 +62,9 @@
 #define opcode_transfer_accumulator_to_x TAX
 #define opcode_transfer_accumulator_to_y TAY
 #define opcode_transfer_stack_pointer_to_x TSX
-#define opcode_transfer_stack_pointer_to_accumulator TXA
+#define opcode_transfer_x_to_accumulator TXA
 #define opcode_transfer_x_to_stack_pointer TXS
-#define opcode_transfer_accumulator_to_stack_pointer TYA
+#define opcode_transfer_y_to_accumulator TYA
 
 #define a() cpu.accumulator.get()
 #define x() cpu.x.get()
@@ -72,6 +72,15 @@
 #define status() cpu.status.get()
 #define sp() cpu.stack_pointer.get()
 #define pc() cpu.program_counter.get()
+
+inline std::uint8_t fetch_argument_data(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
+{
+    if (cpu.instuction_set_[opcode].address_mode != &address_mode_implied)
+    { return cpu.read(state.data.address_absolute); }
+    return state.data.fetched;
+}
 
 enum StatusFlags : std::uint8_t
 {
@@ -87,9 +96,11 @@ enum StatusFlags : std::uint8_t
     /* clang-format on */
 };
 
-inline State &opcode_add_with_carry_in(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_add_with_carry_in(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
 
     // Add is performed in 16-bit domain for emulation to capture any
     // carry bit, which will exist in bit 8 of the 16-bit word
@@ -105,13 +116,15 @@ inline State &opcode_add_with_carry_in(Cpu6502 &cpu, std::uint8_t opcode, State 
     cpu.status.set_flag(Negative, temp & 0x80);
     a() = static_cast<std::uint8_t>(temp & 0x00FF);
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_bitwise_and(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_bitwise_and(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const std::uint8_t fetched = cpu.fetch(opcode, state);
+    const std::uint8_t fetched = fetch_argument_data(cpu, opcode, state);
 
     const std::uint8_t temp = u8(a() & fetched);
 
@@ -119,14 +132,16 @@ inline State &opcode_bitwise_and(Cpu6502 &cpu, std::uint8_t opcode, State &state
     cpu.status.set_flag(Negative, temp & 0x80);
 
     a() = temp;
+    pc() = u16(pc() + state.processed);
 
-    state.additional_cycles_used &= 1;
-    return state;
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_arithmetic_shift_left(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_arithmetic_shift_left(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
 
     const auto temp = u16(fetched << 1);
     cpu.status.set_flag(Carry, (temp & 0XFF00) > 0);
@@ -140,76 +155,71 @@ inline State &opcode_arithmetic_shift_left(Cpu6502 &cpu, std::uint8_t opcode, St
         cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
     }
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+
+    return 0;
 }
 
-inline State &opcode_branch([[maybe_unused]] Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state,
-    bool condition) noexcept
+inline std::uint8_t opcode_branch(Cpu6502 &cpu, const State &state, bool condition) noexcept
 {
+    std::uint8_t additional_cycles = 0;
+
     if (condition)
     {
-        const auto pc = pc() + state.processed;
+        const auto pc = u16(pc() + state.processed);
 
-        state.additional_cycles_used = 1;
-        const auto absolute_address = pc + state.data.address_relative;
+        additional_cycles = 1;
+        const auto absolute_address = u16(pc + state.data.address_relative);
 
-        if ((absolute_address & 0xFF00) != (pc & absolute_address))
-        { state.additional_cycles_used = 2; }
+        if ((absolute_address & 0xFF00) != (pc & absolute_address)) { additional_cycles = 2; }
 
-        state.processed = u16(state.processed + state.data.address_relative);
+        pc() = absolute_address;
     }
 
-    return state;
+    return additional_cycles;
 }
 
-inline State &opcode_branch_if_carry_clear(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_carry_clear(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, !cpu.status.is_flag_set(Carry));
+    return opcode_branch(cpu, state, !cpu.status.is_flag_set(Carry));
 }
 
-inline State &opcode_branch_if_carry_set(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_carry_set(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, cpu.status.is_flag_set(Carry));
+    return opcode_branch(cpu, state, cpu.status.is_flag_set(Carry));
 }
 
-inline State &opcode_branch_if_equal(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_equal(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, cpu.status.is_flag_set(Zero));
+    return opcode_branch(cpu, state, cpu.status.is_flag_set(Zero));
 }
 
-inline State &opcode_branch_if_negative(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_negative(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, cpu.status.is_flag_set(Negative));
+    return opcode_branch(cpu, state, cpu.status.is_flag_set(Negative));
 }
 
-inline State &opcode_branch_if_not_equal(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_not_equal(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, !cpu.status.is_flag_set(Zero));
+    return opcode_branch(cpu, state, !cpu.status.is_flag_set(Zero));
 }
 
-inline State &opcode_branch_if_positive(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_branch_if_positive(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, !cpu.status.is_flag_set(Negative));
+    return opcode_branch(cpu, state, !cpu.status.is_flag_set(Negative));
 }
 
-inline State &opcode_branch_if_overflow_clear(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_branch_if_overflow_clear(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, !cpu.status.is_flag_set(Overflow));
+    return opcode_branch(cpu, state, !cpu.status.is_flag_set(Overflow));
 }
 
-inline State &opcode_branch_if_overflow_set(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_branch_if_overflow_set(Cpu6502 &cpu, const State &state) noexcept
 {
-    return opcode_branch(cpu, opcode, state, cpu.status.is_flag_set(Overflow));
+    return opcode_branch(cpu, state, cpu.status.is_flag_set(Overflow));
 }
 
-inline State &opcode_break(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_break(Cpu6502 &cpu, const State &state) noexcept
 {
     const auto pc = u16(pc() + state.processed + 1);
 
@@ -227,108 +237,97 @@ inline State &opcode_break(Cpu6502 &cpu, std::uint8_t opcode, State &state) noex
     cpu.program_counter.low_byte() = cpu.read(Cpu6502::IRQ_USER_TABLE_ADDRESS);
     cpu.program_counter.high_byte() = cpu.read(0xFFFF);
 
-    state.processed = 0;
-    state.additional_cycles_used = 0;
-    return state;
+    return 0;
 }
 
-inline State &opcode_test_bits(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_test_bits(Cpu6502 &cpu, std::uint8_t opcode, const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u8(a() & fetched);
 
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0x00);
     cpu.status.set_flag(Negative, fetched & 0x80);
     cpu.status.set_flag(Overflow, fetched & (1 << 6));
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_clear_carry(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_clear_carry(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(Carry, false);
-    state.additional_cycles_used = 0;
 
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_clear_decimal(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_clear_decimal(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(DecimalMode, false);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_disable_interrupts(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_disable_interrupts(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(DisableInterrupts, true);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_clear_overflow(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_clear_overflow(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(Overflow, false);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_compare_accumulator(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_compare_accumulator(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u16(u16(a()) - fetched);
 
     cpu.status.set_flag(Carry, a() >= fetched);
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
     cpu.status.set_flag(Negative, temp & 0x0080);
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_compare_x(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_compare_x(Cpu6502 &cpu, std::uint8_t opcode, const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u16(u16(x()) - fetched);
 
     cpu.status.set_flag(Carry, x() >= fetched);
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
     cpu.status.set_flag(Negative, temp & 0x0080);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_compare_y(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_compare_y(Cpu6502 &cpu, std::uint8_t opcode, const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u16(u16(y()) - fetched);
 
     cpu.status.set_flag(Carry, y() >= fetched);
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
     cpu.status.set_flag(Negative, temp & 0x0080);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_decrement_value_at_location(Cpu6502 &cpu,
+inline std::uint8_t opcode_decrement_value_at_location(Cpu6502 &cpu,
     std::uint8_t opcode,
-    State &state) noexcept
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u16(fetched - 1);
 
     cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
@@ -336,51 +335,51 @@ inline State &opcode_decrement_value_at_location(Cpu6502 &cpu,
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
     cpu.status.set_flag(Negative, temp & 0x0080);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_decrement_x(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_decrement_x(Cpu6502 &cpu, const State &state) noexcept
 {
     --(x());
     cpu.status.set_flag(Zero, x() == 0);
     cpu.status.set_flag(Negative, x() & 0x80);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_decrement_y(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_decrement_y(Cpu6502 &cpu, const State &state) noexcept
 {
     --(y());
     cpu.status.set_flag(Zero, y() == 0);
     cpu.status.set_flag(Negative, y() & 0x80);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_bitwise_xor(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_bitwise_xor(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u8(a() ^ fetched);
 
     cpu.status.set_flag(Zero, temp == 0);
     cpu.status.set_flag(Negative, temp & 0x80);
 
+    pc() = u16(pc() + state.processed);
     a() = temp;
 
-    state.additional_cycles_used &= 1;
-    return state;
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_increment_value_at_location(Cpu6502 &cpu,
+inline std::uint8_t opcode_increment_value_at_location(Cpu6502 &cpu,
     std::uint8_t opcode,
-    State &state) noexcept
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u16(fetched + 1);
 
     cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
@@ -388,44 +387,38 @@ inline State &opcode_increment_value_at_location(Cpu6502 &cpu,
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
     cpu.status.set_flag(Negative, temp & 0x0080);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_increment_x(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_increment_x(Cpu6502 &cpu, const State &state) noexcept
 {
     ++(x());
     cpu.status.set_flag(Zero, x() == 0);
     cpu.status.set_flag(Negative, x() & 0x80);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_increment_y(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_increment_y(Cpu6502 &cpu, const State &state) noexcept
 {
     ++(y());
     cpu.status.set_flag(Zero, y() == 0);
     cpu.status.set_flag(Negative, y() & 0x80);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_jump_to_location(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_jump_to_location(Cpu6502 &cpu, const State &state) noexcept
 {
     pc() = state.data.address_absolute;
 
-    state.processed = 0;
-    state.additional_cycles_used = 0;
-    return state;
+    return 0;
 }
 
-inline State &opcode_jump_to_subroutine(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_jump_to_subroutine(Cpu6502 &cpu, const State &state) noexcept
 {
     const auto pc = u16(pc() + state.processed);
     cpu.write(u16(Cpu6502::STACK_POINTER_OFFSET + sp()), u8((pc >> 8) & 0x00FF));
@@ -435,53 +428,59 @@ inline State &opcode_jump_to_subroutine(Cpu6502 &cpu, std::uint8_t opcode, State
 
     pc() = state.data.address_absolute;
 
-    state.processed = 0;
-    state.additional_cycles_used = 0;
-    return state;
+    return 0;
 }
 
-inline State &opcode_load_accumulator(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_load_accumulator(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
 
     cpu.status.set_flag(Zero, fetched == 0);
     cpu.status.set_flag(Negative, fetched & 0x80);
 
     a() = fetched;
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_load_x_register(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_load_x_register(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
 
     cpu.status.set_flag(Zero, fetched == 0);
     cpu.status.set_flag(Negative, fetched & 0x80);
 
     x() = fetched;
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_load_y_register(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_load_y_register(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
 
     cpu.status.set_flag(Zero, fetched == 0);
     cpu.status.set_flag(Negative, fetched & 0x80);
 
     y() = fetched;
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_logical_shift_right(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_logical_shift_right(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = u16(cpu.fetch(opcode, state));
+    const auto fetched = u16(fetch_argument_data(cpu, opcode, state));
 
     cpu.status.set_flag(Carry, fetched & 0x0001);
 
@@ -497,13 +496,14 @@ inline State &opcode_logical_shift_right(Cpu6502 &cpu, std::uint8_t opcode, Stat
         cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
     }
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+
+    return 0;
 }
 
-inline State &opcode_no_operation([[maybe_unused]] Cpu6502 &cpu,
+inline std::uint8_t opcode_no_operation([[maybe_unused]] Cpu6502 &cpu,
     std::uint8_t opcode,
-    State &state) noexcept
+    const State &state) noexcept
 {
     switch (opcode)
     {
@@ -513,19 +513,19 @@ inline State &opcode_no_operation([[maybe_unused]] Cpu6502 &cpu,
     case 0x7C:
     case 0xDC:
     case 0xFC:
-        state.additional_cycles_used &= 1;
+        return u8(state.additional_cycles_used & 1);
         break;
     default:
-        state.additional_cycles_used = 0;
+        return 0;
         break;
     }
-
-    return state;
 }
 
-inline State &opcode_bitwise_logic_or(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_bitwise_logic_or(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = cpu.fetch(opcode, state);
+    const auto fetched = fetch_argument_data(cpu, opcode, state);
     const auto temp = u8(a() | fetched);
 
     cpu.status.set_flag(Zero, temp == 0);
@@ -533,37 +533,31 @@ inline State &opcode_bitwise_logic_or(Cpu6502 &cpu, std::uint8_t opcode, State &
 
     a() = temp;
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_push_accumulator_to_stack(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_push_accumulator_to_stack(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.write(u16(Cpu6502::STACK_POINTER_OFFSET + sp()), a());
     --(sp());
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_push_status_register_to_stack(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_push_status_register_to_stack(Cpu6502 &cpu, const State &state) noexcept
 {
-    cpu.write(Cpu6502::STACK_POINTER_OFFSET + sp(), u8(status() | Break | Unused));
+    cpu.write(u16(Cpu6502::STACK_POINTER_OFFSET + sp()), u8(status() | Break | Unused));
     cpu.status.set_flag(Break, false);
     cpu.status.set_flag(Unused, false);
     --(sp());
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_pop_accumulator_from_stack(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_pop_accumulator_from_stack(Cpu6502 &cpu, const State &state) noexcept
 {
     const auto sp = ++(sp());
 
@@ -571,25 +565,25 @@ inline State &opcode_pop_accumulator_from_stack(Cpu6502 &cpu,
     cpu.status.set_flag(Zero, a() == 0);
     cpu.status.set_flag(Negative, a() & 0x80);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_pop_status_register_from_stack(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_pop_status_register_from_stack(Cpu6502 &cpu, const State &state) noexcept
 {
     const auto sp = ++(sp());
-    status() = cpu.read(Cpu6502::STACK_POINTER_OFFSET + sp);
+    status() = cpu.read(u16(Cpu6502::STACK_POINTER_OFFSET + sp));
     cpu.status.set_flag(Unused, true);
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_rotate_left(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_rotate_left(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = u16(cpu.fetch(opcode, state));
+    const auto fetched = u16(fetch_argument_data(cpu, opcode, state));
     const auto temp = u16((fetched << 1) | cpu.status.is_flag_set(Carry));
 
     cpu.status.set_flag(Carry, temp & 0xFF00);
@@ -603,13 +597,15 @@ inline State &opcode_rotate_left(Cpu6502 &cpu, std::uint8_t opcode, State &state
         cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
     }
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_rotate_right(Cpu6502 &cpu, std::uint8_t opcode, State &state) noexcept
+inline std::uint8_t opcode_rotate_right(Cpu6502 &cpu,
+    std::uint8_t opcode,
+    const State &state) noexcept
 {
-    const auto fetched = u16(cpu.fetch(opcode, state));
+    const auto fetched = u16(fetch_argument_data(cpu, opcode, state));
     const auto temp = u16((fetched << 7) | (fetched >> 1));
 
     cpu.status.set_flag(Carry, fetched & 0x01);
@@ -623,13 +619,11 @@ inline State &opcode_rotate_right(Cpu6502 &cpu, std::uint8_t opcode, State &stat
         cpu.write(state.data.address_absolute, u8(temp & 0x00FF));
     }
 
-    state.additional_cycles_used = 0;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_return_from_interrupt(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_return_from_interrupt(Cpu6502 &cpu) noexcept
 {
     auto sp = u8(sp() + 1);
     status() = cpu.read(u16(Cpu6502::STACK_POINTER_OFFSET + sp));
@@ -642,14 +636,10 @@ inline State &opcode_return_from_interrupt(Cpu6502 &cpu,
     pc() = u16(new_program_counter | u16(cpu.read(u16(Cpu6502::STACK_POINTER_OFFSET + sp)) << 8));
     sp() = sp;
 
-    state.processed = 0;
-    state.additional_cycles_used = 0;
-    return state;
+    return 0;
 }
 
-inline State &opcode_return_from_subroutine(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_return_from_subroutine(Cpu6502 &cpu) noexcept
 {
     auto sp = u8(sp() + 1);
     auto new_program_counter = u16(cpu.read(u16(Cpu6502::STACK_POINTER_OFFSET + sp)));
@@ -660,15 +650,14 @@ inline State &opcode_return_from_subroutine(Cpu6502 &cpu,
     pc() = u16(new_program_counter + 1);
     sp() = sp;
 
-    state.additional_cycles_used = 0;
-    return state;
+    return 0;
 }
 
-inline State &opcode_substraction_borrow_in(Cpu6502 &cpu,
+inline std::uint8_t opcode_substraction_borrow_in(Cpu6502 &cpu,
     std::uint8_t opcode,
-    State &state) noexcept
+    const State &state) noexcept
 {
-    const std::uint16_t fetched = cpu.fetch(opcode, state);
+    const std::uint16_t fetched = fetch_argument_data(cpu, opcode, state);
     const std::uint16_t value = (static_cast<std::uint16_t>(fetched)) ^ 0x00FF;
 
     const std::uint16_t temp =
@@ -681,133 +670,131 @@ inline State &opcode_substraction_borrow_in(Cpu6502 &cpu,
     cpu.status.set_flag(Negative, temp & 0x80);
     a() = static_cast<std::uint8_t>(temp & 0x00FF);
 
-    state.additional_cycles_used &= 1;
-    return state;
+    pc() = u16(pc() + state.processed);
+    return u8(state.additional_cycles_used & 1);
 }
 
-inline State &opcode_set_carry_flag(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_set_carry_flag(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(Carry, true);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_set_decimal_flag(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_set_decimal_flag(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(DecimalMode, true);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_enable_interrupts(Cpu6502 &cpu,
-    [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_enable_interrupts(Cpu6502 &cpu, const State &state) noexcept
 {
     cpu.status.set_flag(DisableInterrupts, false);
-    state.additional_cycles_used = 0;
-
-    return state;
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_store_accumulator_at_address(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_store_accumulator_at_address(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    cpu.write(state.data.address_absolute, a());
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_store_x_register_at_address(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_store_x_register_at_address(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    cpu.write(state.data.address_absolute, x());
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_store_y_register_at_address(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_store_y_register_at_address(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    cpu.write(state.data.address_absolute, y());
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_accumulator_to_x(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_accumulator_to_x(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    const auto x = a();
+
+    cpu.status.set_flag(Zero, x == 0);
+    cpu.status.set_flag(Negative, x & 0x80);
+
+    x() = x;
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_accumulator_to_y(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_accumulator_to_y(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    const auto y = a();
+
+    cpu.status.set_flag(Zero, y == 0);
+    cpu.status.set_flag(Negative, y & 0x80);
+
+    y() = y;
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_stack_pointer_to_x(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_stack_pointer_to_x(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    const auto x = sp();
+
+    cpu.status.set_flag(Zero, x == 0);
+    cpu.status.set_flag(Negative, x & 0x80);
+
+    x() = x;
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_stack_pointer_to_accumulator(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_x_to_accumulator(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    const auto a = x();
+
+    cpu.status.set_flag(Zero, a == 0);
+    cpu.status.set_flag(Negative, a & 0x80);
+
+    a() = a;
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_x_to_stack_pointer(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_x_to_stack_pointer(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    sp() = x();
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_transfer_accumulator_to_stack_pointer(Cpu6502 &cpu,
-    std::uint8_t opcode,
-    State &state) noexcept
+inline std::uint8_t opcode_transfer_y_to_accumulator(Cpu6502 &cpu, const State &state) noexcept
 {
-    static_cast<void>(cpu);
-    static_cast<void>(opcode);
-    static_cast<void>(state);
-    return state;
+    const auto a = y();
+
+    cpu.status.set_flag(Zero, a == 0);
+    cpu.status.set_flag(Negative, a & 0x80);
+
+    a() = a;
+
+    pc() = u16(pc() + state.processed);
+    return 0;
 }
 
-inline State &opcode_illegal_unknown([[maybe_unused]] Cpu6502 &cpu,
+inline std::uint8_t opcode_illegal_unknown([[maybe_unused]] Cpu6502 &cpu,
     [[maybe_unused]] std::uint8_t opcode,
-    State &state) noexcept
+    [[maybe_unused]] const State &state) noexcept
 {
-    return state;
+    return 0;
 }
