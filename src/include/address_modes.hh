@@ -86,14 +86,17 @@ inline State address_mode_zero_page_y_offset(const Cpu6502 &cpu) noexcept
 // This address mode is exclusive to branch instructions. The address
 // must reside within -128 to +127 of the branch instruction, i.e.
 // you cant directly branch to any address in the addressable range.
-constexpr inline State address_mode_relative(const Cpu6502 &cpu) noexcept
+inline State address_mode_relative(const Cpu6502 &cpu) noexcept
 {
     const auto pc = cpu.program_counter.get();
 
     State result;
-    result.data.address_relative = pc;
+    const auto relative_address = cpu.read(pc);
     result.processed = 1;
-    if (result.data.address_relative & 0x80) result.data.address_relative |= 0xFF00;
+    if (relative_address & 0x80)
+        result.data.address_relative = u16(relative_address) | 0xFF00;
+    else
+        result.data.address_relative = u16(relative_address & 0x00FF);
     return result;
 }
 

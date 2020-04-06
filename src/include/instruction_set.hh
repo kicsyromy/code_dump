@@ -234,7 +234,7 @@ inline std::uint8_t opcode_break(Cpu6502 &cpu, const State &state) noexcept
     --(sp());
     cpu.status.set_flag(Break, false);
 
-    cpu.program_counter.low_byte() = cpu.read(Cpu6502::IRQ_USER_TABLE_ADDRESS);
+    cpu.program_counter.low_byte() = cpu.read(Cpu6502::USER_IRQ_VECTOR_ADDRESS);
     cpu.program_counter.high_byte() = cpu.read(0xFFFF);
 
     return 0;

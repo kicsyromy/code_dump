@@ -22,6 +22,10 @@ namespace imgui_bgfx_sdl
     public:
         bool process_event(const SDL_Event *event)
         {
+            if (!(ImGui::IsAnyItemActive() || ImGui::IsAnyItemFocused() ||
+                    ImGui::IsAnyItemHovered()))
+            { return false; }
+
             ImGuiIO &io = ImGui::GetIO();
             switch (event->type)
             {

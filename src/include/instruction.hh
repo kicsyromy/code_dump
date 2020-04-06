@@ -24,12 +24,13 @@ struct State
 
 template<typename Cpu> struct Instruction
 {
-    using instruction_f = std::uint8_t (*)(Cpu &, std::uint8_t, const State &) noexcept;
-    using instruction_no_opcode = std::uint8_t (*)(Cpu &, const State &) noexcept;
     using instruction_no_params = std::uint8_t (*)(Cpu &) noexcept;
+    using instruction_no_opcode = std::uint8_t (*)(Cpu &, const State &) noexcept;
+    using instruction_f = std::uint8_t (*)(Cpu &, std::uint8_t, const State &) noexcept;
 
     const std::string_view name;
     std::variant<instruction_f, instruction_no_opcode, instruction_no_params> operation;
+    const std::string_view address_mode_name;
     State (*address_mode)(const Cpu &cpu) noexcept;
     std::uint8_t cycles;
 };

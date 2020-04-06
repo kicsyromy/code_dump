@@ -25,8 +25,8 @@ class Cpu6502
 public:
     static constexpr std::uint16_t STACK_POINTER_OFFSET{ 0x0100 };
     static constexpr std::uint16_t RESET_ADDRESS_LOCATION{ 0xFFFC };
-    static constexpr std::uint16_t IRQ_USER_TABLE_ADDRESS{ 0xFFFE };
-    static constexpr std::uint16_t IRQ_NMI_TABLE_ADDRESS{ 0xFFFA };
+    static constexpr std::uint16_t USER_IRQ_VECTOR_ADDRESS{ 0xFFFE };
+    static constexpr std::uint16_t NMI_IRQ_VECTOR_ADDRESS{ 0xFFFA };
 
 public:
     enum StatusFlags : std::uint8_t
@@ -57,9 +57,15 @@ public:
     Register8Bit stack_pointer{ 0 };
     Register16Bit program_counter{ 0 };
 
-private:
-    void clock() noexcept;
+#ifndef NDEBUG
+public:
+    void draw_ram_content(std::uint16_t offset, int rows, int columns) const noexcept;
+    void draw_cpu_state(int window_with, int window_height) const noexcept;
+#endif
+
+public:
     void reset() noexcept;
+    void clock() noexcept;
     void irq() noexcept;
     void nmi() noexcept;
 
@@ -69,9 +75,12 @@ private:
 
 private:
     DataBus &data_bus_;
-    std::uint8_t remaining_cycles{ 0 };
-
     const std::array<Instruction<Cpu6502>, 256> instuction_set_;
+
+#ifndef NDEBUG
+public:
+#endif
+    std::uint8_t remaining_cycles{ 0 };
 
     /* Addressing modes */
 private:
@@ -80,7 +89,7 @@ private:
     friend State ZP0(const Cpu6502 &) noexcept;
     friend State ZPX(const Cpu6502 &) noexcept;
     friend State ZPY(const Cpu6502 &) noexcept;
-    friend constexpr State REL(const Cpu6502 &) noexcept;
+    friend State REL(const Cpu6502 &) noexcept;
     friend State ABS(const Cpu6502 &) noexcept;
     friend State ABX(const Cpu6502 &) noexcept;
     friend State ABY(const Cpu6502 &) noexcept;

@@ -1,11 +1,16 @@
 #include "cpu6502.hh"
 
+#ifndef NDEBUG
+#include <dear-imgui.hh>
+#include <fmt/format.h>
+#endif
+
 #include "address_modes.hh"
 #include "data_bus.hh"
 #include "instruction_set.hh"
 
 /* clang-format off */
-#define instruction(ins, addr_mode, cycle_cnt) { #ins, &ins, &addr_mode, cycle_cnt }
+#define instr(ins, addr_mode, cycle_cnt) { #ins, &ins, #addr_mode, &addr_mode, cycle_cnt }
 /* clang-format on */
 
 template<class... Ts> struct overload : Ts...
@@ -19,110 +24,167 @@ Cpu6502::Cpu6502(DataBus &bus) noexcept
   , instuction_set_{ {
         /* replace all of this with instruction macro */
         /* clang-format off */
-        { "BRK", &BRK, &IMM, 7 }, { "ORA", &ORA, &IZX, 6 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 3 }, { "ORA", &ORA, &ZP0, 3 }, { "ASL", &ASL, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "PHP", &PHP, &IMP, 3 }, { "ORA", &ORA, &IMM, 2 }, { "ASL", &ASL, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "???", &NOP, &IMP, 4 }, { "ORA", &ORA, &ABS, 4 }, { "ASL", &ASL, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BPL", &BPL, &REL, 2 }, { "ORA", &ORA, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "ORA", &ORA, &ZPX, 4 }, { "ASL", &ASL, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "CLC", &CLC, &IMP, 2 }, { "ORA", &ORA, &ABY, 4 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "ORA", &ORA, &ABX, 4 }, { "ASL", &ASL, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
-        { "JSR", &JSR, &ABS, 6 }, { "AND", &AND, &IZX, 6 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "BIT", &BIT, &ZP0, 3 }, { "AND", &AND, &ZP0, 3 }, { "ROL", &ROL, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "PLP", &PLP, &IMP, 4 }, { "AND", &AND, &IMM, 2 }, { "ROL", &ROL, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "BIT", &BIT, &ABS, 4 }, { "AND", &AND, &ABS, 4 }, { "ROL", &ROL, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BMI", &BMI, &REL, 2 }, { "AND", &AND, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "AND", &AND, &ZPX, 4 }, { "ROL", &ROL, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "SEC", &SEC, &IMP, 2 }, { "AND", &AND, &ABY, 4 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "AND", &AND, &ABX, 4 }, { "ROL", &ROL, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
-        { "RTI", &RTI, &IMP, 6 }, { "EOR", &EOR, &IZX, 6 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 3 }, { "EOR", &EOR, &ZP0, 3 }, { "LSR", &LSR, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "PHA", &PHA, &IMP, 3 }, { "EOR", &EOR, &IMM, 2 }, { "LSR", &LSR, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "JMP", &JMP, &ABS, 3 }, { "EOR", &EOR, &ABS, 4 }, { "LSR", &LSR, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BVC", &BVC, &REL, 2 }, { "EOR", &EOR, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "EOR", &EOR, &ZPX, 4 }, { "LSR", &LSR, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "CLI", &CLI, &IMP, 2 }, { "EOR", &EOR, &ABY, 4 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "EOR", &EOR, &ABX, 4 }, { "LSR", &LSR, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
-        { "RTS", &RTS, &IMP, 6 }, { "ADC", &ADC, &IZX, 6 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 3 }, { "ADC", &ADC, &ZP0, 3 }, { "ROR", &ROR, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "PLA", &PLA, &IMP, 4 }, { "ADC", &ADC, &IMM, 2 }, { "ROR", &ROR, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "JMP", &JMP, &IND, 5 }, { "ADC", &ADC, &ABS, 4 }, { "ROR", &ROR, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BVS", &BVS, &REL, 2 }, { "ADC", &ADC, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "ADC", &ADC, &ZPX, 4 }, { "ROR", &ROR, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "SEI", &SEI, &IMP, 2 }, { "ADC", &ADC, &ABY, 4 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "ADC", &ADC, &ABX, 4 }, { "ROR", &ROR, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 2 }, { "STA", &STA, &IZX, 6 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 6 },
-        { "STY", &STY, &ZP0, 3 }, { "STA", &STA, &ZP0, 3 }, { "STX", &STX, &ZP0, 3 }, { "???", &UNK, &IMP, 3 },
-        { "DEY", &DEY, &IMP, 2 }, { "???", &NOP, &IMP, 2 }, { "TXA", &TXA, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "STY", &STY, &ABS, 4 }, { "STA", &STA, &ABS, 4 }, { "STX", &STX, &ABS, 4 }, { "???", &UNK, &IMP, 4 },
-        { "BCC", &BCC, &REL, 2 }, { "STA", &STA, &IZY, 6 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 6 },
-        { "STY", &STY, &ZPX, 4 }, { "STA", &STA, &ZPX, 4 }, { "STX", &STX, &ZPY, 4 }, { "???", &UNK, &IMP, 4 },
-        { "TYA", &TYA, &IMP, 2 }, { "STA", &STA, &ABY, 5 }, { "TXS", &TXS, &IMP, 2 }, { "???", &UNK, &IMP, 5 },
-        { "???", &NOP, &IMP, 5 }, { "STA", &STA, &ABX, 5 }, { "???", &UNK, &IMP, 5 }, { "???", &UNK, &IMP, 5 },
-        { "LDY", &LDY, &IMM, 2 }, { "LDA", &LDA, &IZX, 6 }, { "LDX", &LDX, &IMM, 2 }, { "???", &UNK, &IMP, 6 },
-        { "LDY", &LDY, &ZP0, 3 }, { "LDA", &LDA, &ZP0, 3 }, { "LDX", &LDX, &ZP0, 3 }, { "???", &UNK, &IMP, 3 },
-        { "TAY", &TAY, &IMP, 2 }, { "LDA", &LDA, &IMM, 2 }, { "TAX", &TAX, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "LDY", &LDY, &ABS, 4 }, { "LDA", &LDA, &ABS, 4 }, { "LDX", &LDX, &ABS, 4 }, { "???", &UNK, &IMP, 4 },
-        { "BCS", &BCS, &REL, 2 }, { "LDA", &LDA, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 5 },
-        { "LDY", &LDY, &ZPX, 4 }, { "LDA", &LDA, &ZPX, 4 }, { "LDX", &LDX, &ZPY, 4 }, { "???", &UNK, &IMP, 4 },
-        { "CLV", &CLV, &IMP, 2 }, { "LDA", &LDA, &ABY, 4 }, { "TSX", &TSX, &IMP, 2 }, { "???", &UNK, &IMP, 4 },
-        { "LDY", &LDY, &ABX, 4 }, { "LDA", &LDA, &ABX, 4 }, { "LDX", &LDX, &ABY, 4 }, { "???", &UNK, &IMP, 4 },
-        { "CPY", &CPY, &IMM, 2 }, { "CMP", &CMP, &IZX, 6 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "CPY", &CPY, &ZP0, 3 }, { "CMP", &CMP, &ZP0, 3 }, { "DEC", &DEC, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "INY", &INY, &IMP, 2 }, { "CMP", &CMP, &IMM, 2 }, { "DEX", &DEX, &IMP, 2 }, { "???", &UNK, &IMP, 2 },
-        { "CPY", &CPY, &ABS, 4 }, { "CMP", &CMP, &ABS, 4 }, { "DEC", &DEC, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BNE", &BNE, &REL, 2 }, { "CMP", &CMP, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "CMP", &CMP, &ZPX, 4 }, { "DEC", &DEC, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "CLD", &CLD, &IMP, 2 }, { "CMP", &CMP, &ABY, 4 }, { "NOP", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "CMP", &CMP, &ABX, 4 }, { "DEC", &DEC, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
-        { "CPX", &CPX, &IMM, 2 }, { "SBC", &SBC, &IZX, 6 }, { "???", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "CPX", &CPX, &ZP0, 3 }, { "SBC", &SBC, &ZP0, 3 }, { "INC", &INC, &ZP0, 5 }, { "???", &UNK, &IMP, 5 },
-        { "INX", &INX, &IMP, 2 }, { "SBC", &SBC, &IMM, 2 }, { "NOP", &NOP, &IMP, 2 }, { "???", &SBC, &IMP, 2 },
-        { "CPX", &CPX, &ABS, 4 }, { "SBC", &SBC, &ABS, 4 }, { "INC", &INC, &ABS, 6 }, { "???", &UNK, &IMP, 6 },
-        { "BEQ", &BEQ, &REL, 2 }, { "SBC", &SBC, &IZY, 5 }, { "???", &UNK, &IMP, 2 }, { "???", &UNK, &IMP, 8 },
-        { "???", &NOP, &IMP, 4 }, { "SBC", &SBC, &ZPX, 4 }, { "INC", &INC, &ZPX, 6 }, { "???", &UNK, &IMP, 6 },
-        { "SED", &SED, &IMP, 2 }, { "SBC", &SBC, &ABY, 4 }, { "NOP", &NOP, &IMP, 2 }, { "???", &UNK, &IMP, 7 },
-        { "???", &NOP, &IMP, 4 }, { "SBC", &SBC, &ABX, 4 }, { "INC", &INC, &ABX, 7 }, { "???", &UNK, &IMP, 7 },
+        instr(BRK, IMM, 7), instr(ORA, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 3), instr(ORA, ZP0, 3), instr(ASL, ZP0, 5), instr(UNK, IMP, 5),
+        instr(PHP, IMP, 3), instr(ORA, IMM, 2), instr(ASL, IMP, 2), instr(UNK, IMP, 2),
+        instr(NOP, IMP, 4), instr(ORA, ABS, 4), instr(ASL, ABS, 6), instr(UNK, IMP, 6),
+        instr(BPL, REL, 2), instr(ORA, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(ORA, ZPX, 4), instr(ASL, ZPX, 6), instr(UNK, IMP, 6),
+        instr(CLC, IMP, 2), instr(ORA, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(ORA, ABX, 4), instr(ASL, ABX, 7), instr(UNK, IMP, 7),
+        instr(JSR, ABS, 6), instr(AND, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(BIT, ZP0, 3), instr(AND, ZP0, 3), instr(ROL, ZP0, 5), instr(UNK, IMP, 5),
+        instr(PLP, IMP, 4), instr(AND, IMM, 2), instr(ROL, IMP, 2), instr(UNK, IMP, 2),
+        instr(BIT, ABS, 4), instr(AND, ABS, 4), instr(ROL, ABS, 6), instr(UNK, IMP, 6),
+        instr(BMI, REL, 2), instr(AND, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(AND, ZPX, 4), instr(ROL, ZPX, 6), instr(UNK, IMP, 6),
+        instr(SEC, IMP, 2), instr(AND, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(AND, ABX, 4), instr(ROL, ABX, 7), instr(UNK, IMP, 7),
+        instr(RTI, IMP, 6), instr(EOR, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 3), instr(EOR, ZP0, 3), instr(LSR, ZP0, 5), instr(UNK, IMP, 5),
+        instr(PHA, IMP, 3), instr(EOR, IMM, 2), instr(LSR, IMP, 2), instr(UNK, IMP, 2),
+        instr(JMP, ABS, 3), instr(EOR, ABS, 4), instr(LSR, ABS, 6), instr(UNK, IMP, 6),
+        instr(BVC, REL, 2), instr(EOR, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(EOR, ZPX, 4), instr(LSR, ZPX, 6), instr(UNK, IMP, 6),
+        instr(CLI, IMP, 2), instr(EOR, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(EOR, ABX, 4), instr(LSR, ABX, 7), instr(UNK, IMP, 7),
+        instr(RTS, IMP, 6), instr(ADC, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 3), instr(ADC, ZP0, 3), instr(ROR, ZP0, 5), instr(UNK, IMP, 5),
+        instr(PLA, IMP, 4), instr(ADC, IMM, 2), instr(ROR, IMP, 2), instr(UNK, IMP, 2),
+        instr(JMP, IND, 5), instr(ADC, ABS, 4), instr(ROR, ABS, 6), instr(UNK, IMP, 6),
+        instr(BVS, REL, 2), instr(ADC, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(ADC, ZPX, 4), instr(ROR, ZPX, 6), instr(UNK, IMP, 6),
+        instr(SEI, IMP, 2), instr(ADC, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(ADC, ABX, 4), instr(ROR, ABX, 7), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 2), instr(STA, IZX, 6), instr(NOP, IMP, 2), instr(UNK, IMP, 6),
+        instr(STY, ZP0, 3), instr(STA, ZP0, 3), instr(STX, ZP0, 3), instr(UNK, IMP, 3),
+        instr(DEY, IMP, 2), instr(NOP, IMP, 2), instr(TXA, IMP, 2), instr(UNK, IMP, 2),
+        instr(STY, ABS, 4), instr(STA, ABS, 4), instr(STX, ABS, 4), instr(UNK, IMP, 4),
+        instr(BCC, REL, 2), instr(STA, IZY, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 6),
+        instr(STY, ZPX, 4), instr(STA, ZPX, 4), instr(STX, ZPY, 4), instr(UNK, IMP, 4),
+        instr(TYA, IMP, 2), instr(STA, ABY, 5), instr(TXS, IMP, 2), instr(UNK, IMP, 5),
+        instr(NOP, IMP, 5), instr(STA, ABX, 5), instr(UNK, IMP, 5), instr(UNK, IMP, 5),
+        instr(LDY, IMM, 2), instr(LDA, IZX, 6), instr(LDX, IMM, 2), instr(UNK, IMP, 6),
+        instr(LDY, ZP0, 3), instr(LDA, ZP0, 3), instr(LDX, ZP0, 3), instr(UNK, IMP, 3),
+        instr(TAY, IMP, 2), instr(LDA, IMM, 2), instr(TAX, IMP, 2), instr(UNK, IMP, 2),
+        instr(LDY, ABS, 4), instr(LDA, ABS, 4), instr(LDX, ABS, 4), instr(UNK, IMP, 4),
+        instr(BCS, REL, 2), instr(LDA, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 5),
+        instr(LDY, ZPX, 4), instr(LDA, ZPX, 4), instr(LDX, ZPY, 4), instr(UNK, IMP, 4),
+        instr(CLV, IMP, 2), instr(LDA, ABY, 4), instr(TSX, IMP, 2), instr(UNK, IMP, 4),
+        instr(LDY, ABX, 4), instr(LDA, ABX, 4), instr(LDX, ABY, 4), instr(UNK, IMP, 4),
+        instr(CPY, IMM, 2), instr(CMP, IZX, 6), instr(NOP, IMP, 2), instr(UNK, IMP, 8),
+        instr(CPY, ZP0, 3), instr(CMP, ZP0, 3), instr(DEC, ZP0, 5), instr(UNK, IMP, 5),
+        instr(INY, IMP, 2), instr(CMP, IMM, 2), instr(DEX, IMP, 2), instr(UNK, IMP, 2),
+        instr(CPY, ABS, 4), instr(CMP, ABS, 4), instr(DEC, ABS, 6), instr(UNK, IMP, 6),
+        instr(BNE, REL, 2), instr(CMP, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(CMP, ZPX, 4), instr(DEC, ZPX, 6), instr(UNK, IMP, 6),
+        instr(CLD, IMP, 2), instr(CMP, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(CMP, ABX, 4), instr(DEC, ABX, 7), instr(UNK, IMP, 7),
+        instr(CPX, IMM, 2), instr(SBC, IZX, 6), instr(NOP, IMP, 2), instr(UNK, IMP, 8),
+        instr(CPX, ZP0, 3), instr(SBC, ZP0, 3), instr(INC, ZP0, 5), instr(UNK, IMP, 5),
+        instr(INX, IMP, 2), instr(SBC, IMM, 2), instr(NOP, IMP, 2), instr(SBC, IMP, 2),
+        instr(CPX, ABS, 4), instr(SBC, ABS, 4), instr(INC, ABS, 6), instr(UNK, IMP, 6),
+        instr(BEQ, REL, 2), instr(SBC, IZY, 5), instr(UNK, IMP, 2), instr(UNK, IMP, 8),
+        instr(NOP, IMP, 4), instr(SBC, ZPX, 4), instr(INC, ZPX, 6), instr(UNK, IMP, 6),
+        instr(SED, IMP, 2), instr(SBC, ABY, 4), instr(NOP, IMP, 2), instr(UNK, IMP, 7),
+        instr(NOP, IMP, 4), instr(SBC, ABX, 4), instr(INC, ABX, 7), instr(UNK, IMP, 7),
         /* clang-format on */
     } }
 {}
 
 Cpu6502::~Cpu6502() noexcept = default;
 
-void Cpu6502::clock() noexcept
+#ifndef NDEBUG
+void Cpu6502::draw_ram_content(uint16_t offset, int rows, int columns) const noexcept
 {
-    if (remaining_cycles == 0)
+    ImGui::Begin("RAM");
+    //    ImGui::SetWindowFontScale(0.9f);
+    auto mem = data_bus_.RAM[offset];
+    for (int i = 0; i < columns; ++i)
     {
-        const auto opcode = read(program_counter.get());
-
-        status.set_flag(Unused, true);
-
-        ++(program_counter.get());
-
-        const auto &instruction = instuction_set_[opcode];
-
-        const auto state = instruction.address_mode(*this);
-        /* clang-format off */
-        const auto additional_cycles = std::visit(overload {
-                [this, opcode, &state](const Instruction<Cpu6502>::instruction_f &f) {
-                    return f(*this, opcode, state);
-                },
-                [this, &state](const Instruction<Cpu6502>::instruction_no_opcode &f) {
-                    return f(*this, state);
-                },
-                [this](const Instruction<Cpu6502>::instruction_no_params &f) {
-                    return f(*this);
-                },
-            }, instruction.operation
-        );
-        /* clang-format on */
-        remaining_cycles = u8(instuction_set_[opcode].cycles + additional_cycles);
-
-        status.set_flag(Unused, true);
+        std::string line = fmt::format("${:06X}: ", offset + i * columns);
+        for (int j = 0; j < rows; ++j)
+        {
+            mem = data_bus_.RAM[size_t(offset + (columns * i) + j)];
+            line += fmt::format("{:02x} ", mem);
+        }
+        ImGui::TextUnformatted(line.c_str());
     }
-
-    remaining_cycles--;
+    ImGui::TextUnformatted("");
+    ImGui::End();
 }
+
+void Cpu6502::draw_cpu_state(int width, int height) const noexcept
+{
+    ImGui::Begin("CPU", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
+    {
+        ImGui::SetWindowSize("CPU", ImVec2{ float(width - height), float(height) });
+        ImGui::SetWindowPos("CPU", ImVec2{ float(720), float(0) });
+        ImGui::TextUnformatted("STATUS: C Z I D B U V N");
+        ImGui::Text("        %d %d %d %d %d %d %d %d",
+            status.is_flag_set(Cpu6502::Carry),
+            status.is_flag_set(Cpu6502::Zero),
+            !status.is_flag_set(Cpu6502::DisableInterrupts),
+            status.is_flag_set(Cpu6502::DecimalMode),
+            status.is_flag_set(Cpu6502::Break),
+            status.is_flag_set(Cpu6502::Unused),
+            status.is_flag_set(Cpu6502::Overflow),
+            status.is_flag_set(Cpu6502::Negative));
+        ImGui::TextUnformatted(fmt::format("PC: ${:06X}", program_counter.get()).c_str());
+        ImGui::TextUnformatted(fmt::format("A: ${0:04X} [ {0} ]", accumulator.get()).c_str());
+        ImGui::TextUnformatted(fmt::format("X: ${0:04X} [ {0} ]", x.get()).c_str());
+        ImGui::TextUnformatted(fmt::format("Y: ${0:04X} [ {0} ]", y.get()).c_str());
+        ImGui::TextUnformatted(fmt::format("SP: ${0:04X}", stack_pointer.get()).c_str());
+        ImGui::TextUnformatted("");
+
+        ImGui::BeginChild("Running Instructions");
+        {
+            for (int i = 0; i < 100; ++i)
+            {
+                const auto off = [](int offset, std::size_t size) {
+                    if (offset < 0) { return std::size_t(int(size) + offset); }
+                    if (offset >= int(size)) { return std::size_t(offset - int(size)); }
+                    return std::size_t(offset);
+                }(i, data_bus_.RAM.size());
+                const auto pc = u16(program_counter.get() + off);
+                const auto opcode = read(pc);
+                const auto &instruction = instuction_set_[opcode];
+
+                auto line = fmt::format("{:#06X}: ", pc);
+                line += fmt::format("{} ", instruction.name);
+
+                const auto state = instruction.address_mode(*this);
+                for (std::uint16_t j = 1; j <= state.processed; ++j)
+                {
+                    if (j == 1)
+                    {
+                        line += fmt::format(instruction.address_mode == &address_mode_immediate
+                                                ? "#${:02X}"
+                                                : "${:02X}",
+                            read(u16(pc + j)));
+                    }
+                    else
+                    {
+                        line += fmt::format("${:02X}", read(u16(pc + j)));
+                    }
+                }
+                line += fmt::format(" {{{}}}", instruction.address_mode_name);
+
+                if (pc == program_counter.get())
+                { ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f }, line.c_str()); }
+                else
+                {
+                    ImGui::TextUnformatted(line.c_str());
+                }
+
+                i += state.processed;
+            }
+        }
+        ImGui::EndChild();
+    }
+    ImGui::End();
+}
+#endif
 
 void Cpu6502::reset() noexcept
 {
@@ -140,6 +202,40 @@ void Cpu6502::reset() noexcept
     remaining_cycles = 8;
 }
 
+/* clang-format off */
+void Cpu6502::clock() noexcept
+{
+    if (remaining_cycles == 0)
+    {
+        const auto opcode = read(program_counter.get());
+
+        status.set_flag(Unused, true);
+
+        ++(program_counter.get());
+
+        const auto &instruction = instuction_set_[opcode];
+
+        const auto state = instruction.address_mode(*this);
+        const auto additional_cycles = std::visit(overload {
+                [this, opcode, &state](const Instruction<Cpu6502>::instruction_f &f) noexcept {
+                    return f(*this, opcode, state);
+                },
+                [this, &state](const Instruction<Cpu6502>::instruction_no_opcode &f) noexcept {
+                    return f(*this, state);
+                },
+                [this](const Instruction<Cpu6502>::instruction_no_params &f) noexcept {
+                    return f(*this);
+                },
+            }, instruction.operation
+        );
+        remaining_cycles = u8(instuction_set_[opcode].cycles + additional_cycles);
+        status.set_flag(Unused, true);
+    }
+
+    remaining_cycles--;
+}
+/* clang-format on */
+
 void Cpu6502::irq() noexcept
 {
     if (!status.is_flag_set(DisableInterrupts))
@@ -156,8 +252,8 @@ void Cpu6502::irq() noexcept
         write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), status.get());
         --(stack_pointer.get());
 
-        const auto low_byte = read(u8(IRQ_USER_TABLE_ADDRESS + 0));
-        const std::uint16_t high_byte = read(u8(IRQ_USER_TABLE_ADDRESS + 1));
+        const auto low_byte = read(u8(USER_IRQ_VECTOR_ADDRESS + 0));
+        const std::uint16_t high_byte = read(u8(USER_IRQ_VECTOR_ADDRESS + 1));
 
         program_counter.set(u16((high_byte << 8) | low_byte));
 
@@ -181,8 +277,8 @@ void Cpu6502::nmi() noexcept
         write(u16(STACK_POINTER_OFFSET + stack_pointer.get()), status.get());
         --(stack_pointer.get());
 
-        const auto low_byte = read(u8(IRQ_NMI_TABLE_ADDRESS + 0));
-        const std::uint16_t high_byte = read(u8(IRQ_NMI_TABLE_ADDRESS + 1));
+        const auto low_byte = read(u8(NMI_IRQ_VECTOR_ADDRESS + 0));
+        const std::uint16_t high_byte = read(u8(NMI_IRQ_VECTOR_ADDRESS + 1));
 
         program_counter.set(u16((high_byte << 8) | low_byte));
 

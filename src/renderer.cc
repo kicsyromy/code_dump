@@ -16,14 +16,13 @@ static constexpr auto WINDOW_HEIGHT{ 720 };
 static constexpr auto VIEWPORT_WIDTH{ WINDOW_HEIGHT };
 static constexpr auto VIEWPORT_HEIGHT{ WINDOW_HEIGHT };
 
-static std::function<void(NVGcontext *)> render_callback{ nullptr };
+static std::function<void(NVGcontext *, int, int)> render_callback{ nullptr };
 [[maybe_unused]] static std::function<void()> mouse_event_callback{ nullptr };
 [[maybe_unused]] static std::function<void()> keyboard_event_callback{ nullptr };
-[[maybe_unused]] static std::function<void()> gamepad_event_callback{ nullptr };
 
 namespace renderer
 {
-    void init(std::function<void(NVGcontext *)> &&render_cb) noexcept
+    void init(std::function<void(NVGcontext *, int, int)> &&render_cb) noexcept
     {
         // Initialize SDL systems
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -64,7 +63,7 @@ namespace renderer
         bgfx::setPlatformData(pd);
 
         bgfx::Init init;
-        init.type = bgfx::RendererType::Vulkan;
+        init.type = bgfx::RendererType::OpenGL;
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
@@ -87,10 +86,10 @@ namespace renderer
         render_callback = std::move(render_cb);
 
         nanovgContext = nvgCreate(0, 0);
-        imguiContext = new imgui_bgfx_sdl::Context(window);
+        imguiContext = new imgui_bgfx_sdl::Context(window, 24.f);
     }
 
-    void run() noexcept
+    void run(const std::function<void(int)> &kcb) noexcept
     {
         auto &imgui = *imguiContext;
         auto &nvg = nanovgContext;
@@ -106,6 +105,14 @@ namespace renderer
                 if (handle_sdl_event)
                 {
                     if (event.type == SDL_QUIT) { quit = true; }
+                    else
+                        switch (event.type)
+                        {
+                        case SDL_KEYUP:
+                            kcb(event.key.keysym.sym);
+                            break;
+                        }
+
                     // more events here
                 }
             }
@@ -114,7 +121,7 @@ namespace renderer
             nvgBeginFrame(
                 nvg, static_cast<float>(VIEWPORT_WIDTH), static_cast<float>(VIEWPORT_HEIGHT), 1.f);
 
-            renderer(nvg);
+            renderer(nvg, WINDOW_WIDTH, WINDOW_HEIGHT);
 
             nvgEndFrame(nvg);
             imgui.end_frame();
