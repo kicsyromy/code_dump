@@ -68,16 +68,16 @@ namespace renderer
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
-        //        init.resolution.reset = BGFX_;
+        init.resolution.reset = BGFX_RESET_VSYNC;
         bgfx::init(init);
 
         // Enable debug text.
         bgfx::setDebug(BGFX_DEBUG_TEXT);
 
         // Set view rectangle for 0th view
-        bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Double);
+        bgfx::setViewRect(0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        // Set view 0 clear state.
+        //        // Set view 0 clear state.
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
         // This dummy draw call is here to make sure that view 0 is cleared
@@ -118,6 +118,7 @@ namespace renderer
                 }
             }
 
+            bgfx::touch(0);
             imgui.new_frame();
             nvgBeginFrame(
                 nvg, static_cast<float>(VIEWPORT_WIDTH), static_cast<float>(VIEWPORT_HEIGHT), 1.f);

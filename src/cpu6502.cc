@@ -9,9 +9,10 @@
 #include "data_bus.hh"
 #include "instruction_set.hh"
 
-Cpu6502::Cpu6502(DataBus &bus) noexcept
-  : data_bus_{ bus }
-  , instuction_set_{ {
+extern std::array<std::uint8_t, 64 * 1024> *gRAM;
+
+Cpu6502::Cpu6502() noexcept
+  : instuction_set_{ {
 /* clang-format off */
         #define instr(ins, addr_mode, cycle_cnt) { #ins, &ins, #addr_mode, &addr_mode, cycle_cnt }
         instr(BRK, IMM, 7), instr(ORA, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8), instr(NOP, IMP, 3), instr(ORA, ZP0, 3), instr(ASL, ZP0, 5), instr(UNK, IMP, 5),
@@ -55,15 +56,17 @@ Cpu6502::~Cpu6502() noexcept = default;
 #ifndef NDEBUG
 void Cpu6502::draw_ram_content(uint16_t offset, int rows, int columns) const noexcept
 {
+    auto &RAM = *gRAM;
+
     ImGui::Begin("RAM");
     //    ImGui::SetWindowFontScale(0.9f);
-    auto mem = data_bus_.RAM[offset];
+    auto mem = RAM[offset];
     for (int i = 0; i < columns; ++i)
     {
         std::string line = fmt::format("${:06X}: ", offset + i * columns);
         for (int j = 0; j < rows; ++j)
         {
-            mem = data_bus_.RAM[size_t(offset + (columns * i) + j)];
+            mem = RAM[size_t(offset + (columns * i) + j)];
             line += fmt::format("{:02x} ", mem);
         }
         ImGui::TextUnformatted(line.c_str());
@@ -74,6 +77,8 @@ void Cpu6502::draw_ram_content(uint16_t offset, int rows, int columns) const noe
 
 void Cpu6502::draw_cpu_state(int width, int height) const noexcept
 {
+    auto &RAM = *gRAM;
+
     ImGui::Begin("CPU", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
     {
         ImGui::SetWindowSize("CPU", ImVec2{ float(width - height), float(height) });
@@ -103,7 +108,7 @@ void Cpu6502::draw_cpu_state(int width, int height) const noexcept
                     if (offset < 0) { return std::size_t(int(size) + offset); }
                     if (offset >= int(size)) { return std::size_t(offset - int(size)); }
                     return std::size_t(offset);
-                }(i, data_bus_.RAM.size());
+                }(i, RAM.size());
                 const auto pc = u16(program_counter.get() + off);
                 const auto opcode = read(pc);
                 const auto &instruction = instuction_set_[opcode];
@@ -142,7 +147,15 @@ void Cpu6502::draw_cpu_state(int width, int height) const noexcept
     }
     ImGui::End();
 }
+
 #endif
+
+void Cpu6502::connect(data_bus_t bus, BusReadFunction &&r, BusWriteFunction &&w) noexcept
+{
+    data_bus_ = bus;
+    bus_read_ = r;
+    bus_write_ = w;
+}
 
 void Cpu6502::reset() noexcept
 {
@@ -240,12 +253,13 @@ void Cpu6502::nmi() noexcept
     }
 }
 
-void Cpu6502::write(std::uint16_t address, std::uint8_t data) noexcept
+uint8_t Cpu6502::read(uint16_t address) const noexcept
 {
-    data_bus_.write(address, data);
+    if (data_bus_ != nullptr) { return bus_read_(address, false, data_bus_); }
+    return 0;
 }
 
-std::uint8_t Cpu6502::read(std::uint16_t address) const noexcept
+void Cpu6502::write(uint16_t address, uint8_t data) noexcept
 {
-    return data_bus_.read(address, false);
+    if (data_bus_ != nullptr) { bus_write_(address, data, data_bus_); }
 }

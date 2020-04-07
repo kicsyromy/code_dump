@@ -423,6 +423,9 @@ spvc_result spvc_compiler_options_set_uint(spvc_compiler_options options, spvc_c
 	case SPVC_COMPILER_OPTION_ENABLE_STORAGE_IMAGE_QUALIFIER_DEDUCTION:
 		options->glsl.enable_storage_image_qualifier_deduction = value != 0;
 		break;
+	case SPVC_COMPILER_OPTION_FORCE_ZERO_INITIALIZED_VARIABLES:
+		options->glsl.force_zero_initialized_variables = value != 0;
+		break;
 
 	case SPVC_COMPILER_OPTION_GLSL_SUPPORT_NONZERO_BASE_INSTANCE:
 		options->glsl.vertex.support_nonzero_base_instance = value != 0;
@@ -477,6 +480,10 @@ spvc_result spvc_compiler_options_set_uint(spvc_compiler_options options, spvc_c
 
 	case SPVC_COMPILER_OPTION_HLSL_FORCE_STORAGE_BUFFER_AS_UAV:
 		options->hlsl.force_storage_buffer_as_uav = value != 0;
+		break;
+
+	case SPVC_COMPILER_OPTION_HLSL_NONWRITABLE_UAV_TEXTURE_AS_SRV:
+		options->hlsl.nonwritable_uav_texture_as_srv = value != 0;
 		break;
 #endif
 
@@ -701,6 +708,23 @@ spvc_result spvc_compiler_flatten_buffer_block(spvc_compiler compiler, spvc_vari
 	(void)id;
 	compiler->context->report_error("Cross-compilation related option used on NONE backend which only supports reflection.");
 	return SPVC_ERROR_INVALID_ARGUMENT;
+#endif
+}
+
+spvc_bool spvc_compiler_variable_is_depth_or_compare(spvc_compiler compiler, spvc_variable_id id)
+{
+#if SPIRV_CROSS_C_API_GLSL
+	if (compiler->backend == SPVC_BACKEND_NONE)
+	{
+		compiler->context->report_error("Cross-compilation related option used on NONE backend which only supports reflection.");
+		return SPVC_ERROR_INVALID_ARGUMENT;
+	}
+
+	return static_cast<CompilerGLSL *>(compiler->compiler.get())->variable_is_depth_or_compare(id) ? SPVC_TRUE : SPVC_FALSE;
+#else
+	(void)id;
+	compiler->context->report_error("Cross-compilation related option used on NONE backend which only supports reflection.");
+	return SPVC_FALSE;
 #endif
 }
 

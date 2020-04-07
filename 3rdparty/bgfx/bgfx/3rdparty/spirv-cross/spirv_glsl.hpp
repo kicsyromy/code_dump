@@ -115,6 +115,11 @@ public:
 		// by the SPIR-V, it's recommended to set this to false.
 		bool enable_storage_image_qualifier_deduction = true;
 
+		// On some targets (WebGPU), uninitialized variables are banned.
+		// If this is enabled, all variables (temporaries, Private, Function)
+		// which would otherwise be uninitialized will now be initialized to 0 instead.
+		bool force_zero_initialized_variables = false;
+
 		enum Precision
 		{
 			DontCare,
@@ -222,6 +227,14 @@ public:
 	// mixing int and float is not.
 	// The name of the uniform array will be the same as the interface block name.
 	void flatten_buffer_block(VariableID id);
+
+	// After compilation, query if a variable ID was used as a depth resource.
+	// This is meaningful for MSL since descriptor types depend on this knowledge.
+	// Cases which return true:
+	// - Images which are declared with depth = 1 image type.
+	// - Samplers which are statically used at least once with Dref opcodes.
+	// - Images which are statically used at least once with Dref opcodes.
+	bool variable_is_depth_or_compare(VariableID id) const;
 
 protected:
 	void reset();
@@ -576,6 +589,8 @@ protected:
 	                             spv::StorageClass rhs_storage);
 	virtual void emit_block_hints(const SPIRBlock &block);
 	virtual std::string to_initializer_expression(const SPIRVariable &var);
+	virtual std::string to_zero_initialized_expression(uint32_t type_id);
+	bool type_can_zero_initialize(const SPIRType &type) const;
 
 	bool buffer_is_packing_standard(const SPIRType &type, BufferPackingStandard packing,
 	                                uint32_t *failed_index = nullptr, uint32_t start_offset = 0,

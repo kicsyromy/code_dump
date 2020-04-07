@@ -210,6 +210,8 @@ string CompilerHLSL::image_type_hlsl_modern(const SPIRType &type, uint32_t id)
 	bool typed_load = false;
 	uint32_t components = 4;
 
+	bool force_image_srv = hlsl_options.nonwritable_uav_texture_as_srv && has_decoration(id, DecorationNonWritable);
+
 	switch (type.image.dim)
 	{
 	case Dim1D:
@@ -239,7 +241,14 @@ string CompilerHLSL::image_type_hlsl_modern(const SPIRType &type, uint32_t id)
 			if (interlocked_resources.count(id))
 				return join("RasterizerOrderedBuffer<", image_format_to_type(type.image.format, imagetype.basetype),
 				            ">");
-			return join("RWBuffer<", image_format_to_type(type.image.format, imagetype.basetype), ">");
+
+			typed_load = !force_image_srv && type.image.sampled == 2;
+
+			const char *rw = force_image_srv ? "" : "RW";
+			return join(rw, "Buffer<",
+			            typed_load ? image_format_to_type(type.image.format, imagetype.basetype) :
+			                         join(type_to_glsl(imagetype), components),
+			            ">");
 		}
 		else
 			SPIRV_CROSS_THROW("Sampler buffers must be either sampled or unsampled. Cannot deduce in runtime.");
@@ -252,9 +261,14 @@ string CompilerHLSL::image_type_hlsl_modern(const SPIRType &type, uint32_t id)
 	}
 	const char *arrayed = type.image.arrayed ? "Array" : "";
 	const char *ms = type.image.ms ? "MS" : "";
-	const char *rw = typed_load ? "RW" : "";
+	const char *rw = typed_load && !force_image_srv ? "RW" : "";
+
+	if (force_image_srv)
+		typed_load = false;
+
 	if (typed_load && interlocked_resources.count(id))
 		rw = "RasterizerOrdered";
+
 	return join(rw, "Texture", dim, ms, arrayed, "<",
 	            typed_load ? image_format_to_type(type.image.format, imagetype.basetype) :
 	                         join(type_to_glsl(imagetype), components),
@@ -1121,7 +1135,12 @@ void CompilerHLSL::declare_undefined_values()
 {
 	bool emitted = false;
 	ir.for_each_typed_id<SPIRUndef>([&](uint32_t, const SPIRUndef &undef) {
-		statement("static ", variable_decl(this->get<SPIRType>(undef.basetype), to_name(undef.self), undef.self), ";");
+		string initializer;
+		if (options.force_zero_initialized_variables && type_can_zero_initialize(this->get<SPIRType>(undef.basetype)))
+			initializer = join(" = ", to_zero_initialized_expression(undef.basetype));
+
+		statement("static ", variable_decl(this->get<SPIRType>(undef.basetype), to_name(undef.self), undef.self),
+		          initializer, ";");
 		emitted = true;
 	});
 
@@ -1362,7 +1381,15 @@ void CompilerHLSL::emit_resources()
 					storage = "static";
 					break;
 				}
-				statement(storage, " ", variable_decl(var), ";");
+
+				string initializer;
+				if (options.force_zero_initialized_variables && var.storage == StorageClassPrivate &&
+				    !var.initializer && !var.static_expression && type_can_zero_initialize(get_variable_data_type(var)))
+				{
+					initializer = join(" = ", to_zero_initialized_expression(get_variable_data_type_id(var)));
+				}
+				statement(storage, " ", variable_decl(var), initializer, ";");
+
 				emitted = true;
 			}
 		}
@@ -2958,8 +2985,16 @@ string CompilerHLSL::to_resource_binding(const SPIRVariable &var)
 	case SPIRType::Image:
 		if (type.image.sampled == 2 && type.image.dim != DimSubpassData)
 		{
-			space = 'u'; // UAV
-			resource_flags = HLSL_BINDING_AUTO_UAV_BIT;
+			if (has_decoration(var.self, DecorationNonWritable) && hlsl_options.nonwritable_uav_texture_as_srv)
+			{
+				space = 't'; // SRV
+				resource_flags = HLSL_BINDING_AUTO_SRV_BIT;
+			}
+			else
+			{
+				space = 'u'; // UAV
+				resource_flags = HLSL_BINDING_AUTO_UAV_BIT;
+			}
 		}
 		else
 		{
@@ -4800,7 +4835,12 @@ void CompilerHLSL::emit_instruction(const Instruction &instruction)
 			imgexpr = join(to_expression(ops[2]), "[", to_expression(ops[3]), "]");
 			// The underlying image type in HLSL depends on the image format, unlike GLSL, where all images are "vec4",
 			// except that the underlying type changes how the data is interpreted.
-			if (var && !subpass_data)
+
+			bool force_srv =
+			    hlsl_options.nonwritable_uav_texture_as_srv && var && has_decoration(var->self, DecorationNonWritable);
+			pure = force_srv;
+
+			if (var && !subpass_data && !force_srv)
 				imgexpr = remap_swizzle(get<SPIRType>(result_type),
 				                        image_format_to_components(get<SPIRType>(var->basetype).image.format), imgexpr);
 		}
