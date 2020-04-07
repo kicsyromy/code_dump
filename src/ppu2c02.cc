@@ -43,9 +43,9 @@ bool PaletteTable::write_data(std::uint16_t address, std::uint8_t value, void *i
 
 Ppu2C02::Ppu2C02(Cartridge &cartridge) noexcept
   : Device{ &read_data, &write_data }
-  , data_bus_{ { name_table_, NAME_TABLE_BASE_ADDRESS, 0x2FFF },
-      { palette_table_, PALETTE_TABLE_BASE_ADDRESS, 0x3FFF },
-      { cartridge, 0x0000, 0x1FFF } }
+  , data_bus_{ { cartridge, 0x0000, 0x1FFF },
+      { name_table_, NAME_TABLE_BASE_ADDRESS, 0x2FFF },
+      { palette_table_, PALETTE_TABLE_BASE_ADDRESS, 0x3FFF } }
 {}
 
 std::pair<bool, uint8_t> Ppu2C02::read_data(std::uint16_t address, const void *instance) noexcept

@@ -5,10 +5,10 @@ NesSystem::NesSystem() noexcept
   , system_ram_{}
   , cartridge_{ &cpu_, &ppu_ }
   , ppu_{ cartridge_ }
-  , main_bus_{ { cpu_, 0x0000, 0x0000 },
+  , main_bus_{ { cartridge_, 0x4020, 0xFFFF },
+      { cpu_, 0x0000, 0x0000 },
       { system_ram_, 0x0000, 0x1FFF },
-      { ppu_, 0x2000, 0x3FFF },
-      { cartridge_, 0x4020, 0xFFFF } }
+      { ppu_, 0x2000, 0x3FFF } }
 {}
 
 void NesSystem::reset() noexcept
@@ -17,4 +17,7 @@ void NesSystem::reset() noexcept
     clock_counter_ = 0;
 }
 
-void NesSystem::insertCartridge(Cartridge &&) noexcept {}
+void NesSystem::loadCartridge(std::string_view rom_file_path) noexcept
+{
+    cartridge_.load(rom_file_path);
+}

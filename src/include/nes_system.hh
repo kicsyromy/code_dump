@@ -12,7 +12,7 @@ public:
 
 public:
     void reset() noexcept;
-    void insertCartridge(Cartridge &&cartridge) noexcept;
+    void loadCartridge(std::string_view rom_file_path) noexcept;
 
 private:
     std::uint32_t clock_counter_{ 0 };
@@ -22,5 +22,5 @@ private:
     Ram system_ram_;
     Cartridge cartridge_;
     Ppu2C02 ppu_;
-    DataBus<Cpu6502, Ram, Ppu2C02, Cartridge> main_bus_;
+    DataBus<Cartridge, Cpu6502, Ram, Ppu2C02> main_bus_;
 };

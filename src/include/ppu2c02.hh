@@ -22,7 +22,7 @@ private:
 private:
     NameTable name_table_;
     PaletteTable palette_table_;
-    DataBus<NameTable, PaletteTable, Cartridge> data_bus_;
+    DataBus<Cartridge, NameTable, PaletteTable> data_bus_;
 
 private:
     friend class Cartridge;
