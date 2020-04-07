@@ -25,7 +25,7 @@ namespace renderer
     void init(std::function<void(NVGcontext *, int, int)> &&render_cb) noexcept
     {
         // Initialize SDL systems
-        if (SDL_Init(SDL_INIT_VIDEO) < 0)
+        if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         {
             spdlog::error("Failed to initialize SDL: {}", SDL_GetError());
             std::exit(EXIT_FAILURE);
@@ -62,19 +62,20 @@ namespace renderer
         // Tell bgfx about the platform and window
         bgfx::setPlatformData(pd);
 
+        bgfx::renderFrame(0);
         bgfx::Init init;
         init.type = bgfx::RendererType::OpenGL;
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
-        init.resolution.reset = BGFX_RESET_VSYNC;
+        //        init.resolution.reset = BGFX_;
         bgfx::init(init);
 
         // Enable debug text.
         bgfx::setDebug(BGFX_DEBUG_TEXT);
 
         // Set view rectangle for 0th view
-        bgfx::setViewRect(0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Double);
 
         // Set view 0 clear state.
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);

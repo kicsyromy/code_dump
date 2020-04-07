@@ -87,7 +87,7 @@ enum StatusFlags : std::uint8_t
     /* clang-format off */
     Carry             = Cpu6502::Carry,
     Zero              = Cpu6502::Zero,
-    DisableInterrupts = Cpu6502::DisableInterrupts, /* Unused in this implementation */
+    DisableInterrupts = Cpu6502::DisableInterrupts,
     DecimalMode       = Cpu6502::DecimalMode,
     Break             = Cpu6502::Break,
     Unused            = Cpu6502::Unused,

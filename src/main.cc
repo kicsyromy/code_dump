@@ -38,8 +38,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
     renderer::init([&my_tool_active, &my_color, &cpu](NVGcontext *nvg, int width, int height) {
         nvgBeginPath(nvg);
-        nvgRect(nvg, 0, 0, float(width), float(height));
-        nvgFillColor(nvg, nvgRGBA(0, 0, 0, 255));
+        nvgRect(nvg, 10, 10, float(width) / 2, float(height) / 2);
+        nvgFillColor(nvg, nvgRGBA(255, 0, 0, 255));
         nvgFill(nvg);
 
         //        ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
