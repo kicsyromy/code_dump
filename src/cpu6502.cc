@@ -12,7 +12,7 @@
 extern std::array<std::uint8_t, 64 * 1024> *gRAM;
 
 Cpu6502::Cpu6502() noexcept
-  : Device(0, 0)
+  : Device{}
   , instuction_set_{ {
 /* clang-format off */
         #define instr(ins, addr_mode, cycle_cnt) { #ins, &ins, #addr_mode, &addr_mode, cycle_cnt }

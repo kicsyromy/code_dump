@@ -157,4 +157,7 @@ private:
     friend std::uint8_t SEC(Cpu6502 &, std::uint8_t, const State &) noexcept;
     friend std::uint8_t SED(Cpu6502 &, std::uint8_t, const State &) noexcept;
     friend std::uint8_t SEI(Cpu6502 &, std::uint8_t, const State &) noexcept;
+
+private:
+    friend class Cartridge;
 };

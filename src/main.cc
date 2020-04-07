@@ -22,7 +22,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
     Cpu6502 cpu{};
     Ram memory{};
-    DataBus bus(cpu, memory);
+    DataBus<Cpu6502, Ram> bus{ { cpu, 0x0000, 0x0000 }, { memory, 0x0000, 0xFFFF } };
     gRAM = &memory.RAM;
 
     std::stringstream program_data;

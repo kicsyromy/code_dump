@@ -7,21 +7,17 @@ struct Device
 {
 public:
     using data_bus_t = void *;
-    using bus_read_f = std::uint8_t (*)(std::uint16_t, bool, data_bus_t) noexcept;
+    using bus_read_f = std::uint8_t (*)(std::uint16_t, bool, const void *) noexcept;
     using bus_write_f = void (*)(std::uint16_t, std::uint8_t, data_bus_t) noexcept;
 
     using device_read_f = std::pair<bool, std::uint8_t> (*)(std::uint16_t, const void *) noexcept;
     using device_write_f = bool (*)(std::uint16_t, std::uint8_t, void *) noexcept;
 
 public:
-    Device(std::size_t address_start,
-        std::size_t address_end,
-        device_read_f && = nullptr,
-        device_write_f && = nullptr) noexcept;
+    Device(device_read_f && = nullptr, device_write_f && = nullptr) noexcept;
 
 public:
     void connect(data_bus_t bus, bus_read_f &&, bus_write_f &&) noexcept;
-    bool handles_address(std::uint16_t address) const noexcept;
     std::pair<bool, std::uint8_t> read_from(std::uint16_t address) const noexcept;
     bool write_to(std::uint16_t address, std::uint8_t data) noexcept;
 
@@ -32,8 +28,4 @@ protected:
 
     device_read_f device_read_{ nullptr };
     device_write_f device_write_{ nullptr };
-
-private:
-    std::size_t address_start_;
-    std::size_t address_end_;
 };
