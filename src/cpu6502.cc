@@ -12,7 +12,8 @@
 extern std::array<std::uint8_t, 64 * 1024> *gRAM;
 
 Cpu6502::Cpu6502() noexcept
-  : instuction_set_{ {
+  : Device(0, 0)
+  , instuction_set_{ {
 /* clang-format off */
         #define instr(ins, addr_mode, cycle_cnt) { #ins, &ins, #addr_mode, &addr_mode, cycle_cnt }
         instr(BRK, IMM, 7), instr(ORA, IZX, 6), instr(UNK, IMP, 2), instr(UNK, IMP, 8), instr(NOP, IMP, 3), instr(ORA, ZP0, 3), instr(ASL, ZP0, 5), instr(UNK, IMP, 5),
@@ -149,13 +150,6 @@ void Cpu6502::draw_cpu_state(int width, int height) const noexcept
 }
 
 #endif
-
-void Cpu6502::connect(data_bus_t bus, BusReadFunction &&r, BusWriteFunction &&w) noexcept
-{
-    data_bus_ = bus;
-    bus_read_ = r;
-    bus_write_ = w;
-}
 
 void Cpu6502::reset() noexcept
 {

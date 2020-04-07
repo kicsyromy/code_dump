@@ -1,5 +1,6 @@
 #pragma once
 
+#include "device.hh"
 #include "instruction.hh"
 #include "register.hh"
 
@@ -18,14 +19,8 @@ template<typename Number> constexpr std::uint16_t u16(Number value) noexcept
     return static_cast<std::uint16_t>(value);
 }
 
-using data_bus_t = void *;
-
-class Cpu6502
+class Cpu6502 : public Device
 {
-public:
-    using BusReadFunction = std::uint8_t (*)(std::uint16_t, bool, void *) noexcept;
-    using BusWriteFunction = void (*)(std::uint16_t, std::uint8_t, void *) noexcept;
-
 public:
     static constexpr std::uint16_t STACK_POINTER_OFFSET{ 0x0100 };
     static constexpr std::uint16_t RESET_ADDRESS_LOCATION{ 0xFFFC };
@@ -68,9 +63,6 @@ public:
 #endif
 
 public:
-    void connect(data_bus_t bus, BusReadFunction &&, BusWriteFunction &&) noexcept;
-
-public:
     void reset() noexcept;
     void clock() noexcept;
     void irq() noexcept;
@@ -81,10 +73,6 @@ private:
     void write(std::uint16_t address, std::uint8_t data) noexcept;
 
 private:
-    data_bus_t data_bus_{ nullptr };
-    BusReadFunction bus_read_{ nullptr };
-    BusWriteFunction bus_write_{ nullptr };
-
     const std::array<Instruction<Cpu6502>, 256> instuction_set_;
 
 #ifndef NDEBUG

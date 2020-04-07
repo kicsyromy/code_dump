@@ -1,6 +1,7 @@
 #include "cpu6502.hh"
 #include "data_bus.hh"
 #include "renderer.hh"
+#include "ram.hh"
 
 #include <cstdint>
 #include <sstream>
@@ -20,8 +21,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     float my_color[4];
 
     Cpu6502 cpu{};
-    DataBus bus(cpu);
-    gRAM = &bus.RAM;
+    Ram memory{};
+    DataBus bus(cpu, memory);
+    gRAM = &memory.RAM;
 
     std::stringstream program_data;
     program_data
@@ -31,11 +33,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     {
         std::string byte;
         program_data >> byte;
-        bus.RAM[offset++] = u8(std::stoul(byte, nullptr, 16));
+        memory.write_to(offset++, u8(std::stoul(byte, nullptr, 16)));
     }
 
-    bus.RAM[Cpu6502::RESET_ADDRESS_LOCATION] = 0x00;
-    bus.RAM[Cpu6502::RESET_ADDRESS_LOCATION + 1] = 0x80;
+    memory.write_to(Cpu6502::RESET_ADDRESS_LOCATION, u8(0x00));
+    memory.write_to(Cpu6502::RESET_ADDRESS_LOCATION + 1, u8(0x80));
 
     cpu.reset();
 
