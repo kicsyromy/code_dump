@@ -7,11 +7,14 @@ struct Device
 {
 public:
     using data_bus_t = void *;
-    using bus_read_f = std::uint8_t (*)(std::uint16_t, bool, const void *) noexcept;
+    using const_data_bus_t = const void *;
+    using bus_read_f = std::uint8_t (*)(std::uint16_t, bool, const_data_bus_t) noexcept;
     using bus_write_f = void (*)(std::uint16_t, std::uint8_t, data_bus_t) noexcept;
 
-    using device_read_f = std::pair<bool, std::uint8_t> (*)(std::uint16_t, const void *) noexcept;
-    using device_write_f = bool (*)(std::uint16_t, std::uint8_t, void *) noexcept;
+    using device_t = void *;
+    using const_device_t = const void *;
+    using device_read_f = std::pair<bool, std::uint8_t> (*)(std::uint16_t, const_device_t) noexcept;
+    using device_write_f = bool (*)(std::uint16_t, std::uint8_t, device_t) noexcept;
 
 public:
     Device(device_read_f && = nullptr, device_write_f && = nullptr) noexcept;

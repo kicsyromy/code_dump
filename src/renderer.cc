@@ -64,7 +64,7 @@ namespace renderer
 
         bgfx::renderFrame(0);
         bgfx::Init init;
-        init.type = bgfx::RendererType::OpenGL;
+        init.type = bgfx::RendererType::Vulkan;
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;

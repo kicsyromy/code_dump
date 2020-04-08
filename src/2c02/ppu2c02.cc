@@ -16,7 +16,6 @@ std::pair<bool, std::uint8_t> NameTable::read_data(std::uint16_t address,
 
 bool NameTable::write_data(std::uint16_t address, std::uint8_t value, void *instance) noexcept
 {
-
     auto self = static_cast<NameTable *>(instance);
     self->memory_[0][static_cast<std::size_t>(address - NAME_TABLE_BASE_ADDRESS)] = value;
     return true;

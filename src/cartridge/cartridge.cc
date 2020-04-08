@@ -6,10 +6,29 @@
 
 #include <memory>
 
+Cartridge::Mapper::Mapper(Cartridge &cartridge) noexcept
+  : cartridge_{ cartridge }
+  , program_banks_{ cartridge.program_banks_ }
+  , character_banks_{ cartridge.character_banks_ }
+{}
+
+std::pair<bool, std::uint16_t> Cartridge::Mapper::read(std::uint16_t input_address,
+    Cartridge::Mapper::Interface::const_mapper_t) noexcept
+{
+    return impl_.read_f(input_address, impl_.mapper_object);
+}
+
+std::pair<bool, std::uint16_t> Cartridge::Mapper::write(std::uint16_t input_address,
+    Cartridge::Mapper::Interface::mapper_t) noexcept
+{
+    return impl_.write_f(input_address, impl_.mapper_object);
+}
+
 Cartridge::Cartridge(Cpu6502 *cpu, Ppu2C02 *ppu) noexcept
   : Device{ &read_data, &write_data }
-  , cpu_{ *cpu }
+  , cpu_{ *cpu } //  , cpuMapper_{ *this }
   , ppu_{ *ppu }
+//  , ppuMapper_{ *this }
 {}
 
 bool Cartridge::load(std::string_view path) noexcept
@@ -49,11 +68,11 @@ bool Cartridge::load(std::string_view path) noexcept
     if (file_format == 1)
     {
         program_banks_ = header_.program_rom_size;
-        program_memory_.resize(program_banks_ * 16 * 1024);
+        program_memory_.resize(program_banks_ * 16ul * 1024ul);
         std::fread(program_memory_.data(), program_memory_.size(), 1, rom_file);
 
         character_banks_ = header_.character_rom_size;
-        character_memory_.resize(character_banks_ * 8 * 1024);
+        character_memory_.resize(character_banks_ * 8ul * 1024ul);
         std::fread(character_memory_.data(), character_memory_.size(), 1, rom_file);
     }
     if (file_format == 2) {}
