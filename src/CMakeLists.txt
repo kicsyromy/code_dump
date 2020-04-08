@@ -15,10 +15,11 @@ add_executable (
 
     #------------------------Cartridge and mappers----------------------------#
     cartridge/cartridge.cc     cartridge/include/cartridge.hh
+    cartridge/mapper_000.cc    cartridge/include/mapper_000.hh
 
     #------------------------------Main system--------------------------------#
-    device.cc    	        include/device.hh
-                               include/data_bus.hh                           
+    device.cc                  include/device.hh
+                               include/data_bus.hh
     main.cc
     nes_system.cc              include/nes_system.hh
     ram.cc                     include/ram.hh

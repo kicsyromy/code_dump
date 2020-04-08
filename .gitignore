@@ -34,6 +34,7 @@
 # Qt Creator
 *.pro.user
 CMakeLists.txt.user
+CMakeLists.txt.user*
 
 build-*
 *.config

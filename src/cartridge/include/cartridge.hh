@@ -25,36 +25,13 @@ private:
         char unused[5];
     };
 
-private:
-    struct Mapper
+public:
+    struct MapperInterface
     {
-        struct Interface
-        {
-            using mapper_t = void *;
-            using const_mapper_t = const void *;
-
-            std::pair<bool, std::uint16_t> (
-                *read_f)(std::uint16_t input_address, const_mapper_t) noexcept;
-            std::pair<bool, std::uint16_t> (
-                *write_f)(std::uint16_t input_address, mapper_t) noexcept;
-
-            mapper_t mapper_object;
-        };
-
-        Mapper(Cartridge &cartridge) noexcept;
-
-        std::pair<bool, std::uint16_t> read(std::uint16_t input_address,
-            Interface::const_mapper_t) noexcept;
-        std::pair<bool, std::uint16_t> write(std::uint16_t input_address,
-            Interface::mapper_t) noexcept;
-
-    private:
-        Cartridge &cartridge_;
-        Interface impl_;
-
-    private:
-        std::uint8_t program_banks_;
-        std::uint8_t character_banks_;
+        std::pair<bool, std::uint16_t> (
+            *read_f)(std::uint16_t input_address, Cartridge &cart, const void *) noexcept;
+        std::pair<bool, std::uint16_t> (
+            *write_f)(std::uint16_t input_address, Cartridge &cart, void *) noexcept;
     };
 
 public:
@@ -80,8 +57,10 @@ private:
 
 private:
     Cpu6502 &cpu_;
+    MapperInterface mapper_cpu_;
     Ppu2C02 &ppu_;
+    MapperInterface mapper_ppu_;
 
 private:
-    friend struct Mapper;
+    friend class MapperBase;
 };

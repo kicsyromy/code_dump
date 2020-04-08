@@ -6,29 +6,10 @@
 
 #include <memory>
 
-Cartridge::Mapper::Mapper(Cartridge &cartridge) noexcept
-  : cartridge_{ cartridge }
-  , program_banks_{ cartridge.program_banks_ }
-  , character_banks_{ cartridge.character_banks_ }
-{}
-
-std::pair<bool, std::uint16_t> Cartridge::Mapper::read(std::uint16_t input_address,
-    Cartridge::Mapper::Interface::const_mapper_t) noexcept
-{
-    return impl_.read_f(input_address, impl_.mapper_object);
-}
-
-std::pair<bool, std::uint16_t> Cartridge::Mapper::write(std::uint16_t input_address,
-    Cartridge::Mapper::Interface::mapper_t) noexcept
-{
-    return impl_.write_f(input_address, impl_.mapper_object);
-}
-
 Cartridge::Cartridge(Cpu6502 *cpu, Ppu2C02 *ppu) noexcept
   : Device{ &read_data, &write_data }
-  , cpu_{ *cpu } //  , cpuMapper_{ *this }
+  , cpu_{ *cpu }
   , ppu_{ *ppu }
-//  , ppuMapper_{ *this }
 {}
 
 bool Cartridge::load(std::string_view path) noexcept
