@@ -1,10 +1,5 @@
 #include "cpu6502.hh"
 
-#ifndef NDEBUG
-#include <dear-imgui.hh>
-#include <fmt/format.h>
-#endif
-
 #include "address_modes.hh"
 #include "data_bus.hh"
 #include "instruction_set.hh"
@@ -53,103 +48,6 @@ Cpu6502::Cpu6502() noexcept
 {}
 
 Cpu6502::~Cpu6502() noexcept = default;
-
-#ifndef NDEBUG
-void Cpu6502::draw_ram_content(uint16_t offset, int rows, int columns) const noexcept
-{
-    auto &RAM = *gRAM;
-
-    ImGui::Begin("RAM");
-    //    ImGui::SetWindowFontScale(0.9f);
-    auto mem = RAM[offset];
-    for (int i = 0; i < columns; ++i)
-    {
-        std::string line = fmt::format("${:06X}: ", offset + i * columns);
-        for (int j = 0; j < rows; ++j)
-        {
-            mem = RAM[size_t(offset + (columns * i) + j)];
-            line += fmt::format("{:02x} ", mem);
-        }
-        ImGui::TextUnformatted(line.c_str());
-    }
-    ImGui::TextUnformatted("");
-    ImGui::End();
-}
-
-void Cpu6502::draw_cpu_state(int width, int height) const noexcept
-{
-    auto &RAM = *gRAM;
-
-    ImGui::Begin("CPU", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
-    {
-        ImGui::SetWindowSize("CPU", ImVec2{ float(width - height), float(height) });
-        ImGui::SetWindowPos("CPU", ImVec2{ float(720), float(0) });
-        ImGui::TextUnformatted("STATUS: C Z I D B U V N");
-        ImGui::Text("        %d %d %d %d %d %d %d %d",
-            status.is_flag_set(Cpu6502::Carry),
-            status.is_flag_set(Cpu6502::Zero),
-            !status.is_flag_set(Cpu6502::DisableInterrupts),
-            status.is_flag_set(Cpu6502::DecimalMode),
-            status.is_flag_set(Cpu6502::Break),
-            status.is_flag_set(Cpu6502::Unused),
-            status.is_flag_set(Cpu6502::Overflow),
-            status.is_flag_set(Cpu6502::Negative));
-        ImGui::TextUnformatted(fmt::format("PC: ${:06X}", program_counter.get()).c_str());
-        ImGui::TextUnformatted(fmt::format("A: ${0:04X} [ {0} ]", accumulator.get()).c_str());
-        ImGui::TextUnformatted(fmt::format("X: ${0:04X} [ {0} ]", x.get()).c_str());
-        ImGui::TextUnformatted(fmt::format("Y: ${0:04X} [ {0} ]", y.get()).c_str());
-        ImGui::TextUnformatted(fmt::format("SP: ${0:04X}", stack_pointer.get()).c_str());
-        ImGui::TextUnformatted("");
-
-        ImGui::BeginChild("Running Instructions");
-        {
-            for (int i = 0; i < 100; ++i)
-            {
-                const auto off = [](int offset, std::size_t size) {
-                    if (offset < 0) { return std::size_t(int(size) + offset); }
-                    if (offset >= int(size)) { return std::size_t(offset - int(size)); }
-                    return std::size_t(offset);
-                }(i, RAM.size());
-                const auto pc = u16(program_counter.get() + off);
-                const auto opcode = read(pc);
-                const auto &instruction = instuction_set_[opcode];
-
-                auto line = fmt::format("{:#06X}: ", pc);
-                line += fmt::format("{} ", instruction.name);
-
-                const auto state = instruction.address_mode(*this);
-                for (std::uint16_t j = state.processed; j >= 1; --j)
-                {
-                    if (j == state.processed)
-                    {
-                        line += fmt::format(instruction.address_mode == &address_mode_immediate
-                                                ? "#${:02X}"
-                                                : "${:02X}",
-                            read(u16(pc + j)));
-                    }
-                    else
-                    {
-                        line += fmt::format("{:02X}", read(u16(pc + j)));
-                    }
-                }
-                line += fmt::format(" {{{}}}", instruction.address_mode_name);
-
-                if (pc == program_counter.get())
-                { ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f }, line.c_str()); }
-                else
-                {
-                    ImGui::TextUnformatted(line.c_str());
-                }
-
-                i += state.processed;
-            }
-        }
-        ImGui::EndChild();
-    }
-    ImGui::End();
-}
-
-#endif
 
 void Cpu6502::reset() noexcept
 {

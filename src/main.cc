@@ -11,13 +11,9 @@
 
 #include <spdlog/spdlog.h>
 
-std::array<std::uint8_t, 64 * 1024> *gRAM;
-
 int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
     NesSystem nes;
-    auto &cpu = nes.cpu_;
-    gRAM = &nes.system_ram_.RAM;
     nes.loadCartridge(SOURCE_DIR "/nestest.nes");
     nes.reset();
 
@@ -37,15 +33,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
                 do
                 {
                     nes.clock();
-                } while (!nes.ppu_.frame_complete());
-                nes.ppu_.frame_complete() = false;
+                } while (!nes.ppu().frame_complete());
             }
         }
 
         nvgDeleteImage(nvg, framebuffer);
 
         nvgScale(nvg, 3.f, 3.f);
-        framebuffer = nvgCreateImageRGBA(nvg, 256, 240, 0, nes.ppu_.framebuffer().data());
+        framebuffer = nvgCreateImageRGBA(nvg, 256, 240, 0, nes.ppu().framebuffer().data());
         auto framebuffer_pattern = nvgImagePattern(nvg, 0, 0, 256, 240, 0.f, framebuffer, 1.f);
         nvgBeginPath(nvg);
         nvgRect(nvg, 0, 0, 256, 240);
@@ -53,9 +48,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
         nvgFill(nvg);
 
         ImGui::PushFont(ImGui::Font::Mono);
-        cpu.draw_ram_content(0, 16, 16);
-        cpu.draw_ram_content(0x8000, 16, 16);
-        cpu.draw_cpu_state(width, height);
+        nes.draw_ram_content(0, 16, 16);
+        nes.draw_ram_content(0x8000, 16, 16);
+        nes.draw_cpu_state(width, height);
         ImGui::PopFont();
     });
 
@@ -72,23 +67,22 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             do
             {
                 nes.clock();
-            } while (!nes.cpu_.complete());
+            } while (!nes.cpu().cycle_complete());
             do
             {
                 nes.clock();
-            } while (nes.cpu_.complete());
+            } while (nes.cpu().cycle_complete());
         }
         break;
         case SDLK_f: {
             do
             {
                 nes.clock();
-            } while (!nes.ppu_.frame_complete());
+            } while (!nes.ppu().frame_complete());
             do
             {
                 nes.clock();
-            } while (!nes.cpu_.complete());
-            nes.ppu_.frame_complete() = false;
+            } while (!nes.cpu().cycle_complete());
         }
         break;
         }

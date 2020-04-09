@@ -59,6 +59,8 @@ Ppu2C02::Ppu2C02(Cartridge &cartridge) noexcept
 
 void Ppu2C02::clock() noexcept
 {
+    if (frame_complete_) frame_complete_ = false;
+
     const auto &color = palette[std::size_t(rand() % 64)];
     std::size_t framebuffer_index{ std::size_t(scanline_) * FRAME_WIDTH * 4ul +
                                    std::size_t(cycle_ - 1) * 4ul };

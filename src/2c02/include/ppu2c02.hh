@@ -46,8 +46,8 @@ public:
 
 public:
     void clock() noexcept;
-    inline bool &frame_complete() noexcept { return frame_complete_; }
-    inline const auto &framebuffer() noexcept { return framebuffer_; }
+    inline bool frame_complete() const noexcept { return frame_complete_; }
+    inline const auto &framebuffer() const noexcept { return framebuffer_; }
 
 private:
     static std::pair<bool, std::uint8_t> read_request(std::uint16_t address, const void *) noexcept;

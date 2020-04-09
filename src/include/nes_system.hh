@@ -15,14 +15,18 @@ public:
     void clock() noexcept;
     void loadCartridge(std::string_view rom_file_path) noexcept;
 
+public:
+    const auto &cpu() const noexcept { return cpu_; }
+    const auto &ppu() const noexcept { return ppu_; }
+
+public:
+    void draw_ram_content(uint16_t offset, int rows, int columns) const noexcept;
+    void draw_cpu_state(int width, int height) const noexcept;
+
 private:
     std::uint32_t clock_counter_{ 0 };
 
-#ifndef NDEBUG
-public:
-#else
 private:
-#endif
     Cpu6502 cpu_;
     Ram system_ram_;
     Cartridge cartridge_;

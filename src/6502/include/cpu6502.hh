@@ -56,18 +56,22 @@ public:
     Register8Bit stack_pointer{ 0 };
     Register16Bit program_counter{ 0 };
 
-#ifndef NDEBUG
 public:
     void draw_ram_content(std::uint16_t offset, int rows, int columns) const noexcept;
     void draw_cpu_state(int window_with, int window_height) const noexcept;
-#endif
 
 public:
     void reset() noexcept;
     void clock() noexcept;
     void irq() noexcept;
     void nmi() noexcept;
-    inline bool complete() noexcept { return remaining_cycles == 0; }
+    inline bool cycle_complete() const noexcept { return remaining_cycles == 0; }
+
+public:
+    inline Instruction<Cpu6502> instruction_for_opcode(std::uint8_t opcode) const noexcept
+    {
+        return instuction_set_[opcode];
+    }
 
 private:
     std::uint8_t read(std::uint16_t address) const noexcept;
@@ -75,10 +79,6 @@ private:
 
 private:
     const std::array<Instruction<Cpu6502>, 256> instuction_set_;
-
-#ifndef NDEBUG
-public:
-#endif
     std::uint8_t remaining_cycles{ 0 };
 
     /* Addressing modes */

@@ -36,7 +36,7 @@ private:
         }
     }
 
-private:
+public:
     static std::uint8_t read(std::uint16_t address, bool read_only, const void *instance) noexcept
     {
         auto self = static_cast<const DataBus *>(instance);
@@ -63,38 +63,36 @@ private:
         noexcept
     {
         std::uint8_t result = 0;
-        for_each(
-            connected_devices_, [&address, &result ](const auto &d) noexcept {
-                if (address >= d.start_address && address <= d.end_address)
+        for_each(connected_devices_, [&address, &result](const auto &d) noexcept {
+            if (address >= d.start_address && address <= d.end_address)
+            {
+                const auto &device = static_cast<const Device &>(d.device);
+                const auto r = device.read_from(address);
+                if (r.first == true)
                 {
-                    const auto &device = static_cast<const Device &>(d.device);
-                    const auto r = device.read_from(address);
-                    if (r.first == true)
-                    {
-                        result = r.second;
-                        return false;
-                    }
+                    result = r.second;
+                    return false;
                 }
+            }
 
-                return true;
-            });
+            return true;
+        });
 
         return result;
     }
 
     void write(std::uint16_t address, std::uint8_t data) noexcept
     {
-        for_each(
-            connected_devices_, [&address, &data ](auto &d) noexcept {
-                if (address >= d.start_address && address <= d.end_address)
-                {
-                    auto &device = static_cast<Device &>(d.device);
-                    const auto r = device.write_to(address, data);
-                    if (r == true) { return false; }
-                }
+        for_each(connected_devices_, [&address, &data](auto &d) noexcept {
+            if (address >= d.start_address && address <= d.end_address)
+            {
+                auto &device = static_cast<Device &>(d.device);
+                const auto r = device.write_to(address, data);
+                if (r == true) { return false; }
+            }
 
-                return true;
-            });
+            return true;
+        });
     }
 
 private:

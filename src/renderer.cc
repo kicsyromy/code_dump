@@ -68,11 +68,11 @@ namespace renderer
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
-        // init.resolution.reset = BGFX_RESET_VSYNC;
+        //        init.resolution.reset = BGFX_RESET_VSYNC;
         bgfx::init(init);
 
         // Enable debug text.
-        bgfx::setDebug(BGFX_DEBUG_TEXT);
+        //        bgfx::setDebug(BGFX_DEBUG_TEXT);
 
         // Set view rectangle for 0th view
         bgfx::setViewRect(0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
