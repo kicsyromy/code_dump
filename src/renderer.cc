@@ -16,13 +16,13 @@ static constexpr auto WINDOW_HEIGHT{ 720 };
 static constexpr auto VIEWPORT_WIDTH{ WINDOW_HEIGHT };
 static constexpr auto VIEWPORT_HEIGHT{ WINDOW_HEIGHT };
 
-static std::function<void(NVGcontext *, int, int)> render_callback{ nullptr };
+static std::function<void(NVGcontext *, int, int, float)> render_callback{ nullptr };
 [[maybe_unused]] static std::function<void()> mouse_event_callback{ nullptr };
 [[maybe_unused]] static std::function<void()> keyboard_event_callback{ nullptr };
 
 namespace renderer
 {
-    void init(std::function<void(NVGcontext *, int, int)> &&render_cb) noexcept
+    void init(std::function<void(NVGcontext *, int, int, float)> &&render_cb) noexcept
     {
         // Initialize SDL systems
         if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -68,7 +68,7 @@ namespace renderer
         init.vendorId = BGFX_PCI_ID_NONE;
         init.resolution.width = WINDOW_WIDTH;
         init.resolution.height = WINDOW_HEIGHT;
-        init.resolution.reset = BGFX_RESET_VSYNC;
+        // init.resolution.reset = BGFX_RESET_VSYNC;
         bgfx::init(init);
 
         // Enable debug text.
@@ -96,6 +96,9 @@ namespace renderer
         auto &nvg = nanovgContext;
         auto &renderer = render_callback;
 
+        auto start = std::chrono::high_resolution_clock::now();
+        float elapsed = 0.f;
+
         bool quit = false;
         SDL_Event event;
         while (!quit)
@@ -118,12 +121,18 @@ namespace renderer
                 }
             }
 
+            elapsed = float(std::chrono::duration_cast<std::chrono::milliseconds>(
+                          std::chrono::high_resolution_clock::now() - start)
+                                .count()) /
+                      1000.f;
+            start = std::chrono::high_resolution_clock::now();
+
             bgfx::touch(0);
             imgui.new_frame();
             nvgBeginFrame(
                 nvg, static_cast<float>(VIEWPORT_WIDTH), static_cast<float>(VIEWPORT_HEIGHT), 1.f);
 
-            renderer(nvg, WINDOW_WIDTH, WINDOW_HEIGHT);
+            renderer(nvg, WINDOW_WIDTH, WINDOW_HEIGHT, elapsed);
 
             nvgEndFrame(nvg);
             imgui.end_frame();

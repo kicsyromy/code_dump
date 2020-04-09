@@ -22,6 +22,7 @@ add_executable (
                                include/data_bus.hh
     main.cc
     nes_system.cc              include/nes_system.hh
+                               include/platform_definitions.hh
     ram.cc                     include/ram.hh
 
     renderer.cc                include/renderer.hh
@@ -33,6 +34,12 @@ target_include_directories (
     "${CMAKE_CURRENT_SOURCE_DIR}/2c02/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/6502/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/cartridge/include"
+)
+
+target_compile_definitions (
+    graphics_base PRIVATE
+    -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
+    -DBINARY_DIR="${PROJECT_BINARY_DIR}"
 )
 
 target_link_libraries (

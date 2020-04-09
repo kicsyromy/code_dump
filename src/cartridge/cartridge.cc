@@ -1,5 +1,7 @@
 #include "cartridge.hh"
 #include "cpu6502.hh"
+#include "mapper_000.hh"
+#include "platform_definitions.hh"
 #include "ppu2c02.hh"
 
 #include <spdlog/spdlog.h>
@@ -7,7 +9,7 @@
 #include <memory>
 
 Cartridge::Cartridge(Cpu6502 *cpu, Ppu2C02 *ppu) noexcept
-  : Device{ &read_data, &write_data }
+  : Device{ &read_request, &write_request }
   , cpu_{ *cpu }
   , ppu_{ *ppu }
 {}
@@ -55,28 +57,66 @@ bool Cartridge::load(std::string_view path) noexcept
         character_banks_ = header_.character_rom_size;
         character_memory_.resize(character_banks_ * 8ul * 1024ul);
         std::fread(character_memory_.data(), character_memory_.size(), 1, rom_file);
+
+        mapper_cpu_.read_f = &Mapper000::cpu_read;
+        mapper_cpu_.write_f = &Mapper000::cpu_write;
+        mapper_ppu_.read_f = &Mapper000::ppu_read;
+        mapper_ppu_.write_f = &Mapper000::ppu_write;
     }
     if (file_format == 2) {}
 
     return true;
 }
 
-std::pair<bool, std::uint8_t> Cartridge::read_data(std::uint16_t address,
-    const void *instance) noexcept
+#define get_mapper(address)                                 \
+    if (address >= CART_CPU_BUS_ADDRESS.lower_bound &&      \
+        address <= CART_CPU_BUS_ADDRESS.upper_bound)        \
+    { return { &mapper_cpu_, &cpu_, &program_memory_ }; }   \
+                                                            \
+    if (address >= CART_PPU_BUS_ADDRESS.lower_bound &&      \
+        address <= CART_PPU_BUS_ADDRESS.upper_bound)        \
+    { return { &mapper_ppu_, &ppu_, &character_memory_ }; } \
+                                                            \
+    return { nullptr, nullptr, nullptr };
+
+std::tuple<Cartridge::MapperInterface *, void *, std::vector<std::uint8_t> *> Cartridge::
+    get_mapper_interface(uint16_t address) noexcept
 {
-    auto self = static_cast<const Ppu2C02 *>(instance);
-    //    return { true, self->RAM[address & 0x0007] };
-    static_cast<void>(address);
-    static_cast<void>(self);
-    return { false, 0 };
+    get_mapper(address);
 }
 
-bool Cartridge::write_data(std::uint16_t address, std::uint8_t value, void *instance) noexcept
+std::tuple<const Cartridge::MapperInterface *, const void *, const std::vector<uint8_t> *>
+Cartridge::get_mapper_interface(uint16_t address) const noexcept
 {
-    auto self = static_cast<Ppu2C02 *>(instance);
-    //    self->RAM[address & 0x0007] = value;
-    static_cast<void>(address);
-    static_cast<void>(value);
-    static_cast<void>(self);
-    return false;
+    get_mapper(address);
+}
+
+std::pair<bool, std::uint8_t> Cartridge::read_request(std::uint16_t address,
+    const void *instance) noexcept
+{
+    auto self = static_cast<const Cartridge *>(instance);
+
+    auto [mapper_interface, device, memory] = self->get_mapper_interface(address);
+
+    if (mapper_interface == nullptr || mapper_interface->read_f == nullptr) { return { false, 0 }; }
+
+    const auto mapped_address = mapper_interface->read_f(address, *self, device);
+    if (mapped_address.first == false) { return { false, 0 }; }
+
+    return { true, (*memory)[mapped_address.second] };
+}
+
+bool Cartridge::write_request(std::uint16_t address, std::uint8_t value, void *instance) noexcept
+{
+    auto self = static_cast<Cartridge *>(instance);
+
+    auto [mapper_interface, device, memory] = self->get_mapper_interface(address);
+
+    if (mapper_interface == nullptr || mapper_interface->write_f == nullptr) { return false; }
+
+    const auto mapped_address = mapper_interface->write_f(address, *self, device);
+    if (mapped_address.first == false) { return false; }
+
+    (*memory)[mapped_address.second] = value;
+    return true;
 }

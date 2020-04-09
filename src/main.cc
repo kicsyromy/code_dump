@@ -1,7 +1,5 @@
-#include "cpu6502.hh"
-#include "data_bus.hh"
+#include "nes_system.hh"
 #include "renderer.hh"
-#include "ram.hh"
 
 #include <cstdint>
 #include <sstream>
@@ -17,31 +15,43 @@ std::array<std::uint8_t, 64 * 1024> *gRAM;
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
-    bool my_tool_active = true;
-    float my_color[4];
+    NesSystem nes;
+    auto &cpu = nes.cpu_;
+    gRAM = &nes.system_ram_.RAM;
+    nes.loadCartridge(SOURCE_DIR "/nestest.nes");
+    nes.reset();
 
-    Cpu6502 cpu{};
-    Ram memory{};
-    DataBus<Cpu6502, Ram> bus{ { cpu, 0x0000, 0x0000 }, { memory, 0x0000, 0xFFFF } };
-    gRAM = &memory.RAM;
+    bool running = false;
 
-    std::stringstream program_data;
-    program_data
-        << "A2 0A 8E 00 00 A2 03 8E 01 00 AC 00 00 A9 00 18 6D 01 00 88 D0 FA 8D 02 00 EA EA EA";
-    std::uint16_t offset{ 0x8000 };
-    while (!program_data.eof())
-    {
-        std::string byte;
-        program_data >> byte;
-        memory.write_to(offset++, u8(std::stoul(byte, nullptr, 16)));
-    }
+    float residual_time{ 0.f };
+    int framebuffer = -1;
 
-    memory.write_to(Cpu6502::RESET_ADDRESS_LOCATION, u8(0x00));
-    memory.write_to(Cpu6502::RESET_ADDRESS_LOCATION + 1, u8(0x80));
+    renderer::init([&](NVGcontext *nvg, int width, int height, float elapsed) {
+        if (running)
+        {
+            if (residual_time > 0.f)
+                residual_time -= elapsed;
+            else
+            {
+                residual_time += (1.f / 60.f) - elapsed;
+                do
+                {
+                    nes.clock();
+                } while (!nes.ppu_.frame_complete());
+                nes.ppu_.frame_complete() = false;
+            }
+        }
 
-    cpu.reset();
+        nvgDeleteImage(nvg, framebuffer);
 
-    renderer::init([&my_tool_active, &my_color, &cpu](NVGcontext *, int width, int height) {
+        nvgScale(nvg, 3.f, 3.f);
+        framebuffer = nvgCreateImageRGBA(nvg, 256, 240, 0, nes.ppu_.framebuffer().data());
+        auto framebuffer_pattern = nvgImagePattern(nvg, 0, 0, 256, 240, 0.f, framebuffer, 1.f);
+        nvgBeginPath(nvg);
+        nvgRect(nvg, 0, 0, 256, 240);
+        nvgFillPaint(nvg, framebuffer_pattern);
+        nvgFill(nvg);
+
         ImGui::PushFont(ImGui::Font::Mono);
         cpu.draw_ram_content(0, 16, 16);
         cpu.draw_ram_content(0x8000, 16, 16);
@@ -53,12 +63,34 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
         switch (keycode)
         {
         case SDLK_SPACE:
-            cpu.remaining_cycles = 0;
-            cpu.clock();
+            running = !running;
             break;
         case SDLK_r:
-            cpu.reset();
+            nes.reset();
             break;
+        case SDLK_c: {
+            do
+            {
+                nes.clock();
+            } while (!nes.cpu_.complete());
+            do
+            {
+                nes.clock();
+            } while (nes.cpu_.complete());
+        }
+        break;
+        case SDLK_f: {
+            do
+            {
+                nes.clock();
+            } while (!nes.ppu_.frame_complete());
+            do
+            {
+                nes.clock();
+            } while (!nes.cpu_.complete());
+            nes.ppu_.frame_complete() = false;
+        }
+        break;
         }
     });
     renderer::destroy();

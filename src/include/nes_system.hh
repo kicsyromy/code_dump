@@ -12,12 +12,17 @@ public:
 
 public:
     void reset() noexcept;
+    void clock() noexcept;
     void loadCartridge(std::string_view rom_file_path) noexcept;
 
 private:
     std::uint32_t clock_counter_{ 0 };
 
+#ifndef NDEBUG
+public:
+#else
 private:
+#endif
     Cpu6502 cpu_;
     Ram system_ram_;
     Cartridge cartridge_;

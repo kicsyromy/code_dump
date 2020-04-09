@@ -29,9 +29,9 @@ public:
     struct MapperInterface
     {
         std::pair<bool, std::uint16_t> (
-            *read_f)(std::uint16_t input_address, Cartridge &cart, const void *) noexcept;
+            *read_f)(std::uint16_t input_address, const Cartridge &cart, const void *) noexcept;
         std::pair<bool, std::uint16_t> (
-            *write_f)(std::uint16_t input_address, Cartridge &cart, void *) noexcept;
+            *write_f)(std::uint16_t input_address, const Cartridge &cart, void *) noexcept;
     };
 
 public:
@@ -39,10 +39,18 @@ public:
 
 public:
     bool load(std::string_view path) noexcept;
+    inline std::uint8_t program_banks() const noexcept { return program_banks_; }
+    inline std::uint8_t character_banks() const noexcept { return character_banks_; }
 
 private:
-    static std::pair<bool, std::uint8_t> read_data(std::uint16_t address, const void *) noexcept;
-    static bool write_data(std::uint16_t address, std::uint8_t value, void *) noexcept;
+    std::tuple<Cartridge::MapperInterface *, void *, std::vector<std::uint8_t> *>
+    get_mapper_interface(std::uint16_t address) noexcept;
+    std::tuple<const Cartridge::MapperInterface *, const void *, const std::vector<std::uint8_t> *>
+    get_mapper_interface(std::uint16_t address) const noexcept;
+
+private:
+    static std::pair<bool, std::uint8_t> read_request(std::uint16_t address, const void *) noexcept;
+    static bool write_request(std::uint16_t address, std::uint8_t value, void *) noexcept;
 
 private:
     std::vector<std::uint8_t> program_memory_{};
@@ -57,9 +65,9 @@ private:
 
 private:
     Cpu6502 &cpu_;
-    MapperInterface mapper_cpu_;
+    MapperInterface mapper_cpu_{ nullptr, nullptr };
     Ppu2C02 &ppu_;
-    MapperInterface mapper_ppu_;
+    MapperInterface mapper_ppu_{ nullptr, nullptr };
 
 private:
     friend class MapperBase;

@@ -118,9 +118,9 @@ void Cpu6502::draw_cpu_state(int width, int height) const noexcept
                 line += fmt::format("{} ", instruction.name);
 
                 const auto state = instruction.address_mode(*this);
-                for (std::uint16_t j = 1; j <= state.processed; ++j)
+                for (std::uint16_t j = state.processed; j >= 1; --j)
                 {
-                    if (j == 1)
+                    if (j == state.processed)
                     {
                         line += fmt::format(instruction.address_mode == &address_mode_immediate
                                                 ? "#${:02X}"
@@ -129,7 +129,7 @@ void Cpu6502::draw_cpu_state(int width, int height) const noexcept
                     }
                     else
                     {
-                        line += fmt::format("${:02X}", read(u16(pc + j)));
+                        line += fmt::format("{:02X}", read(u16(pc + j)));
                     }
                 }
                 line += fmt::format(" {{{}}}", instruction.address_mode_name);

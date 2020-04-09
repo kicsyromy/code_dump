@@ -67,6 +67,7 @@ public:
     void clock() noexcept;
     void irq() noexcept;
     void nmi() noexcept;
+    inline bool complete() noexcept { return remaining_cycles == 0; }
 
 private:
     std::uint8_t read(std::uint16_t address) const noexcept;
