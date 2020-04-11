@@ -74,8 +74,14 @@ public:
     }
 
 private:
-    std::uint8_t read(std::uint16_t address) const noexcept;
-    void write(std::uint16_t address, std::uint8_t data) noexcept;
+    inline uint8_t read(uint16_t address) const noexcept
+    {
+        return Device::bus_read(address, false);
+    }
+    void write(std::uint16_t address, std::uint8_t data) noexcept
+    {
+        Device::bus_write(address, data);
+    }
 
 private:
     const std::array<Instruction<Cpu6502>, 256> instuction_set_;
@@ -158,7 +164,4 @@ private:
     friend std::uint8_t SEC(Cpu6502 &, std::uint8_t, const State &) noexcept;
     friend std::uint8_t SED(Cpu6502 &, std::uint8_t, const State &) noexcept;
     friend std::uint8_t SEI(Cpu6502 &, std::uint8_t, const State &) noexcept;
-
-private:
-    friend class Cartridge;
 };

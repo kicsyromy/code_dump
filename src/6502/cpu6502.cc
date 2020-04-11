@@ -4,8 +4,6 @@
 #include "data_bus.hh"
 #include "instruction_set.hh"
 
-extern std::array<std::uint8_t, 64 * 1024> *gRAM;
-
 Cpu6502::Cpu6502() noexcept
   : Device{}
   , instuction_set_{ {
@@ -143,15 +141,4 @@ void Cpu6502::nmi() noexcept
 
         remaining_cycles = 8;
     }
-}
-
-uint8_t Cpu6502::read(uint16_t address) const noexcept
-{
-    if (data_bus_ != nullptr) { return bus_read_(address, false, data_bus_); }
-    return 0;
-}
-
-void Cpu6502::write(uint16_t address, uint8_t data) noexcept
-{
-    if (data_bus_ != nullptr) { bus_write_(address, data, data_bus_); }
 }

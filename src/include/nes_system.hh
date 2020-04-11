@@ -22,6 +22,7 @@ public:
 public:
     void draw_ram_content(uint16_t offset, int rows, int columns) const noexcept;
     void draw_cpu_state(int width, int height) const noexcept;
+    void draw_pattern_tables(std::uint8_t palette) const noexcept;
 
 private:
     std::uint32_t clock_counter_{ 0 };

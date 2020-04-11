@@ -1,11 +1,13 @@
 #pragma once
 
+#include <spdlog/spdlog.h>
+
 #include <cstdint>
 #include <utility>
 
 struct Device
 {
-public:
+private:
     using data_bus_t = void *;
     using const_data_bus_t = const void *;
     using bus_read_f = std::uint8_t (*)(std::uint16_t, bool, const_data_bus_t) noexcept;
@@ -25,6 +27,23 @@ public:
     bool write_to(std::uint16_t address, std::uint8_t data) noexcept;
 
 protected:
+    inline std::uint8_t bus_read(std::uint16_t address, bool read_only = true) const noexcept
+    {
+        if (data_bus_ != nullptr && bus_read_ != nullptr)
+            return bus_read_(address, read_only, data_bus_);
+
+        spdlog::error("Device is not connected to a bus, read failed at address {}", address);
+        return 0;
+    }
+    inline void bus_write(std::uint16_t address, std::uint8_t value) noexcept
+    {
+        if (data_bus_ != nullptr && bus_write_ != nullptr)
+            bus_write_(address, value, data_bus_);
+        else
+            spdlog::error("Device is not connected to a bus, write failed to address {}", address);
+    }
+
+private:
     data_bus_t data_bus_{ nullptr };
     bus_read_f bus_read_{ nullptr };
     bus_write_f bus_write_{ nullptr };

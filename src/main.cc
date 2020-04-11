@@ -22,6 +22,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     float residual_time{ 0.f };
     int framebuffer = -1;
 
+    std::uint8_t selected_palette = 0;
+
     renderer::init([&](NVGcontext *nvg, int width, int height, float elapsed) {
         if (running)
         {
@@ -48,9 +50,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
         nvgFill(nvg);
 
         ImGui::PushFont(ImGui::Font::Mono);
-        nes.draw_ram_content(0, 16, 16);
-        nes.draw_ram_content(0x8000, 16, 16);
+        //        nes.draw_ram_content(0, 16, 16);
+        //        nes.draw_ram_content(0x8000, 16, 16);
         nes.draw_cpu_state(width, height);
+        nes.draw_pattern_tables(selected_palette);
         ImGui::PopFont();
     });
 
@@ -83,8 +86,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             {
                 nes.clock();
             } while (!nes.cpu().cycle_complete());
+            break;
         }
-        break;
+        case SDLK_p:
+            const auto new_pal = selected_palette + 1;
+            selected_palette = std::uint8_t(new_pal & 0x07);
+            break;
         }
     });
     renderer::destroy();

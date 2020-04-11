@@ -1,6 +1,7 @@
 #pragma once
 
 #include "device.hh"
+#include "pattern_table.hh"
 
 #include <string_view>
 #include <vector>
@@ -39,8 +40,6 @@ public:
 
 public:
     bool load(std::string_view path) noexcept;
-    inline std::uint8_t program_banks() const noexcept { return program_banks_; }
-    inline std::uint8_t character_banks() const noexcept { return character_banks_; }
 
 private:
     std::tuple<Cartridge::MapperInterface *, void *, std::vector<std::uint8_t> *>
@@ -68,7 +67,9 @@ private:
     MapperInterface mapper_cpu_{ nullptr, nullptr };
     Ppu2C02 &ppu_;
     MapperInterface mapper_ppu_{ nullptr, nullptr };
+    PatternTable pattern_table_;
 
 private:
-    friend class MapperBase;
+    friend class PatternTable;
+    friend class Mapper000;
 };

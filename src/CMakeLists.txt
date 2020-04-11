@@ -1,5 +1,5 @@
 add_executable (
-    graphics_base
+    nes-emu
 
     #-----------------------------2c02 PPU------------------------------------#
                                2c02/include/name_table.hh
@@ -16,6 +16,7 @@ add_executable (
     #------------------------Cartridge and mappers----------------------------#
     cartridge/cartridge.cc     cartridge/include/cartridge.hh
     cartridge/mapper_000.cc    cartridge/include/mapper_000.hh
+    cartridge/pattern_table.cc cartridge/include/pattern_table.hh
 
     #------------------------------Main system--------------------------------#
     device.cc                  include/device.hh
@@ -29,7 +30,7 @@ add_executable (
 )
 
 target_include_directories (
-    graphics_base PRIVATE
+    nes-emu PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/2c02/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/6502/include"
@@ -37,13 +38,13 @@ target_include_directories (
 )
 
 target_compile_definitions (
-    graphics_base PRIVATE
+    nes-emu PRIVATE
     -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
     -DBINARY_DIR="${PROJECT_BINARY_DIR}"
 )
 
 target_link_libraries (
-    graphics_base PRIVATE
+    nes-emu PRIVATE
     project_options
     project_warnings
     spdlog::spdlog

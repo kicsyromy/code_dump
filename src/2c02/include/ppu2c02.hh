@@ -5,6 +5,7 @@
 #include "device.hh"
 #include "name_table.hh"
 #include "palette_table.hh"
+#include "pattern_table.hh"
 
 class Ppu2C02 : public Device
 {
@@ -49,13 +50,19 @@ public:
     inline bool frame_complete() const noexcept { return frame_complete_; }
     inline const auto &framebuffer() const noexcept { return framebuffer_; }
 
+public:
+    using pattern_array_t = std::array<std::uint8_t, 128 * 128 * BYTES_PER_PIXEL>;
+    pattern_array_t get_pattern_table(std::size_t index, uint8_t palette) const;
+
 private:
     static std::pair<bool, std::uint8_t> read_request(std::uint16_t address, const void *) noexcept;
     static bool write_request(std::uint16_t address, std::uint8_t value, void *) noexcept;
 
 private:
-    std::uint8_t read(std::uint16_t address) const noexcept;
-    void write(std::uint16_t address, std::uint8_t data) noexcept;
+    void set_color_from_palette_ram(std::uint8_t palette,
+        std::uint8_t pixel,
+        pattern_array_t &pattern_array,
+        std::size_t index) const noexcept;
 
 private:
     std::int16_t scanline_{ 0 };
@@ -63,16 +70,15 @@ private:
     bool frame_complete_{ false };
 
 private:
-    std::array<std::array<std::uint8_t, 4096>, 2> pattern_table_;
+    //    std::array<std::array<std::uint8_t, 4096>, 2> pattern_table_;
     static constexpr std::size_t FRAME_WIDTH{ 256 };
     static constexpr std::size_t FRAME_HEIGHT{ 240 };
-    std::array<std::uint8_t, FRAME_WIDTH * FRAME_HEIGHT * 4> framebuffer_;
+    std::array<std::uint8_t, FRAME_WIDTH * FRAME_HEIGHT * BYTES_PER_PIXEL> framebuffer_;
 
 private:
+    Cartridge &cartridge_;
     NameTable name_table_;
     PaletteTable palette_table_;
-    DataBus<Cartridge, NameTable, PaletteTable> data_bus_;
-
-private:
-    friend class Cartridge;
+    PatternTable pattern_table_;
+    DataBus<PatternTable, NameTable, PaletteTable> data_bus_;
 };

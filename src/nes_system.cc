@@ -79,7 +79,10 @@ void NesSystem::draw_cpu_state(int width, int height) const noexcept
         ImGui::TextUnformatted(fmt::format("SP: ${0:04X}", cpu_.stack_pointer.get()).c_str());
         ImGui::TextUnformatted("");
 
-        ImGui::BeginChild("Running Instructions");
+        ImGui::BeginChild("Running Instructions",
+            {},
+            false,
+            ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs);
         {
             for (int i = 0; i < 100; ++i)
             {
@@ -92,7 +95,7 @@ void NesSystem::draw_cpu_state(int width, int height) const noexcept
                 const auto original_pc = cpu_.program_counter.get();
                 const auto pc = std::uint16_t(cpu_.program_counter.get() + off);
 
-                const auto opcode = main_bus_.read(pc, false, &main_bus_);
+                const auto opcode = main_bus_.read(pc, false);
                 const auto instruction = cpu_.instruction_for_opcode(opcode);
 
                 auto line = fmt::format("0x{:04X}: ", pc);
@@ -111,12 +114,11 @@ void NesSystem::draw_cpu_state(int width, int height) const noexcept
                             std::strcmp(instruction.address_mode_name.data(), "IMM") == 0
                                 ? "#${:02X}"
                                 : "${:02X}",
-                            main_bus_.read(u16(pc + j), false, &main_bus_));
+                            main_bus_.read(u16(pc + j), false));
                     }
                     else
                     {
-                        line +=
-                            fmt::format("{:02X}", main_bus_.read(u16(pc + j), false, &main_bus_));
+                        line += fmt::format("{:02X}", main_bus_.read(u16(pc + j), false));
                     }
 
                     if (std::strcmp(instruction.address_mode_name.data(), "REL") == 0)
@@ -137,5 +139,28 @@ void NesSystem::draw_cpu_state(int width, int height) const noexcept
         }
         ImGui::EndChild();
     }
+    ImGui::End();
+}
+
+void NesSystem::draw_pattern_tables(std::uint8_t palette) const noexcept
+{
+    static auto pattern_left =
+        bgfx::createTexture2D(128, 128, false, 1, bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_NONE);
+    static auto pattern_right =
+        bgfx::createTexture2D(128, 128, false, 1, bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_NONE);
+
+    auto table_left = ppu_.get_pattern_table(0, palette);
+    auto table_right = ppu_.get_pattern_table(1, palette);
+
+    const auto pitch = 128 * BYTES_PER_PIXEL;
+    bgfx::updateTexture2D(
+        pattern_left, 0, 0, 0, 0, 128, 128, bgfx::copy(table_left.data(), 128 * pitch));
+    bgfx::updateTexture2D(
+        pattern_right, 0, 0, 0, 0, 128, 128, bgfx::copy(table_right.data(), 128 * pitch));
+
+    ImGui::Begin("Pattern Tables");
+    ImGui::Image(pattern_left, ImVec2{ 128, 128 });
+    ImGui::SameLine();
+    ImGui::Image(pattern_right, ImVec2{ 128, 128 });
     ImGui::End();
 }

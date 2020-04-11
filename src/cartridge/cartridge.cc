@@ -1,6 +1,7 @@
 #include "cartridge.hh"
 #include "cpu6502.hh"
 #include "mapper_000.hh"
+#include "pattern_table.hh"
 #include "platform_definitions.hh"
 #include "ppu2c02.hh"
 
@@ -12,17 +13,13 @@ Cartridge::Cartridge(Cpu6502 *cpu, Ppu2C02 *ppu) noexcept
   : Device{ &read_request, &write_request }
   , cpu_{ *cpu }
   , ppu_{ *ppu }
+  , pattern_table_{ *this }
 {}
 
 bool Cartridge::load(std::string_view path) noexcept
 {
-    /* clang-format off */
-    std::unique_ptr<FILE, decltype(&std::fclose)> rf{
-        std::fopen(path.data(), "rb"),
-        &std::fclose
-    };
+    std::unique_ptr<FILE, decltype(&std::fclose)> rf{ std::fopen(path.data(), "rb"), &std::fclose };
     auto rom_file = rf.get();
-    /* clang-format on */
 
     if (rom_file == nullptr)
     {
@@ -31,15 +28,15 @@ bool Cartridge::load(std::string_view path) noexcept
         return false;
     }
 
-    std::fread(header_.name, 4, 1, rom_file);
-    std::fread(&header_.program_rom_size, 1, 1, rom_file);
-    std::fread(&header_.character_rom_size, 1, 1, rom_file);
-    std::fread(&header_.mapper1, 1, 1, rom_file);
-    std::fread(&header_.mapper2, 1, 1, rom_file);
-    std::fread(&header_.program_ram_size, 1, 1, rom_file);
-    std::fread(&header_.tv_system1, 1, 1, rom_file);
-    std::fread(&header_.tv_system2, 1, 1, rom_file);
-    std::fread(header_.unused, 5, 1, rom_file);
+    auto res = std::fread(header_.name, 4, 1, rom_file);
+    res = std::fread(&header_.program_rom_size, 1, 1, rom_file);
+    res = std::fread(&header_.character_rom_size, 1, 1, rom_file);
+    res = std::fread(&header_.mapper1, 1, 1, rom_file);
+    res = std::fread(&header_.mapper2, 1, 1, rom_file);
+    res = std::fread(&header_.program_ram_size, 1, 1, rom_file);
+    res = std::fread(&header_.tv_system1, 1, 1, rom_file);
+    res = std::fread(&header_.tv_system2, 1, 1, rom_file);
+    res = std::fread(header_.unused, 5, 1, rom_file);
 
     // 512-byte trainer at $7000-$71FF
     if (header_.mapper1 & 0x04) std::fseek(rom_file, 512, SEEK_CUR);
@@ -52,11 +49,11 @@ bool Cartridge::load(std::string_view path) noexcept
     {
         program_banks_ = header_.program_rom_size;
         program_memory_.resize(program_banks_ * 16ul * 1024ul);
-        std::fread(program_memory_.data(), program_memory_.size(), 1, rom_file);
+        res = std::fread(program_memory_.data(), program_memory_.size(), 1, rom_file);
 
         character_banks_ = header_.character_rom_size;
         character_memory_.resize(character_banks_ * 8ul * 1024ul);
-        std::fread(character_memory_.data(), character_memory_.size(), 1, rom_file);
+        res = std::fread(character_memory_.data(), character_memory_.size(), 1, rom_file);
 
         mapper_cpu_.read_f = &Mapper000::cpu_read;
         mapper_cpu_.write_f = &Mapper000::cpu_write;
@@ -66,6 +63,8 @@ bool Cartridge::load(std::string_view path) noexcept
     if (file_format == 2) {}
 
     return true;
+
+    static_cast<void>(res);
 }
 
 #define get_mapper(address)                                 \
