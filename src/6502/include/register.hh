@@ -21,12 +21,12 @@ template<typename ValueType> struct Register
 
     constexpr ValueType &get() noexcept
     {
-        return *static_cast<ValueType *>(static_cast<void *>(data_.data()));
+        return *static_cast<ValueType *>(static_cast<void *>(data_));
     }
 
     constexpr const ValueType &get() const noexcept
     {
-        return *static_cast<const ValueType *>(static_cast<const void *>(data_.data()));
+        return *static_cast<const ValueType *>(static_cast<const void *>(data_));
     }
 
     constexpr void set(ValueType value) noexcept { get() = value; }
@@ -66,22 +66,11 @@ template<typename ValueType> struct Register
         set_flag(1 << bit_index, value);
     }
 
-    constexpr std::uint8_t &high_byte() noexcept
-    {
-        if constexpr (sizeof(ValueType) == 2) { return data_[1]; }
-        else
-        {
-            return data_[0];
-        }
-    }
+    constexpr std::uint8_t &high_byte() noexcept { return data_[sizeof(ValueType) - 1]; }
 
     constexpr const std::uint8_t &high_byte() const noexcept
     {
-        if constexpr (sizeof(ValueType) == 2) { return data_[1]; }
-        else
-        {
-            return data_[0];
-        }
+        return data_[sizeof(ValueType) - 1];
     }
 
     constexpr std::uint8_t &low_byte() noexcept { return data_[0]; }
@@ -111,7 +100,7 @@ private:
     }
 
 private:
-    std::array<std::uint8_t, sizeof(ValueType)> data_{};
+    alignas(alignof(ValueType)) std::uint8_t data_[sizeof(ValueType)];
 };
 
 using Register8Bit = Register<std::uint8_t>;

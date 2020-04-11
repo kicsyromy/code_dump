@@ -49,9 +49,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
         nvgFillPaint(nvg, framebuffer_pattern);
         nvgFill(nvg);
 
+        static_cast<void>(width);
+        static_cast<void>(height);
+
         ImGui::PushFont(ImGui::Font::Mono);
-        //        nes.draw_ram_content(0, 16, 16);
-        //        nes.draw_ram_content(0x8000, 16, 16);
+        // nes.draw_ram_content(0, 16, 16);
+        // nes.draw_ram_content(0x8000, 16, 16);
         nes.draw_cpu_state(width, height);
         nes.draw_pattern_tables(selected_palette);
         ImGui::PopFont();

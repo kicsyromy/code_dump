@@ -24,6 +24,13 @@ public:
 public:
     PatternTable(Cartridge &cartridge) noexcept;
 
+public:
+    static constexpr std::size_t get_pixel_offset(std::size_t x, std::size_t y) noexcept
+    {
+        constexpr auto pattern_table_width = PatternTable::SIZE * Tile::WIDTH;
+        return (y * pattern_table_width + x) * BYTES_PER_PIXEL;
+    }
+
 private:
     static std::pair<bool, std::uint8_t> read_request(std::uint16_t address, const void *) noexcept;
     static bool write_request(std::uint16_t address, std::uint8_t value, void *) noexcept;

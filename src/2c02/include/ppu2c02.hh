@@ -6,6 +6,7 @@
 #include "name_table.hh"
 #include "palette_table.hh"
 #include "pattern_table.hh"
+#include "register.hh"
 
 class Ppu2C02 : public Device
 {
@@ -46,6 +47,77 @@ public:
     Ppu2C02(Cartridge &cartridge) noexcept;
 
 public:
+    mutable struct StatusRegister
+    {
+        enum Flags : std::uint8_t
+        {
+            /* clang-format off */
+            SpriteOverflow = (1 << 5),
+            SpriteZeroHit  = (1 << 6),
+            VerticalBlank  = (1 << 7)
+            /* clang-format on */
+        };
+
+        Register8Bit value;
+    } status;
+
+    mutable struct MaskRegister
+    {
+        enum Flags : std::uint8_t
+        {
+            /* clang-format off */
+            Grayscale            = (1 << 0),
+            RenderBackgroundLeft = (1 << 1),
+            RenderSpritesLeft    = (1 << 2),
+            RenderBackground     = (1 << 3),
+            RenderSprites        = (1 << 4),
+            EnhanceRed           = (1 << 5),
+            EnhanceGreen         = (1 << 6),
+            EnhanceBlue          = (1 << 7),
+            /* clang-format on */
+        };
+
+        Register8Bit value;
+    } mask;
+
+    mutable struct ControlRegister
+    {
+        enum Flags : std::uint8_t
+        {
+            /* clang-format off */
+            NametableX        = (1 << 0),
+			NametableY        = (1 << 1),
+			IncrementMode     = (1 << 2),
+			PatternSprite     = (1 << 3),
+			PatternBackground = (1 << 4),
+			SpriteSize        = (1 << 5),
+			SlaveMode         = (1 << 6),
+            EnableNMI         = (1 << 7)
+            /* clang-format on */
+        };
+
+        Register8Bit value;
+    } control;
+
+    union RegisterLoopy
+    {
+        struct Floopy
+        {
+            std::uint16_t coarse_x : 5;
+            std::uint16_t coarse_y : 5;
+            std::uint16_t nametable_x : 1;
+            std::uint16_t nametable_y : 1;
+            std::uint16_t fine_y : 3;
+            std::uint16_t unused : 1;
+        };
+
+        std::uint16_t value = 0x0000;
+    };
+
+    RegisterLoopy vram_addr;
+    RegisterLoopy tram_addr;
+
+public:
     void clock() noexcept;
     inline bool frame_complete() const noexcept { return frame_complete_; }
     inline const auto &framebuffer() const noexcept { return framebuffer_; }
@@ -68,6 +140,10 @@ private:
     std::int16_t scanline_{ 0 };
     std::int16_t cycle_{ 0 };
     bool frame_complete_{ false };
+
+    mutable std::uint8_t address_latch{ 0 };
+    mutable std::uint8_t ppu_data_buffer{ 0 };
+    std::uint16_t ppu_address{ 0 };
 
 private:
     //    std::array<std::array<std::uint8_t, 4096>, 2> pattern_table_;

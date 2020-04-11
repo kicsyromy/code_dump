@@ -152,7 +152,7 @@ Ppu2C02::pattern_array_t Ppu2C02::get_pattern_table(std::size_t index, std::uint
                     set_color_from_palette_ram(pal,
                         pixel,
                         result,
-                        final_pixel_y * 128 * BYTES_PER_PIXEL + final_pixel_x * BYTES_PER_PIXEL);
+                        PatternTable::get_pixel_offset(final_pixel_x, final_pixel_y));
                 }
             }
         }
@@ -163,11 +163,11 @@ Ppu2C02::pattern_array_t Ppu2C02::get_pattern_table(std::size_t index, std::uint
 
 std::pair<bool, uint8_t> Ppu2C02::read_request(std::uint16_t address, const void *instance) noexcept
 {
-    uint8_t data = 0x00;
-
     auto self = static_cast<const Ppu2C02 *>(instance);
     static_cast<void>(address);
     static_cast<void>(self);
+
+    address = std::uint16_t(address & 0x0007);
 
     switch (address)
     {
@@ -176,7 +176,14 @@ std::pair<bool, uint8_t> Ppu2C02::read_request(std::uint16_t address, const void
     case 0x0001: // Mask
         break;
     case 0x0002: // Status
-        break;
+    {
+        self->status.value.set_flag(StatusRegister::VerticalBlank, true);
+        const auto data =
+            std::uint8_t((self->status.value.get() & 0xE0) | (self->ppu_data_buffer & 0x1F));
+        self->status.value.set_flag(StatusRegister::VerticalBlank, false);
+        self->address_latch = 0;
+        return { true, data };
+    }
     case 0x0003: // OAM Address
         break;
     case 0x0004: // OAM Data
@@ -186,10 +193,16 @@ std::pair<bool, uint8_t> Ppu2C02::read_request(std::uint16_t address, const void
     case 0x0006: // PPU Address
         break;
     case 0x0007: // PPU Data
-        break;
+        const auto buffered_value = self->ppu_data_buffer;
+        self->ppu_data_buffer = self->bus_read(self->ppu_address);
+
+        if (self->ppu_address > PALETTE_TABLE_PPU_BUS_ADDRESS.lower_bound)
+            return { true, self->ppu_data_buffer };
+
+        return { true, buffered_value };
     }
 
-    return { false, data };
+    return { false, 0 };
 }
 
 bool Ppu2C02::write_request(std::uint16_t address, std::uint8_t value, void *instance) noexcept
@@ -199,13 +212,15 @@ bool Ppu2C02::write_request(std::uint16_t address, std::uint8_t value, void *ins
     static_cast<void>(value);
     static_cast<void>(self);
 
-    return false;
+    address = std::uint16_t(address & 0x0007);
     switch (address)
     {
     case 0x0000: // Control
-        break;
+        self->control.value.set(value);
+        return true;
     case 0x0001: // Mask
-        break;
+        self->mask.value.set(value);
+        return true;
     case 0x0002: // Status
         break;
     case 0x0003: // OAM Address
@@ -215,9 +230,20 @@ bool Ppu2C02::write_request(std::uint16_t address, std::uint8_t value, void *ins
     case 0x0005: // Scroll
         break;
     case 0x0006: // PPU Address
-        break;
+        if (self->address_latch == 0)
+        {
+            self->ppu_address = std::uint16_t((self->ppu_address & 0x00FF) | (value << 8));
+            self->address_latch = 1;
+        }
+        else
+        {
+            self->ppu_address = std::uint16_t((self->ppu_address & 0xFF00) | value);
+            self->address_latch = 0;
+        }
+        return true;
     case 0x0007: // PPU Data
-        break;
+        self->data_bus_.write(self->ppu_address, value);
+        return true;
     }
 
     return false;
