@@ -19,7 +19,9 @@ private:
     using device_write_f = bool (*)(std::uint16_t, std::uint8_t, device_t) noexcept;
 
 public:
-    Device(device_read_f && = nullptr, device_write_f && = nullptr) noexcept;
+    Device(device_read_f && = nullptr,
+        device_write_f && = nullptr,
+        std::string_view name = "") noexcept;
 
 public:
     void connect(data_bus_t bus, bus_read_f &&, bus_write_f &&) noexcept;
@@ -50,4 +52,5 @@ private:
 
     device_read_f device_read_{ nullptr };
     device_write_f device_write_{ nullptr };
+    std::string_view name_{};
 };

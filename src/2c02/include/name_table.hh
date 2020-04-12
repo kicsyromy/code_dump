@@ -14,5 +14,5 @@ private:
     static bool write_request(std::uint16_t address, std::uint8_t value, void *) noexcept;
 
 private:
-    std::array<std::array<std::uint8_t, 1024>, 2> memory_;
+    std::array<std::uint8_t, 8192> memory_;
 };

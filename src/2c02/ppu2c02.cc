@@ -3,29 +3,27 @@
 #include "ppu2c02.hh"
 
 NameTable::NameTable() noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "NameTable" }
 {}
 
 std::pair<bool, std::uint8_t> NameTable::read_request(std::uint16_t address,
     const void *instance) noexcept
 {
     auto self = static_cast<const NameTable *>(instance);
-    return {
-        true,
-        self->memory_[0][static_cast<std::size_t>(address - NAME_TABLE_PPU_BUS_ADDRESS.lower_bound)]
-    };
+    return { true,
+        self->memory_[static_cast<std::size_t>(address - NAME_TABLE_PPU_BUS_ADDRESS.lower_bound)] };
 }
 
 bool NameTable::write_request(std::uint16_t address, std::uint8_t value, void *instance) noexcept
 {
     auto self = static_cast<NameTable *>(instance);
-    self->memory_[0][static_cast<std::size_t>(address - NAME_TABLE_PPU_BUS_ADDRESS.lower_bound)] =
+    self->memory_[static_cast<std::size_t>(address - NAME_TABLE_PPU_BUS_ADDRESS.lower_bound)] =
         value;
     return true;
 }
 
 PaletteTable::PaletteTable() noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "PaletteTable" }
 {}
 
 std::pair<bool, std::uint8_t> PaletteTable::read_request(std::uint16_t address,
@@ -57,7 +55,7 @@ bool PaletteTable::write_request(std::uint16_t address, std::uint8_t value, void
 }
 
 Ppu2C02::Ppu2C02(Cartridge &cartridge) noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "PPU" }
   , cartridge_{ cartridge }
   , pattern_table_{ cartridge }
   , data_bus_{ { pattern_table_,
@@ -194,9 +192,11 @@ std::pair<bool, uint8_t> Ppu2C02::read_request(std::uint16_t address, const void
         break;
     case 0x0007: // PPU Data
         const auto buffered_value = self->ppu_data_buffer;
-        self->ppu_data_buffer = self->bus_read(self->ppu_address);
+        self->ppu_data_buffer = self->data_bus_.read(self->ppu_address);
 
-        if (self->ppu_address > PALETTE_TABLE_PPU_BUS_ADDRESS.lower_bound)
+        self->ppu_address = std::uint16_t(self->ppu_address + 1);
+
+        if ((self->ppu_address - 1) > PALETTE_TABLE_PPU_BUS_ADDRESS.lower_bound)
             return { true, self->ppu_data_buffer };
 
         return { true, buffered_value };
@@ -243,6 +243,7 @@ bool Ppu2C02::write_request(std::uint16_t address, std::uint8_t value, void *ins
         return true;
     case 0x0007: // PPU Data
         self->data_bus_.write(self->ppu_address, value);
+        self->ppu_address = std::uint16_t(self->ppu_address + 1);
         return true;
     }
 

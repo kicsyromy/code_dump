@@ -21,6 +21,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
     float residual_time{ 0.f };
     int framebuffer = -1;
+    NVGpaint nvg_pattern{};
 
     std::uint8_t selected_palette = 0;
 
@@ -39,14 +40,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             }
         }
 
-        nvgDeleteImage(nvg, framebuffer);
+        if (framebuffer == -1)
+        {
+            framebuffer = nvgCreateImageRGBA(nvg, 256, 240, 0, nes.ppu().framebuffer().data());
+            nvg_pattern = nvgImagePattern(nvg, 0, 0, 256, 240, 0.f, framebuffer, 1.f);
+        }
+
+        nvgUpdateImage(nvg, framebuffer, nes.ppu().framebuffer().data());
 
         nvgScale(nvg, 3.f, 3.f);
-        framebuffer = nvgCreateImageRGBA(nvg, 256, 240, 0, nes.ppu().framebuffer().data());
-        auto framebuffer_pattern = nvgImagePattern(nvg, 0, 0, 256, 240, 0.f, framebuffer, 1.f);
         nvgBeginPath(nvg);
         nvgRect(nvg, 0, 0, 256, 240);
-        nvgFillPaint(nvg, framebuffer_pattern);
+        nvgFillPaint(nvg, nvg_pattern);
         nvgFill(nvg);
 
         static_cast<void>(width);
@@ -80,7 +85,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
             } while (nes.cpu().cycle_complete());
         }
         break;
-        case SDLK_f: {
+        case SDLK_f:
+        {
             do
             {
                 nes.clock();

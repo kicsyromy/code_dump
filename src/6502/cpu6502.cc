@@ -5,7 +5,7 @@
 #include "instruction_set.hh"
 
 Cpu6502::Cpu6502() noexcept
-  : Device{}
+  : Device{ nullptr, nullptr, "CPU" }
   , instuction_set_{ {
 /* clang-format off */
         #define instr(ins, addr_mode, cycle_cnt) { #ins, &ins, #addr_mode, &addr_mode, cycle_cnt }
@@ -74,6 +74,23 @@ void Cpu6502::clock() noexcept
         ++(program_counter.get());
 
         const auto &instruction = instuction_set_[opcode];
+
+        spdlog::error(
+            "Running {} in {} address mode", instruction.name, instruction.address_mode_name);
+
+        spdlog::error("Registers: a = {}, x = {}, y = {}, PC = {}, SP = {}",
+            accumulator.get(),
+            x.get(),
+            y.get(),
+            program_counter.get(),
+            stack_pointer.get());
+
+        /* clang-format off */
+        if (x.get() == 121 && y.get() == 4)
+        {
+            spdlog::warn("bla");
+        }
+        /* clang-format on */
 
         const auto state = instruction.address_mode(*this);
         const auto visitor = [this, opcode, &state](const auto &f) {

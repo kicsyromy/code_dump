@@ -2,7 +2,7 @@
 #include "pattern_table.hh"
 
 PatternTable::PatternTable(Cartridge &cartridge) noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "PatternTable" }
   , cartridge_{ cartridge }
 {}
 

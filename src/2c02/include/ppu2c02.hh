@@ -143,7 +143,7 @@ private:
 
     mutable std::uint8_t address_latch{ 0 };
     mutable std::uint8_t ppu_data_buffer{ 0 };
-    std::uint16_t ppu_address{ 0 };
+    mutable std::uint16_t ppu_address{ 0 };
 
 private:
     //    std::array<std::array<std::uint8_t, 4096>, 2> pattern_table_;

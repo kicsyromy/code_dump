@@ -37,5 +37,4 @@ private:
 
 private:
     Cartridge &cartridge_;
-    std::array<std::array<std::uint8_t, SIZE * SIZE * Tile::SIZE_BYTES>, 2> memory_;
 };

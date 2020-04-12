@@ -10,7 +10,7 @@
 #include <memory>
 
 Cartridge::Cartridge(Cpu6502 *cpu, Ppu2C02 *ppu) noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "Cartridge" }
   , cpu_{ *cpu }
   , ppu_{ *ppu }
   , pattern_table_{ *this }

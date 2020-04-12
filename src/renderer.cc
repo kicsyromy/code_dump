@@ -112,7 +112,7 @@ namespace renderer
                     else
                         switch (event.type)
                         {
-                        case SDL_KEYUP:
+                        case SDL_KEYDOWN:
                             kcb(event.key.keysym.sym);
                             break;
                         }

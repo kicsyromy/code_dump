@@ -1,7 +1,7 @@
 #include "ram.hh"
 
 Ram::Ram() noexcept
-  : Device{ &read_request, &write_request }
+  : Device{ &read_request, &write_request, "RAM" }
 {}
 
 std::pair<bool, uint8_t> Ram::read_request(std::uint16_t address, const void *instance) noexcept

@@ -32,5 +32,5 @@ private:
     Ram system_ram_;
     Cartridge cartridge_;
     Ppu2C02 ppu_;
-    DataBus<Cartridge, Cpu6502, Ram, Ppu2C02> main_bus_;
+    DataBus<Cartridge, Ram, Ppu2C02, Cpu6502> main_bus_;
 };
