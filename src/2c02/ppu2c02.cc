@@ -202,7 +202,7 @@ std::pair<bool, uint8_t> Ppu2C02::read_request(std::uint16_t address, const void
         return { true, buffered_value };
     }
 
-    return { false, 0 };
+    return { false, std::uint8_t(0) };
 }
 
 bool Ppu2C02::write_request(std::uint16_t address, std::uint8_t value, void *instance) noexcept

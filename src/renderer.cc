@@ -1,8 +1,8 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <dear-imgui.hh>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
 #include <nanovg/nanovg.h>
 
 #include <spdlog/spdlog.h>
@@ -55,11 +55,13 @@ namespace renderer
         }
 
         bgfx::PlatformData pd;
-        // and give the pointer to the window to pd
+#ifdef _WIN32
+        pd.ndt = wmi.info.win.hdc;
+        pd.nwh = reinterpret_cast<void *>(wmi.info.win.window);
+#else
         pd.ndt = wmi.info.x11.display;
         pd.nwh = reinterpret_cast<void *>(wmi.info.x11.window);
-
-        // Tell bgfx about the platform and window
+#endif
         bgfx::setPlatformData(pd);
 
         bgfx::renderFrame(0);
@@ -71,17 +73,8 @@ namespace renderer
         //        init.resolution.reset = BGFX_RESET_VSYNC;
         bgfx::init(init);
 
-        // Enable debug text.
-        //        bgfx::setDebug(BGFX_DEBUG_TEXT);
-
-        // Set view rectangle for 0th view
         bgfx::setViewRect(0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        //        // Set view 0 clear state.
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
-
-        // This dummy draw call is here to make sure that view 0 is cleared
-        // if no other draw calls are submitted to view 0.
         bgfx::touch(0);
 
         render_callback = std::move(render_cb);

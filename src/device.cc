@@ -20,7 +20,7 @@ std::pair<bool, std::uint8_t> Device::read_from(std::uint16_t address) const noe
     if (device_read_ != nullptr) { return device_read_(address, this); }
     spdlog::error(
         "Reading from device {} with missing read function, address: 0x{:04}", name_, address);
-    return { false, 0 };
+    return { false, std::uint8_t(0) };
 }
 
 bool Device::write_to(std::uint16_t address, std::uint8_t data) noexcept

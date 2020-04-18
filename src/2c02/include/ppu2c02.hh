@@ -8,6 +8,8 @@
 #include "pattern_table.hh"
 #include "register.hh"
 
+#undef RGB
+
 class Ppu2C02 : public Device
 {
 public:

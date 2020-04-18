@@ -97,10 +97,11 @@ std::pair<bool, std::uint8_t> Cartridge::read_request(std::uint16_t address,
 
     auto [mapper_interface, device, memory] = self->get_mapper_interface(address);
 
-    if (mapper_interface == nullptr || mapper_interface->read_f == nullptr) { return { false, 0 }; }
+    if (mapper_interface == nullptr || mapper_interface->read_f == nullptr)
+        return { false, std::uint8_t(0) }; 
 
     const auto mapped_address = mapper_interface->read_f(address, *self, device);
-    if (mapped_address.first == false) { return { false, 0 }; }
+    if (mapped_address.first == false) { return { false, std::uint8_t(0) }; }
 
     return { true, (*memory)[mapped_address.second] };
 }

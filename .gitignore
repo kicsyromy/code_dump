@@ -45,6 +45,7 @@ build-*
 # Visual Studio
 .vs/
 CMakeSettings.json
+out/
 
 # macOS Finder files
 .DS_Store

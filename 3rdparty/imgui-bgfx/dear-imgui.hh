@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <imgui/imgui.h>
 
 namespace imgui_bgfx_sdl

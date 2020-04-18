@@ -9,6 +9,7 @@ add_library (
 target_include_directories (
     imgui-bgfx SYSTEM PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../bgfx/bgfx/examples/common/imgui"
 )
 
 target_compile_definitions (
@@ -21,4 +22,5 @@ target_link_libraries (
     imgui-bgfx PUBLIC
     dear-imgui
     bgfx
+    SDL2-static
 )

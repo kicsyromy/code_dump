@@ -8,7 +8,7 @@ std::pair<bool, std::uint16_t> Mapper000::cpu_read(std::uint16_t input_address,
     {
         return { true, { uint16_t(input_address & (cart.program_banks_ > 1 ? 0x7FFF : 0x3FFF)) } };
     }
-    return { false, 0 };
+    return { false, std::uint16_t(0) };
 }
 
 std::pair<bool, std::uint16_t> Mapper000::cpu_write(std::uint16_t output_address,
@@ -19,9 +19,7 @@ std::pair<bool, std::uint16_t> Mapper000::cpu_write(std::uint16_t output_address
     {
         return { true, { uint16_t(output_address & (cart.program_banks_ > 1 ? 0x7FFF : 0x3FFF)) } };
     }
-    return { false, 0 };
-
-    return {};
+    return { false, std::uint16_t(0) };
 }
 
 std::pair<bool, std::uint16_t> Mapper000::ppu_read(std::uint16_t input_address,
@@ -29,7 +27,7 @@ std::pair<bool, std::uint16_t> Mapper000::ppu_read(std::uint16_t input_address,
     const void *) noexcept
 {
     if (input_address <= 0x1FFF) { return { true, { input_address } }; }
-    return { false, 0 };
+    return { false, std::uint16_t(0) };
 }
 
 std::pair<bool, std::uint16_t> Mapper000::ppu_write(std::uint16_t output_address,
@@ -40,6 +38,5 @@ std::pair<bool, std::uint16_t> Mapper000::ppu_write(std::uint16_t output_address
     {
         if (cart.character_banks_ == 0) { return { true, { output_address } }; }
     }
-    return { false, 0 };
-    return { false, 0 };
+    return { false, std::uint16_t(0) };
 }

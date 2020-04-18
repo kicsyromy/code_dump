@@ -40,7 +40,7 @@ public:
     DataBus(ConnectedDevice<std::decay_t<Devices>>... devices) noexcept
       : connected_devices_{ devices... }
     {
-        std::apply([this](auto &... d) { (d.device.connect(this, &read, &write), ...); },
+       std::apply([this](auto &... d) { (d.device.connect(this, &DataBus::read, &DataBus::write), ...); },
             connected_devices_);
     }
 

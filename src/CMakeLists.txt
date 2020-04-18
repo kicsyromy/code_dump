@@ -39,6 +39,8 @@ target_include_directories (
 
 target_compile_definitions (
     nes-emu PRIVATE
+    -D_CRT_SECURE_NO_WARNINGS
+    -DSDL_MAIN_HANDLED
     -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
     -DBINARY_DIR="${PROJECT_BINARY_DIR}"
 )
