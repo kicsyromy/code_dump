@@ -1,8 +1,13 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <dear-imgui.hh>
+
 #include <SDL.h>
+
+/* Why is this needed ??? */
+#define SDL_VIDEO_DRIVER_X11
 #include <SDL_syswm.h>
+
 #include <nanovg/nanovg.h>
 
 #include <spdlog/spdlog.h>

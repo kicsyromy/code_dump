@@ -95,9 +95,13 @@ private:
         for (std::size_t i = 0; i < sizeof(ValueType); ++i)
         {
             data_[i] = static_cast<std::uint8_t>(value & 0xFF);
+#ifdef _MSC_VER
 #pragma warning(disable : 4333)
+#endif
             value = static_cast<ValueType>(value >> 8);
+#ifdef _MSC_VER
 #pragma warning(default : 4333)
+#endif
         }
     }
 

@@ -584,7 +584,7 @@ inline std::uint8_t opcode_rotate_left(Cpu6502 &cpu,
     const State &state) noexcept
 {
     const auto fetched = u16(fetch_argument_data(cpu, opcode, state));
-    const auto temp = u16((fetched << 1) | int(cpu.status.is_flag_set(Carry) & 0x1));
+    const auto temp = u16((fetched << 1) | (int(cpu.status.is_flag_set(Carry)) & 0x1));
 
     cpu.status.set_flag(Carry, temp & 0xFF00);
     cpu.status.set_flag(Zero, (temp & 0x00FF) == 0);
