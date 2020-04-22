@@ -15,10 +15,14 @@
 
 VOOT_BEGIN_NAMESPACE
 
-class Logger
+#ifdef _MSC_VER
+#pragma warning(disable : 4251)
+#endif
+
+class VOOT_API Logger
 {
 public:
-    static Logger &instance();
+    static std::shared_ptr<Logger> instance();
 
 public:
     Logger();
@@ -35,12 +39,14 @@ private:
     std::shared_ptr<spdlog::logger> logger_{ nullptr };
 
 private:
+    Logger(void *) noexcept {};
     VOOT_DISABLE_COPY(Logger);
     VOOT_DISABLE_MOVE(Logger);
-
-private:
-    // friend initializer
 };
+
+#ifdef _MSC_VER
+#pragma warning(default : 4251)
+#endif
 
 VOOT_END_NAMESPACE
 

@@ -12,10 +12,10 @@
 #pragma warning Unknown dynamic link import / export semantics.
 #endif
 
-#ifdef BUILD_LIBRARY
-#define VOOT_API EXPORT_SYMBOL
+#ifdef voot_LIB
+#define VOOT_API VOOT_EXPORT_SYMBOL
 #else
-#define VOOT_API IMPORT_SYMBOL
+#define VOOT_API VOOT_IMPORT_SYMBOL
 #endif
 
 #define VOOT_BEGIN_NAMESPACE \
