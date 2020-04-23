@@ -3,12 +3,10 @@ string (TOLOWER ${BINARY_NAME} BINARY_NAME)
 
 add_library (
     ${BINARY_NAME} SHARED
-#    application.cc          include/application.hh
-#                            include/signal.hh
-#    window.cc               include/window.hh
+    voot_application.cc     include/core/voot_application.hh
+    voot_logger.cc          include/core/voot_logger.hh
+                            include/core/voot_logger.inl
                             include/events/voot_event.hh
-    voot_logger.cc          include/voot_logger.hh
-                            include/voot_logger.inl
     voot.cc                 include/voot.hh
                             include/voot_global.hh
 )

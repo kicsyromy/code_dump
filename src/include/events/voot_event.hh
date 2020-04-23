@@ -5,20 +5,20 @@
 #include <string_view>
 #include <type_traits>
 
-#define DECLARE_EVENT(name, categories)     \
-public:                                     \
-    static EventType event_type()           \
-    {                                       \
-        return EventType::name;             \
-    }                                       \
-    static std::uint32_t event_categories() \
-    {                                       \
-        return categories;                  \
-    }                                       \
-    static const char *event_name()         \
-    {                                       \
-        return #name "Event";               \
-    }                                       \
+#define DECLARE_EVENT(name, categories)              \
+public:                                              \
+    static EventType event_type() noexcept           \
+    {                                                \
+        return EventType::name;                      \
+    }                                                \
+    static std::uint32_t event_categories() noexcept \
+    {                                                \
+        return categories;                           \
+    }                                                \
+    static const char *event_name() noexcept         \
+    {                                                \
+        return #name;                                \
+    }                                                \
     static_assert(true)
 
 VOOT_BEGIN_NAMESPACE
@@ -37,7 +37,7 @@ enum class EventType
     MouseButtonReleased,
     MouseMoved,
     MouseScrolled,
-    Test = 512
+    User
 };
 
 enum EventCategory
@@ -53,7 +53,7 @@ enum EventCategory
     EventCategoryUser = 1 << 7
 };
 
-class EventBase
+class Event
 {
 public:
     using fn_static_event_type_t = EventType (*)();
@@ -61,7 +61,7 @@ public:
     using fn_static_event_name_t = const char *(*)();
 
 public:
-    EventBase(fn_static_event_type_t fn_static_event_type,
+    Event(fn_static_event_type_t fn_static_event_type,
         fn_static_event_categories_t fn_static_event_categories,
         fn_static_event_name_t fn_static_event_name = nullptr) noexcept
       : static_event_type_{ fn_static_event_type }
@@ -92,17 +92,12 @@ private:
     fn_static_event_name_t static_event_name_;
 };
 
-template<typename ChildEvent> class Event : public EventBase
+template<typename ChildEvent> class EventBase : public Event
 {
 public:
-    Event()
-      : EventBase{ &ChildEvent::event_type, &ChildEvent::event_categories, &ChildEvent::event_name }
+    EventBase()
+      : Event{ &ChildEvent::event_type, &ChildEvent::event_categories, &ChildEvent::event_name }
     {}
-};
-
-class TestEvent : public Event<TestEvent>
-{
-    DECLARE_EVENT(Test, EventCategoryWindow | EventCategoryMouse);
 };
 
 VOOT_END_NAMESPACE

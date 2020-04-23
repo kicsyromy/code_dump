@@ -1,5 +1,6 @@
 #pragma once
 
+#ifndef VOOT_TESTING
 #if defined(_MSC_VER)
 #define VOOT_EXPORT_SYMBOL __declspec(dllexport)
 #define VOOT_IMPORT_SYMBOL __declspec(dllimport)
@@ -10,6 +11,10 @@
 #define VOOT_EXPORT_SYMBOL
 #define VOOT_IMPORT_SYMBOL
 #pragma warning Unknown dynamic link import / export semantics.
+#endif
+#else
+#define VOOT_EXPORT_SYMBOL
+#define VOOT_IMPORT_SYMBOL
 #endif
 
 #ifdef voot_LIB

@@ -1,4 +1,4 @@
-#include "voot_logger.hh"
+#include "core/voot_logger.hh"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -6,32 +6,33 @@
 
 namespace
 {
-    std::weak_ptr<voot::Logger> g_logger_instance;
+    voot::Logger *g_logger_instance;
 }
 
 VOOT_BEGIN_NAMESPACE
 
-std::shared_ptr<Logger> Logger::instance()
+Logger *Logger::instance()
 {
-    auto logger_instance = g_logger_instance.lock();
-    assert(logger_instance != nullptr);
-    return logger_instance;
+    return g_logger_instance;
 }
 
 Logger::Logger()
   : instance_{ new Logger{ nullptr } }
 {
-    auto logger_instance = g_logger_instance.lock();
-    assert(logger_instance == nullptr);
+    auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
-    auto logger = spdlog::stdout_color_mt("voot");
-    auto l = logger.get();
-    l->set_level(spdlog::level::debug);
-    l->set_pattern("%^[%T] (%n) %l%$: %v");
+    auto logger = std::make_unique<spdlog::logger>("voot", stdout_sink);
+    logger->set_level(spdlog::level::debug);
+    logger->set_pattern("%^[%T] (%n) %l%$: %v");
 
     instance_->logger_ = std::move(logger);
 
-    g_logger_instance = instance_;
+    g_logger_instance = instance_.get();
+}
+
+voot::Logger::~Logger() noexcept
+{
+    g_logger_instance = nullptr;
 }
 
 VOOT_END_NAMESPACE

@@ -22,10 +22,11 @@ VOOT_BEGIN_NAMESPACE
 class VOOT_API Logger
 {
 public:
-    static std::shared_ptr<Logger> instance();
+    static Logger *instance();
 
 public:
     Logger();
+    ~Logger() noexcept;
 
 public:
     template<typename... Args> static void debug(std::string_view format, const Args &... args);
@@ -35,8 +36,8 @@ public:
     template<typename... Args> static void fatal(std::string_view format, const Args &... args);
 
 private:
-    std::shared_ptr<Logger> instance_{ nullptr };
-    std::shared_ptr<spdlog::logger> logger_{ nullptr };
+    std::unique_ptr<Logger> instance_{ nullptr };
+    std::unique_ptr<spdlog::logger> logger_{ nullptr };
 
 private:
     Logger(void *) noexcept {};
