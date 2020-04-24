@@ -1,0 +1,4 @@
+#pragma once
+
+#include <@CMAKE_CONFIG_GENERATED@>
+#include <SDL.h>

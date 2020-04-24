@@ -15,8 +15,3 @@ TEST_CASE("Logger lifetime", "[logger]")
     }
     REQUIRE(g_logger_instance == nullptr);
 }
-
-TEST_CASE("Logger destroyed and recreated properly", "[logger]")
-{
-    voot::Logger l;
-}

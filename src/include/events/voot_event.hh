@@ -7,9 +7,9 @@
 
 #define DECLARE_EVENT(name, categories)              \
 public:                                              \
-    static EventType event_type() noexcept           \
+    static voot::EventType event_type() noexcept     \
     {                                                \
-        return EventType::name;                      \
+        return voot::EventType::name;                \
     }                                                \
     static std::uint32_t event_categories() noexcept \
     {                                                \

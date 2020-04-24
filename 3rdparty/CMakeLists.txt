@@ -19,7 +19,7 @@ add_subdirectory (Catch2-2.11.3)
 add_subdirectory (bgfx)
 
 ## SDL2
-add_subdirectory (SDL2-2.0.12)
+add_subdirectory (SDL2)
 
 ## spdlog
 add_subdirectory (spdlog-1.5.0)
@@ -29,14 +29,9 @@ add_subdirectory (GSL-3.0.0)
 
 ## Additional configuration required for proper linking
 
-# Unless this is set SDL2 defines DLL entry point that messes with MSVC when
-# linking into a shared library
-target_compile_definitions (SDL2-static PRIVATE -DSDL_STATIC_LIB)
-
 # These libraries are not compiled with -fPIC on Linux, and since they are
 # linked into a shared library -fPIC is required
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_compile_options (SDL2-static PRIVATE -fPIC)
     target_compile_options (spdlog PRIVATE -fPIC)
 endif ()
 

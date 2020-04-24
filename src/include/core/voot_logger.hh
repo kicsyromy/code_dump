@@ -7,11 +7,20 @@
 #include <memory>
 #include <string_view>
 
-#define VT_LOG_DEBUG(...) voot::Logger::debug(__VA_ARGS__)
-#define VT_LOG_INFO(...) voot::Logger::info(__VA_ARGS__)
-#define VT_LOG_WARN(...) voot::Logger::warn(__VA_ARGS__)
-#define VT_LOG_ERROR(...) voot::Logger::error(__VA_ARGS__)
-#define VT_LOG_FATAL(...) voot::Logger::fatal(__VA_ARGS__)
+#define VT_LOG_TO_STRING_IMP(x) #x
+#define VT_LOG_TO_STRING(x) VT_LOG_TO_STRING_IMP(x)
+
+#define VT_LOG_DEBUG(...) \
+    voot::Logger::debug(__FILE__ ":" VT_LOG_TO_STRING(__LINE__) "\n" __VA_ARGS__)
+#define VT_LOG_INFO(...) \
+    voot::Logger::info(__FILE__ ":" VT_LOG_TO_STRING(__LINE__) "\n" __VA_ARGS__)
+#define VT_LOG_WARN(...) \
+    voot::Logger::warn(__FILE__ ":" VT_LOG_TO_STRING(__LINE__) "\n" __VA_ARGS__)
+#define VT_LOG_ERROR(...) \
+    voot::Logger::error(__FILE__ ":" VT_LOG_TO_STRING(__LINE__) "\n" __VA_ARGS__)
+#define VT_LOG_FATAL(...)                                                          \
+    voot::Logger::fatal(__FILE__ ":" VT_LOG_TO_STRING(__LINE__) "\n" __VA_ARGS__); \
+    std::exit(EXIT_FAILURE)
 
 VOOT_BEGIN_NAMESPACE
 

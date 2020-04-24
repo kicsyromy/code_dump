@@ -19,8 +19,6 @@ target_include_directories (
 target_compile_definitions (
     ${BINARY_NAME} PRIVATE
     -D${BINARY_NAME}_LIB
-    -DUSING_GENERATED_CONFIG_H
-    -DSDL_MAIN_HANDLED
     -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
     -DBINARY_DIR="${PROJECT_BINARY_DIR}"
     -DLIBRARY_NAME="${BINARY_NAME}"
@@ -31,11 +29,11 @@ target_link_libraries (
     project_options
     project_warnings
     bgfx
-    SDL2-static
-    Microsoft.GSL::GSL
+    SDL2::SDL2
 )
 
 target_link_libraries (
     ${BINARY_NAME} PUBLIC
+    Microsoft.GSL::GSL
     spdlog::spdlog
 )

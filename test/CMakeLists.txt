@@ -12,6 +12,7 @@ target_link_libraries (
 
 add_executable (
     tests
+    test_application.cc
     test_event.cc
     test_logger.cc
 )
@@ -32,6 +33,8 @@ target_link_libraries (
     project_warnings
     project_options
     catch_main
+    Microsoft.GSL::GSL
+    SDL2::SDL2
     spdlog::spdlog
 )
 

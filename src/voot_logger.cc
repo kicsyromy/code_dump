@@ -23,7 +23,7 @@ Logger::Logger()
 
     auto logger = std::make_unique<spdlog::logger>("voot", stdout_sink);
     logger->set_level(spdlog::level::debug);
-    logger->set_pattern("%^[%T] (%n) %l%$: %v");
+    logger->set_pattern("%^[%T] (%n) %l%$ %v");
 
     instance_->logger_ = std::move(logger);
 
