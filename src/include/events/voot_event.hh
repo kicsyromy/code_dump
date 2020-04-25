@@ -5,20 +5,20 @@
 #include <string_view>
 #include <type_traits>
 
-#define DECLARE_EVENT(name, categories)              \
-public:                                              \
-    static voot::EventType event_type() noexcept     \
-    {                                                \
-        return voot::EventType::name;                \
-    }                                                \
-    static std::uint32_t event_categories() noexcept \
-    {                                                \
-        return categories;                           \
-    }                                                \
-    static const char *event_name() noexcept         \
-    {                                                \
-        return #name;                                \
-    }                                                \
+#define DECLARE_EVENT(name, categories)                        \
+public:                                                        \
+    constexpr static voot::EventType event_type() noexcept     \
+    {                                                          \
+        return voot::EventType::name;                          \
+    }                                                          \
+    constexpr static std::uint32_t event_categories() noexcept \
+    {                                                          \
+        return categories;                                     \
+    }                                                          \
+    constexpr static const char *event_name() noexcept         \
+    {                                                          \
+        return #name;                                          \
+    }                                                          \
     static_assert(true)
 
 VOOT_BEGIN_NAMESPACE
@@ -26,9 +26,9 @@ VOOT_BEGIN_NAMESPACE
 enum class EventType
 {
     None = 0,
-    WindowClose,
-    WindowResize,
-    WindowFocus,
+    WindowClosed,
+    WindowResized,
+    WindowGainedFocus,
     WindowLostFocus,
     WindowMoved,
     KeyPressed,
@@ -40,7 +40,7 @@ enum class EventType
     User
 };
 
-enum EventCategory
+enum EventCategory : std::uint32_t
 {
     None = 0,
     EventCategoryWindow = 1 << 0,
@@ -61,7 +61,7 @@ public:
     using fn_static_event_name_t = const char *(*)();
 
 public:
-    Event(fn_static_event_type_t fn_static_event_type,
+    constexpr Event(fn_static_event_type_t fn_static_event_type,
         fn_static_event_categories_t fn_static_event_categories,
         fn_static_event_name_t fn_static_event_name = nullptr) noexcept
       : static_event_type_{ fn_static_event_type }
@@ -71,17 +71,17 @@ public:
     {}
 
 public:
-    EventType event_type() const
+    constexpr EventType event_type() const
     {
         return static_event_type_();
     }
 
-    std::uint32_t event_categories() const
+    constexpr std::uint32_t event_categories() const
     {
         return static_event_categories_();
     }
 
-    const char *event_name() const
+    constexpr const char *event_name() const
     {
         return static_event_name_();
     }
@@ -95,7 +95,7 @@ private:
 template<typename ChildEvent> class EventBase : public Event
 {
 public:
-    EventBase()
+    constexpr EventBase() noexcept
       : Event{ &ChildEvent::event_type, &ChildEvent::event_categories, &ChildEvent::event_name }
     {}
 };

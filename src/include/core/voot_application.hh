@@ -5,6 +5,7 @@
 
 #include <gsl/gsl>
 
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -28,7 +29,10 @@ public:
 public:
     void post_event(gsl::owner<Event *> event) noexcept;
     void post_event(const std::shared_ptr<Event> &event) noexcept;
-    void register_event_handler(EventCallback callback, void *user_data, int priority = 0) noexcept;
+    void register_event_handler(EventType,
+        EventCallback,
+        void *user_data,
+        int priority = 0) noexcept;
     void quit() noexcept
     {
         quit_ = true;
@@ -37,7 +41,9 @@ public:
 
 private:
     bool quit_{ false };
-    std::vector<std::tuple<int, EventCallback, void *>> clients_;
+    std::array<std::vector<std::tuple<int, EventCallback, void *>>,
+        std::size_t(EventType::User) + 1>
+        clients_;
 };
 
 VOOT_END_NAMESPACE

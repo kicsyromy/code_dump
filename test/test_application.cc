@@ -32,11 +32,12 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
         static_cast<void>(user_data);
         return true;
     };
-    application.register_event_handler(cb, nullptr);
+    application.register_event_handler(voot::EventType::User, cb, nullptr);
 
-    REQUIRE(application.clients_.size() == 1);
+    REQUIRE(application.clients_[std::size_t(voot::EventType::User)].size() == 1);
 
-    auto &[priority, callback, user_data] = application.clients_[0];
+    auto &[priority, callback, user_data] =
+        application.clients_[std::size_t(voot::EventType::User)][0];
     REQUIRE(priority == 0);
     REQUIRE(callback == cb);
     REQUIRE(user_data == nullptr);
@@ -68,7 +69,7 @@ TEST_CASE("Application::post_event(Event *)", "[application]")
     };
 
     Context ctx{ application, test_event };
-    application.register_event_handler(cb, &ctx);
+    application.register_event_handler(voot::EventType::User, cb, &ctx);
     application.post_event(test_event);
 
     application.exec();

@@ -1,6 +1,10 @@
 #include "core/voot_application.hh"
 #include "core/voot_logger.hh"
 
+#include "events/voot_key_events.hh"
+#include "events/voot_mouse_events.hh"
+#include "events/voot_window_events.hh"
+
 #include <SDL2.h>
 
 #include <variant>
@@ -8,7 +12,7 @@
 namespace
 {
     voot::Application *g_app_instance = nullptr;
-    const std::uint32_t INTERNAL_EVENT_TYPE{ [] {
+    const std::uint32_t USER_EVENT_TYPE{ [] {
         return SDL_RegisterEvents(1);
     }() };
 
@@ -24,6 +28,53 @@ namespace
 
         std::variant<std::unique_ptr<voot::Event>, std::shared_ptr<voot::Event>> event;
     };
+
+    /* TODO: Figure out how to make the a function */
+#define CREATE_WINDOW_EVENT(event_data, window_event)                                            \
+    voot::WindowEventVariant window_event_var;                                                   \
+    do                                                                                           \
+    {                                                                                            \
+        using namespace voot;                                                                    \
+        switch ((event_data).event)                                                              \
+        {                                                                                        \
+        default:                                                                                 \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_SHOWN:                                                              \
+        case SDL_WINDOWEVENT_HIDDEN:                                                             \
+        case SDL_WINDOWEVENT_EXPOSED:                                                            \
+        case SDL_WINDOWEVENT_MOVED:                                                              \
+            window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 };  \
+            (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));               \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_RESIZED:                                                            \
+        case SDL_WINDOWEVENT_SIZE_CHANGED:                                                       \
+            window_event_var = voot::WindowResizeEvent{ static_cast<size_t>((event_data).data1), \
+                static_cast<size_t>((event_data).data2) };                                       \
+            (window_event) = &(std::get<voot::WindowResizeEvent>(window_event_var));             \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_MINIMIZED:                                                          \
+        case SDL_WINDOWEVENT_MAXIMIZED:                                                          \
+        case SDL_WINDOWEVENT_RESTORED:                                                           \
+        case SDL_WINDOWEVENT_ENTER:                                                              \
+        case SDL_WINDOWEVENT_LEAVE:                                                              \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_FOCUS_GAINED:                                                       \
+            window_event_var = voot::WindowGainFocusEvent{};                                     \
+            (window_event) = &(std::get<voot::WindowGainFocusEvent>(window_event_var));          \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_FOCUS_LOST:                                                         \
+            window_event_var = voot::WindowLooseFocusEvent{};                                    \
+            (window_event) = &(std::get<voot::WindowLooseFocusEvent>(window_event_var));         \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_CLOSE:                                                              \
+            window_event_var = voot::WindowCloseEvent{};                                         \
+            (window_event) = &(std::get<voot::WindowCloseEvent>(window_event_var));              \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_TAKE_FOCUS:                                                         \
+        case SDL_WINDOWEVENT_HIT_TEST:                                                           \
+            break;                                                                               \
+        }                                                                                        \
+    } while (true)
 } // namespace
 
 VOOT_BEGIN_NAMESPACE
@@ -51,6 +102,7 @@ Application::Application() noexcept
 Application::~Application() noexcept
 {
     g_app_instance = nullptr;
+    SDL_Quit();
 }
 
 void Application::post_event(gsl::owner<Event *> event) noexcept
@@ -60,7 +112,7 @@ void Application::post_event(gsl::owner<Event *> event) noexcept
     SDL_Event sdl_event;
     SDL_zero(sdl_event);
 
-    sdl_event.type = INTERNAL_EVENT_TYPE;
+    sdl_event.type = USER_EVENT_TYPE;
     sdl_event.user.code = 0;
     sdl_event.user.data1 = new EventWrapper{ event };
     sdl_event.user.data2 = nullptr;
@@ -75,7 +127,7 @@ void Application::post_event(const std::shared_ptr<Event> &event) noexcept
     SDL_Event sdl_event;
     SDL_zero(sdl_event);
 
-    sdl_event.type = INTERNAL_EVENT_TYPE;
+    sdl_event.type = USER_EVENT_TYPE;
     sdl_event.user.code = 0;
     sdl_event.user.data1 = new EventWrapper{ event };
     sdl_event.user.data2 = nullptr;
@@ -83,13 +135,16 @@ void Application::post_event(const std::shared_ptr<Event> &event) noexcept
     SDL_PushEvent(&sdl_event);
 }
 
-void Application::register_event_handler(EventCallback callback,
+void Application::register_event_handler(EventType type,
+    EventCallback callback,
     void *user_data,
     int priority) noexcept
 {
-    clients_.emplace_back(priority, callback, user_data);
-    std::sort(clients_.begin(),
-        clients_.end(),
+    auto &event_clients = gsl::at(clients_, std::size_t(type));
+
+    event_clients.emplace_back(priority, callback, user_data);
+    std::sort(event_clients.begin(),
+        event_clients.end(),
         [](const auto &c1, const auto &c2) noexcept -> bool {
             return std::get<0>(c1) < std::get<0>(c2);
         });
@@ -101,6 +156,8 @@ void Application::exec()
     SDL_Event event;
     while (!quit_)
     {
+        using namespace voot;
+
         while (SDL_PollEvent(&event) != 0)
         {
             if (event.type == SDL_QUIT)
@@ -109,15 +166,16 @@ void Application::exec()
             }
             else
             {
-                if (event.type == INTERNAL_EVENT_TYPE)
+                if (event.type == USER_EVENT_TYPE)
                 {
                     auto *wrapped_event = static_cast<EventWrapper *>(event.user.data1);
                     const auto visitor = [](auto &e) -> Event * {
                         return e.get();
                     };
                     auto *e = std::visit(visitor, wrapped_event->event);
-                    VT_LOG_DEBUG("Posted event: {}", e->event_name());
-                    for (auto &[priority, callback, user_data] : clients_)
+                    VT_LOG_DEBUG("Poping event: {}", e->event_name());
+                    for (auto &[priority, callback, user_data] :
+                        clients_[static_cast<std::size_t>(EventType::User)])
                     {
                         if (!callback(e, user_data))
                             break;
@@ -127,9 +185,84 @@ void Application::exec()
                     continue;
                 }
 
-                // switch (event.type)
-                // {
-                // }
+                switch (event.type)
+                {
+                case SDL_WINDOWEVENT: {
+                    voot::Event *window_event = nullptr;
+                    CREATE_WINDOW_EVENT(event.window, window_event);
+
+                    if (window_event != nullptr)
+                    {
+                        auto &window_clients =
+                            gsl::at(clients_, static_cast<std::size_t>(window_event->event_type()));
+                        for (auto &[priority, callback, user_data] : window_clients)
+                        {
+                            if (!callback(window_event, user_data))
+                                break;
+                        }
+                    }
+                    break;
+                }
+                case SDL_MOUSEMOTION: {
+                    MouseMoveEvent mouse_move_event{ event.motion.x, event.motion.y };
+                    auto &mouse_event_clients =
+                        gsl::at(clients_, static_cast<std::size_t>(MouseMoveEvent::event_type()));
+                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    {
+                        if (!callback(&mouse_move_event, user_data))
+                            break;
+                    }
+                    break;
+                }
+                case SDL_MOUSEBUTTONUP: {
+                    MouseButtonPressEvent mouse_press_event{ event.button.x,
+                        event.button.y,
+                        static_cast<MouseButton>(event.button.button - 1) };
+                    auto &mouse_event_clients = gsl::at(clients_,
+                        static_cast<std::size_t>(MouseButtonPressEvent::event_type()));
+                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    {
+                        if (!callback(&mouse_press_event, user_data))
+                            break;
+                    }
+                    break;
+                }
+                case SDL_MOUSEBUTTONDOWN: {
+                    MouseButtonReleaseEvent mouse_release_event{ event.button.x,
+                        event.button.y,
+                        static_cast<MouseButton>(event.button.button - 1) };
+                    auto &mouse_event_clients = gsl::at(clients_,
+                        static_cast<std::size_t>(MouseButtonReleaseEvent::event_type()));
+                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    {
+                        if (!callback(&mouse_release_event, user_data))
+                            break;
+                    }
+                    break;
+                }
+                case SDL_KEYUP: {
+                    KeyReleaseEvent key_event{ event.key.keysym.scancode };
+                    auto &mouse_event_clients =
+                        gsl::at(clients_, static_cast<std::size_t>(KeyReleaseEvent::event_type()));
+                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    {
+                        if (!callback(&key_event, user_data))
+                            break;
+                    }
+                    break;
+                }
+                case SDL_KEYDOWN: {
+                    KeyPressEvent key_event{ event.key.keysym.scancode };
+                    auto &mouse_event_clients =
+                        gsl::at(clients_, static_cast<std::size_t>(KeyPressEvent::event_type()));
+                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    {
+                        if (!callback(&key_event, user_data))
+                            break;
+                    }
+                    break;
+                }
+                }
             }
         }
 
