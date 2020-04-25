@@ -26,6 +26,7 @@ VOOT_BEGIN_NAMESPACE
 enum class EventType
 {
     None = 0,
+    Render,
     WindowClosed,
     WindowResized,
     WindowGainedFocus,
@@ -37,20 +38,24 @@ enum class EventType
     MouseButtonReleased,
     MouseMoved,
     MouseScrolled,
-    User
+    User,
+    Count
 };
+
+constexpr std::size_t EVENT_TYPE_COUNT{ std::size_t(EventType::Count) };
 
 enum EventCategory : std::uint32_t
 {
     None = 0,
-    EventCategoryWindow = 1 << 0,
-    EventCategoryInput = 1 << 1,
-    EventCategoryKeyboard = 1 << 2,
-    EventCategoryMouse = 1 << 3,
-    EventCategoryMouseButton = 1 << 4,
-    EventCategoryReserved1 = 1 << 5,
-    EventCategoryReserved2 = 1 << 6,
-    EventCategoryUser = 1 << 7
+    EventCategoryRender = 1 << 0,
+    EventCategoryWindow = 1 << 1,
+    EventCategoryInput = 1 << 2,
+    EventCategoryKeyboard = 1 << 3,
+    EventCategoryMouse = 1 << 4,
+    EventCategoryMouseButton = 1 << 5,
+    EventCategoryReserved1 = 1 << 6,
+    EventCategoryReserved2 = 1 << 7,
+    EventCategoryUser = 1 << 8
 };
 
 class Event

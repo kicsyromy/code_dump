@@ -2,6 +2,8 @@
 
 #include "voot_global.hh"
 #include "events/voot_event.hh"
+#include "events/voot_key_events.hh"
+#include "events/voot_mouse_events.hh"
 
 #include <gsl/gsl>
 
@@ -41,9 +43,9 @@ public:
 
 private:
     bool quit_{ false };
-    std::array<std::vector<std::tuple<int, EventCallback, void *>>,
-        std::size_t(EventType::User) + 1>
-        clients_;
+    std::array<std::uint8_t, KEY_CODE_COUNT> key_states_{ 0 };
+    std::array<std::uint8_t, MOUSE_BUTTON_COUNT> mouse_button_states_{ 0 };
+    std::array<std::vector<std::tuple<int, EventCallback, void *>>, EVENT_TYPE_COUNT> clients_;
 };
 
 VOOT_END_NAMESPACE

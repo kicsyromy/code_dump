@@ -3,6 +3,7 @@
 
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"
+#include "events/voot_render_event.hh"
 #include "events/voot_window_events.hh"
 
 #include <SDL2.h>
@@ -173,7 +174,7 @@ void Application::exec()
                         return e.get();
                     };
                     auto *e = std::visit(visitor, wrapped_event->event);
-                    VT_LOG_DEBUG("Poping event: {}", e->event_name());
+                    VT_LOG_DEBUG("Poping synthetic event: {}", e->event_name());
                     for (auto &[priority, callback, user_data] :
                         clients_[static_cast<std::size_t>(EventType::User)])
                     {
@@ -191,6 +192,8 @@ void Application::exec()
                     voot::Event *window_event = nullptr;
                     CREATE_WINDOW_EVENT(event.window, window_event);
 
+                    VT_LOG_DEBUG("New window event: {}", window_event->event_name());
+
                     if (window_event != nullptr)
                     {
                         auto &window_clients =
@@ -205,6 +208,10 @@ void Application::exec()
                 }
                 case SDL_MOUSEMOTION: {
                     MouseMoveEvent mouse_move_event{ event.motion.x, event.motion.y };
+                    VT_LOG_DEBUG("Mouse moved: X: {}, Y: {}",
+                        mouse_move_event.coordinates().first,
+                        mouse_move_event.coordinates().second);
+
                     auto &mouse_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(MouseMoveEvent::event_type()));
                     for (auto &[priority, callback, user_data] : mouse_event_clients)
@@ -214,10 +221,18 @@ void Application::exec()
                     }
                     break;
                 }
-                case SDL_MOUSEBUTTONUP: {
+                case SDL_MOUSEBUTTONDOWN: {
+                    const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
+                    gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 1;
+
                     MouseButtonPressEvent mouse_press_event{ event.button.x,
                         event.button.y,
-                        static_cast<MouseButton>(event.button.button - 1) };
+                        mouse_button };
+                    VT_LOG_DEBUG("Mouse button pressed: B: {}, X: {}, Y: {}",
+                        static_cast<int>(mouse_press_event.button()),
+                        mouse_press_event.coordinates().first,
+                        mouse_press_event.coordinates().second);
+
                     auto &mouse_event_clients = gsl::at(clients_,
                         static_cast<std::size_t>(MouseButtonPressEvent::event_type()));
                     for (auto &[priority, callback, user_data] : mouse_event_clients)
@@ -225,12 +240,21 @@ void Application::exec()
                         if (!callback(&mouse_press_event, user_data))
                             break;
                     }
+
                     break;
                 }
-                case SDL_MOUSEBUTTONDOWN: {
+                case SDL_MOUSEBUTTONUP: {
+                    const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
+                    gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 0;
+
                     MouseButtonReleaseEvent mouse_release_event{ event.button.x,
                         event.button.y,
-                        static_cast<MouseButton>(event.button.button - 1) };
+                        mouse_button };
+                    VT_LOG_DEBUG("Mouse button released: B: {}, X: {}, Y: {}",
+                        static_cast<int>(mouse_release_event.button()),
+                        mouse_release_event.coordinates().first,
+                        mouse_release_event.coordinates().second);
+
                     auto &mouse_event_clients = gsl::at(clients_,
                         static_cast<std::size_t>(MouseButtonReleaseEvent::event_type()));
                     for (auto &[priority, callback, user_data] : mouse_event_clients)
@@ -238,10 +262,16 @@ void Application::exec()
                         if (!callback(&mouse_release_event, user_data))
                             break;
                     }
+
                     break;
                 }
                 case SDL_KEYUP: {
-                    KeyReleaseEvent key_event{ event.key.keysym.scancode };
+                    const auto key = event.key.keysym.scancode;
+                    gsl::at(key_states_, std::size_t(key)) = 0;
+
+                    KeyReleaseEvent key_event{ KeyCode(key) };
+                    VT_LOG_DEBUG("Key released: {}", key);
+
                     auto &mouse_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(KeyReleaseEvent::event_type()));
                     for (auto &[priority, callback, user_data] : mouse_event_clients)
@@ -249,10 +279,16 @@ void Application::exec()
                         if (!callback(&key_event, user_data))
                             break;
                     }
+
                     break;
                 }
                 case SDL_KEYDOWN: {
-                    KeyPressEvent key_event{ event.key.keysym.scancode };
+                    const auto key = event.key.keysym.scancode;
+                    gsl::at(key_states_, std::size_t(key)) = 1;
+
+                    KeyPressEvent key_event{ KeyCode(key) };
+                    VT_LOG_DEBUG("Key pressed: {}", key);
+
                     auto &mouse_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(KeyPressEvent::event_type()));
                     for (auto &[priority, callback, user_data] : mouse_event_clients)
@@ -260,6 +296,7 @@ void Application::exec()
                         if (!callback(&key_event, user_data))
                             break;
                     }
+
                     break;
                 }
                 }
@@ -270,8 +307,17 @@ void Application::exec()
                                  std::chrono::high_resolution_clock::now() - start)
                                        .count()) /
                              1000.F;
+        VT_LOG_DEBUG("{} seconds elapsed since the last frame", elapsed);
         start = std::chrono::high_resolution_clock::now();
-        static_cast<void>(elapsed);
+
+        RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
+        auto &render_clients = gsl::at(clients_, static_cast<std::size_t>(EventType::Render));
+        for (auto &[priority, callback, user_data] : render_clients)
+        {
+            if (!callback(&render_event, user_data))
+                break;
+        }
+        break;
     }
 }
 

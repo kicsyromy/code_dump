@@ -50,8 +50,11 @@ enum class MouseButton
     Button6,
     Button7,
     Button8,
-    Button9
+    Button9,
+    Count
 };
+
+constexpr std::size_t MOUSE_BUTTON_COUNT{ std::size_t(MouseButton::Count) };
 
 class MouseButtonEvent : public MouseEvent
 {

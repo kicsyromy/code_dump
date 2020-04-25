@@ -9,6 +9,7 @@ add_library (
                             include/events/voot_event.hh
                             include/events/voot_key_events.hh
                             include/events/voot_mouse_events.hh
+                            include/events/voot_render_event.hh
                             include/events/voot_window_events.hh
     voot.cc                 include/voot.hh
                             include/voot_global.hh
