@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <cstdint>
+#include <string>
 
 #ifndef VOOT_TESTING
 #if defined(_MSC_VER)
@@ -43,6 +44,10 @@
 
 #define VT_CONSTEXPR_VALUE(exp) voot::utility::constexpr_value<decltype(exp), exp>::value
 
+#ifdef __linux__
+extern const std::string VT_WAYLAND_DISPLAY;
+#endif
+
 VOOT_BEGIN_NAMESPACE
 
 namespace utility
@@ -58,6 +63,15 @@ namespace utility
         return (str[i] == '/' || str[i] == '\\') ? i + 1
                                                  : (i > 0 ? get_file_name_offset(str, i - 1) : 0);
     }
+
+    constexpr std::uint32_t rgba(std::uint8_t red,
+        std::uint8_t green,
+        std::uint8_t blue,
+        std::uint8_t alpha = 0xFF) noexcept
+    {
+        return std::uint32_t((red << 24) | (green << 16) | (blue << 8) | alpha);
+    }
+
 } // namespace utility
 
 VOOT_END_NAMESPACE

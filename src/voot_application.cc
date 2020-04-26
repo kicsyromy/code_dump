@@ -1,5 +1,4 @@
 #include "core/voot_application.hh"
-#include "core/voot_logger.hh"
 
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"
@@ -7,15 +6,41 @@
 #include "events/voot_window_events.hh"
 
 #include <SDL2.h>
+#include <SDL_syswm.h>
+#include <bgfx/bgfx.h>
+#include <bgfx/platform.h>
 
 #include <variant>
+#include <unordered_set>
+
+#ifdef __linux__
+#ifdef SDL_VIDEO_DRIVER_WAYLAND
+const std::string VT_WAYLAND_DISPLAY = [] {
+    const char *env = std::getenv("WAYLAND_DISPLAY");
+
+    if (env == nullptr)
+        return "";
+
+    return env;
+}();
+#else
+const std::string VT_WAYLAND_DISPLAY{ "" };
+#endif
+#endif
 
 namespace
 {
     voot::Application *g_app_instance = nullptr;
+
     const std::uint32_t USER_EVENT_TYPE{ [] {
         return SDL_RegisterEvents(1);
     }() };
+
+    /* TODO: Figure out if we want a separate rendering thread, disable for now */
+    //    const auto NO_OFFSCREEN_RENDERER = []() -> int {
+    //        bgfx::renderFrame(0);
+    //        return 0;
+    //    }();
 
     struct EventWrapper
     {
@@ -41,8 +66,14 @@ namespace
         default:                                                                                 \
             break;                                                                               \
         case SDL_WINDOWEVENT_SHOWN:                                                              \
-        case SDL_WINDOWEVENT_HIDDEN:                                                             \
         case SDL_WINDOWEVENT_EXPOSED:                                                            \
+            window_event_var = voot::WindowShowEvent{};                                          \
+            (window_event) = &(std::get<voot::WindowShowEvent>(window_event_var));               \
+            break;                                                                               \
+        case SDL_WINDOWEVENT_HIDDEN:                                                             \
+            window_event_var = voot::WindowHideEvent{};                                          \
+            (window_event) = &(std::get<voot::WindowHideEvent>(window_event_var));               \
+            break;                                                                               \
         case SDL_WINDOWEVENT_MOVED:                                                              \
             window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 };  \
             (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));               \
@@ -75,7 +106,7 @@ namespace
         case SDL_WINDOWEVENT_HIT_TEST:                                                           \
             break;                                                                               \
         }                                                                                        \
-    } while (true)
+    } while (false)
 } // namespace
 
 VOOT_BEGIN_NAMESPACE
@@ -97,12 +128,87 @@ Application::Application() noexcept
         VT_LOG_FATAL("Failed to initialize SDL: {}", SDL_GetError());
     }
 
+    bgfx_platfrom_window_ =
+        std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{ SDL_CreateWindow("",
+                                                                       SDL_WINDOWPOS_UNDEFINED,
+                                                                       SDL_WINDOWPOS_UNDEFINED,
+                                                                       0,
+                                                                       0,
+                                                                       SDL_WINDOW_HIDDEN),
+            &SDL_DestroyWindow };
+
+    if (bgfx_platfrom_window_ == nullptr)
+    {
+        VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
+    }
+
+    SDL_SysWMinfo wmi;
+    SDL_VERSION(&wmi.version);
+    if (!SDL_GetWindowWMInfo(bgfx_platfrom_window_.get(), &wmi))
+    {
+        std::exit(EXIT_FAILURE);
+    }
+
+    bgfx::PlatformData pd;
+    std::memset(static_cast<void *>(&pd), 0, sizeof(pd));
+#ifdef _WIN32
+    pd.ndt = wmi.info.win.hdc;
+    pd.nwh = reinterpret_cast<void *>(wmi.info.win.window);
+#else
+    if (!VT_WAYLAND_DISPLAY.empty())
+    {
+        pd.ndt = wmi.info.wl.display;
+        pd.nwh = wmi.info.wl.surface;
+    }
+    else /* X11 */
+    {
+        pd.ndt = wmi.info.x11.display;
+        pd.nwh = reinterpret_cast<void *>(wmi.info.x11.window);
+    }
+#endif
+
+    bgfx::setPlatformData(pd);
+
+    bgfx::Init init;
+#ifdef _WIN32
+    init.type = bgfx::RendererType::Direct3D11;
+#else
+    init.type = bgfx::RendererType::OpenGL;
+#endif
+    init.vendorId = BGFX_PCI_ID_NONE;
+    init.resolution.width = 1;
+    init.resolution.height = 1;
+    init.resolution.reset = BGFX_RESET_VSYNC;
+    bgfx::init(init);
+
+    //    const auto *caps = bgfx::getCaps();
+    //    if ((caps->supported & (BGFX_CAPS_SWAP_CHAIN)) != 0)
+    //    {
+    //        bgfx::shutdown();
+
+    //#ifdef __linux__
+    //        VT_LOG_WARN("Swap chain extension not present on Vulkan, falling back to OpenGL
+    //        rendering");
+
+    //        init = {};
+    //        init.type = bgfx::RendererType::OpenGL;
+    //        init.vendorId = BGFX_PCI_ID_NONE;
+    //        init.resolution.width = 1;
+    //        init.resolution.height = 1;
+    //        init.resolution.reset = BGFX_RESET_VSYNC;
+    //        bgfx::init(init);
+    //#else
+    //        VT_LOG_FATAL("Swap chain extension not supported, bailing out...");
+    //#endif
+    //    }
+
     g_app_instance = this;
 }
 
 Application::~Application() noexcept
 {
     g_app_instance = nullptr;
+    bgfx::shutdown();
     SDL_Quit();
 }
 
@@ -158,6 +264,8 @@ void Application::register_event_handler(EventType type,
 
 void Application::exec()
 {
+    std::unordered_set<std::uint32_t> open_windows;
+
     auto start = std::chrono::high_resolution_clock::now();
     SDL_Event event;
     while (!quit_)
@@ -199,12 +307,11 @@ void Application::exec()
                     voot::Event *window_event = nullptr;
                     CREATE_WINDOW_EVENT(event.window, window_event);
 
-                    const auto window_id = event.window.windowID;
-
-                    VT_LOG_DEBUG("New window event: {}", window_event->event_name());
-
                     if (window_event != nullptr)
                     {
+                        const auto window_id = event.window.windowID;
+                        VT_LOG_DEBUG("New window event: {}", window_event->event_name());
+
                         auto &window_clients =
                             gsl::at(clients_, static_cast<std::size_t>(window_event->event_type()));
                         for (auto &client : window_clients)
@@ -216,6 +323,20 @@ void Application::exec()
                                 if (!client.callback(client.id, window_event, client.callback_data))
                                     break;
                             }
+                        }
+
+                        if (window_event->event_type() == EventType::WindowShown)
+                        {
+                            if (open_windows.count(window_id) == 0)
+                            {
+                                open_windows.insert(window_id);
+                            }
+                        }
+                        else if (window_event->event_type() == EventType::WindowClosed)
+                        {
+                            open_windows.erase(window_id);
+                            if (open_windows.empty())
+                                quit_ = true;
                         }
                     }
                     break;
@@ -362,7 +483,6 @@ void Application::exec()
                                  std::chrono::high_resolution_clock::now() - start)
                                        .count()) /
                              1000.F;
-        VT_LOG_DEBUG("{} seconds elapsed since the last frame", elapsed);
         start = std::chrono::high_resolution_clock::now();
 
         RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
@@ -372,7 +492,8 @@ void Application::exec()
             if (!client.callback(-1, &render_event, client.callback_data))
                 break;
         }
-        break;
+
+        bgfx::frame();
     }
 }
 

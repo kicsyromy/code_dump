@@ -18,6 +18,9 @@ add_subdirectory (Catch2-2.11.3)
 ## bgfx.cmake (git master)
 add_subdirectory (bgfx)
 
+## nanovg with bgfx backend
+add_subdirectory (nanovg-bgfx)
+
 ## SDL2
 add_subdirectory (SDL2)
 
@@ -33,6 +36,9 @@ add_subdirectory (GSL-3.0.0)
 # linked into a shared library -fPIC is required
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     target_compile_options (spdlog PRIVATE -fPIC)
+    target_compile_options (bgfx PRIVATE -fPIC)
+    target_compile_options (bx PRIVATE -fPIC)
+    target_compile_options (bimg PRIVATE -fPIC)
 endif ()
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} CACHE PATH "Global project modules" FORCE)

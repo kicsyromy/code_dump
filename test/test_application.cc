@@ -18,9 +18,9 @@ TEST_CASE("Application::instance()", "[application]")
 {
     {
         voot::Application application;
-        REQUIRE(VOOT_APPLICATION() != nullptr);
+        REQUIRE(VT_APPLICATION() != nullptr);
     }
-    REQUIRE(VOOT_APPLICATION() == nullptr);
+    REQUIRE(VT_APPLICATION() == nullptr);
 }
 
 TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[application]")
@@ -46,8 +46,6 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
 
 TEST_CASE("Application::post_event(Event *)", "[application]")
 {
-    [[maybe_unused]] voot::Logger logger;
-
     class TestEvent : public voot::EventBase<TestEvent>
     {
         DECLARE_EVENT(User, voot::EventCategory::EventCategoryUser);

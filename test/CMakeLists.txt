@@ -15,6 +15,7 @@ add_executable (
     test_application.cc
     test_event.cc
     test_logger.cc
+    test_window.cc
 )
 
 target_include_directories (
@@ -34,6 +35,8 @@ target_link_libraries (
     project_options
     catch_main
     Microsoft.GSL::GSL
+    bgfx
+    nanovg-bgfx
     SDL2::SDL2
     spdlog::spdlog
 )

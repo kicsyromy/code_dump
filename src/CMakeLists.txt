@@ -6,6 +6,7 @@ add_library (
     voot_application.cc     include/core/voot_application.hh
     voot_logger.cc          include/core/voot_logger.hh
                             include/core/voot_logger.inl
+    voot_window.cc          include/gui/voot_window.hh
                             include/events/voot_event.hh
                             include/events/voot_key_events.hh
                             include/events/voot_mouse_events.hh
@@ -33,6 +34,7 @@ target_link_libraries (
     project_options
     project_warnings
     bgfx
+    nanovg-bgfx
     SDL2::SDL2
 )
 

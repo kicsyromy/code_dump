@@ -7,6 +7,22 @@
 
 VOOT_BEGIN_NAMESPACE
 
+class WindowShowEvent : public EventBase<WindowShowEvent>
+{
+    DECLARE_EVENT(WindowShown, EventCategoryWindow);
+
+public:
+    constexpr WindowShowEvent() noexcept = default;
+};
+
+class WindowHideEvent : public EventBase<WindowHideEvent>
+{
+    DECLARE_EVENT(WindowHidden, EventCategoryWindow);
+
+public:
+    constexpr WindowHideEvent() noexcept = default;
+};
+
 class WindowCloseEvent : public EventBase<WindowCloseEvent>
 {
     DECLARE_EVENT(WindowClosed, EventCategoryWindow);
@@ -76,6 +92,8 @@ private:
 };
 
 using WindowEventVariant = std::variant<std::monostate,
+    WindowShowEvent,
+    WindowHideEvent,
     WindowCloseEvent,
     WindowResizeEvent,
     WindowGainFocusEvent,

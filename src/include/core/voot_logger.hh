@@ -44,8 +44,7 @@
         constexpr auto prefix =                                                   \
             voot::Logger::construct_prefix(__FILE__, VT_LOG_TO_STRING(__LINE__)); \
         voot::Logger::fatal(std::string{ prefix.data() } + __VA_ARGS__);          \
-    } while (false);                                                              \
-    std::exit(EXIT_FAILURE)
+    } while (false)
 
 VOOT_BEGIN_NAMESPACE
 
@@ -94,6 +93,7 @@ public:
         return result;
     }
 
+private:
 private:
     std::unique_ptr<Logger> instance_{ nullptr };
     std::unique_ptr<spdlog::logger> logger_{ nullptr };

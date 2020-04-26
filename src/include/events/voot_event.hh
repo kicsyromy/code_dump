@@ -27,6 +27,8 @@ enum class EventType
 {
     None = 0,
     Render,
+    WindowShown,
+    WindowHidden,
     WindowClosed,
     WindowResized,
     WindowGainedFocus,
