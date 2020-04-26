@@ -14,7 +14,9 @@ add_executable (
     tests
     test_application.cc
     test_event.cc
+    test_item.cc
     test_logger.cc
+    test_rectangle.cc
     test_window.cc
 )
 

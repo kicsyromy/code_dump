@@ -1,7 +1,11 @@
 #pragma once
 
 #include "voot_global.hh"
+
 #include "core/voot_application.hh"
+
+#include "gui/voot_item.hh"
+
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"
 #include "events/voot_render_event.hh"
@@ -31,6 +35,10 @@ public:
 
 public:
     std::pair<std::size_t, std::size_t> viewport_size() const noexcept;
+    constexpr Item *root_item() noexcept
+    {
+        return &root_item_;
+    }
 
 public:
     void *native_window_handle() const noexcept;
@@ -63,6 +71,7 @@ private:
     std::uint16_t view_id_;
     std::uint16_t framebuffer_handle_;
     std::unique_ptr<NVGcontext, void (*)(NVGcontext *)> drawing_context_{ nullptr, nullptr };
+    Item root_item_;
 };
 
 VOOT_END_NAMESPACE

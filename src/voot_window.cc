@@ -52,6 +52,7 @@ Window::Window(std::string_view title) noexcept
         std::uint16_t(height_))
                              .idx }
   , drawing_context_{ nvgCreate(true, view_id_), &nvgDelete }
+  , root_item_{ drawing_context_.get() }
 {
     if (window_handle_ == nullptr)
     {
@@ -62,6 +63,9 @@ Window::Window(std::string_view title) noexcept
         framebuffer_handle_,
         std::uint16_t(width_),
         std::uint16_t(height_));
+
+    root_item_.set_width(width_);
+    root_item_.set_height(height_);
 
     auto *app = VT_APPLICATION();
     assert(app != nullptr);
@@ -202,6 +206,9 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event, Wi
         std::uint16_t(new_width),
         std::uint16_t(new_height));
 
+    self->root_item_.set_width(self->width_);
+    self->root_item_.set_height(self->height_);
+
     return true;
 }
 
@@ -222,15 +229,10 @@ bool Window::on_render_event(int window_id, RenderEvent *event, Window *self) no
     static_cast<void>(event);
 
     bgfx::touch(self->view_id_);
+    auto *vg = self->drawing_context_.get();
 
-    auto vg = self->drawing_context_.get();
     nvgBeginFrame(vg, float(self->width_), float(self->height_), 1.0F);
-
-    nvgBeginPath(vg);
-    nvgRect(vg, float(self->width_ - 140), 100, 120, 30);
-    nvgFillColor(vg, nvgRGBA(0, 0, 255, 255));
-    nvgFill(vg);
-
+    self->root_item_.update();
     nvgEndFrame(vg);
 
     return true;
