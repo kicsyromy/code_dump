@@ -106,9 +106,11 @@ Application::~Application() noexcept
     SDL_Quit();
 }
 
-void Application::post_event(gsl::owner<Event *> event) noexcept
+void Application::post_event(gsl::owner<Event *> event, int receiver_id) noexcept
 {
     VT_LOG_DEBUG("Pushing owned event to queue: {}", event->event_name());
+
+    static_cast<void>(receiver_id);
 
     SDL_Event sdl_event;
     SDL_zero(sdl_event);
@@ -121,9 +123,11 @@ void Application::post_event(gsl::owner<Event *> event) noexcept
     SDL_PushEvent(&sdl_event);
 }
 
-void Application::post_event(const std::shared_ptr<Event> &event) noexcept
+void Application::post_event(const std::shared_ptr<Event> &event, int receiver_id) noexcept
 {
     VT_LOG_DEBUG("Pushing event to queue: {}", event->event_name());
+
+    static_cast<void>(receiver_id);
 
     SDL_Event sdl_event;
     SDL_zero(sdl_event);
@@ -139,15 +143,16 @@ void Application::post_event(const std::shared_ptr<Event> &event) noexcept
 void Application::register_event_handler(EventType type,
     EventCallback callback,
     void *user_data,
+    int user_id,
     int priority) noexcept
 {
     auto &event_clients = gsl::at(clients_, std::size_t(type));
 
-    event_clients.emplace_back(priority, callback, user_data);
+    event_clients.push_back({ user_id, priority, callback, user_data });
     std::sort(event_clients.begin(),
         event_clients.end(),
-        [](const auto &c1, const auto &c2) noexcept -> bool {
-            return std::get<0>(c1) < std::get<0>(c2);
+        [](const EventClient &c1, const EventClient &c2) noexcept -> bool {
+            return c1.priority < c2.priority;
         });
 }
 
@@ -170,17 +175,19 @@ void Application::exec()
                 if (event.type == USER_EVENT_TYPE)
                 {
                     auto *wrapped_event = static_cast<EventWrapper *>(event.user.data1);
+
                     const auto visitor = [](auto &e) -> Event * {
                         return e.get();
                     };
                     auto *e = std::visit(visitor, wrapped_event->event);
                     VT_LOG_DEBUG("Poping synthetic event: {}", e->event_name());
-                    for (auto &[priority, callback, user_data] :
-                        clients_[static_cast<std::size_t>(EventType::User)])
+
+                    for (auto &client : clients_[static_cast<std::size_t>(EventType::User)])
                     {
-                        if (!callback(e, user_data))
+                        if (!client.callback(client.id, e, client.callback_data))
                             break;
                     }
+
                     delete wrapped_event;
 
                     continue;
@@ -192,16 +199,23 @@ void Application::exec()
                     voot::Event *window_event = nullptr;
                     CREATE_WINDOW_EVENT(event.window, window_event);
 
+                    const auto window_id = event.window.windowID;
+
                     VT_LOG_DEBUG("New window event: {}", window_event->event_name());
 
                     if (window_event != nullptr)
                     {
                         auto &window_clients =
                             gsl::at(clients_, static_cast<std::size_t>(window_event->event_type()));
-                        for (auto &[priority, callback, user_data] : window_clients)
+                        for (auto &client : window_clients)
                         {
-                            if (!callback(window_event, user_data))
-                                break;
+                            if (client.callback != nullptr &&
+                                (client.id == -1 ||
+                                    (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                            {
+                                if (!client.callback(client.id, window_event, client.callback_data))
+                                    break;
+                            }
                         }
                     }
                     break;
@@ -212,18 +226,29 @@ void Application::exec()
                         mouse_move_event.coordinates().first,
                         mouse_move_event.coordinates().second);
 
+                    const auto window_id = event.motion.windowID;
+
                     auto &mouse_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(MouseMoveEvent::event_type()));
-                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    for (auto &client : mouse_event_clients)
                     {
-                        if (!callback(&mouse_move_event, user_data))
-                            break;
+                        if (client.callback != nullptr &&
+                            (client.id == -1 ||
+                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        {
+                            if (!client.callback(client.id,
+                                    &mouse_move_event,
+                                    client.callback_data))
+                                break;
+                        }
                     }
                     break;
                 }
                 case SDL_MOUSEBUTTONDOWN: {
                     const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
                     gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 1;
+
+                    const auto window_id = event.button.windowID;
 
                     MouseButtonPressEvent mouse_press_event{ event.button.x,
                         event.button.y,
@@ -235,10 +260,17 @@ void Application::exec()
 
                     auto &mouse_event_clients = gsl::at(clients_,
                         static_cast<std::size_t>(MouseButtonPressEvent::event_type()));
-                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    for (auto &client : mouse_event_clients)
                     {
-                        if (!callback(&mouse_press_event, user_data))
-                            break;
+                        if (client.callback != nullptr &&
+                            (client.id == -1 ||
+                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        {
+                            if (!client.callback(client.id,
+                                    &mouse_press_event,
+                                    client.callback_data))
+                                break;
+                        }
                     }
 
                     break;
@@ -246,6 +278,8 @@ void Application::exec()
                 case SDL_MOUSEBUTTONUP: {
                     const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
                     gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 0;
+
+                    const auto window_id = event.button.windowID;
 
                     MouseButtonReleaseEvent mouse_release_event{ event.button.x,
                         event.button.y,
@@ -257,10 +291,17 @@ void Application::exec()
 
                     auto &mouse_event_clients = gsl::at(clients_,
                         static_cast<std::size_t>(MouseButtonReleaseEvent::event_type()));
-                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    for (auto &client : mouse_event_clients)
                     {
-                        if (!callback(&mouse_release_event, user_data))
-                            break;
+                        if (client.callback != nullptr &&
+                            (client.id == -1 ||
+                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        {
+                            if (!client.callback(client.id,
+                                    &mouse_release_event,
+                                    client.callback_data))
+                                break;
+                        }
                     }
 
                     break;
@@ -269,15 +310,22 @@ void Application::exec()
                     const auto key = event.key.keysym.scancode;
                     gsl::at(key_states_, std::size_t(key)) = 0;
 
+                    const auto window_id = event.key.windowID;
+
                     KeyReleaseEvent key_event{ KeyCode(key) };
                     VT_LOG_DEBUG("Key released: {}", key);
 
-                    auto &mouse_event_clients =
+                    auto &key_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(KeyReleaseEvent::event_type()));
-                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    for (auto &client : key_event_clients)
                     {
-                        if (!callback(&key_event, user_data))
-                            break;
+                        if (client.callback != nullptr &&
+                            (client.id == -1 ||
+                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        {
+                            if (!client.callback(client.id, &key_event, client.callback_data))
+                                break;
+                        }
                     }
 
                     break;
@@ -286,15 +334,22 @@ void Application::exec()
                     const auto key = event.key.keysym.scancode;
                     gsl::at(key_states_, std::size_t(key)) = 1;
 
+                    const auto window_id = event.key.windowID;
+
                     KeyPressEvent key_event{ KeyCode(key) };
                     VT_LOG_DEBUG("Key pressed: {}", key);
 
-                    auto &mouse_event_clients =
+                    auto &key_event_clients =
                         gsl::at(clients_, static_cast<std::size_t>(KeyPressEvent::event_type()));
-                    for (auto &[priority, callback, user_data] : mouse_event_clients)
+                    for (auto &client : key_event_clients)
                     {
-                        if (!callback(&key_event, user_data))
-                            break;
+                        if (client.callback != nullptr &&
+                            (client.id == -1 ||
+                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        {
+                            if (!client.callback(client.id, &key_event, client.callback_data))
+                                break;
+                        }
                     }
 
                     break;
@@ -312,9 +367,9 @@ void Application::exec()
 
         RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
         auto &render_clients = gsl::at(clients_, static_cast<std::size_t>(EventType::Render));
-        for (auto &[priority, callback, user_data] : render_clients)
+        for (auto &client : render_clients)
         {
-            if (!callback(&render_event, user_data))
+            if (!client.callback(-1, &render_event, client.callback_data))
                 break;
         }
         break;

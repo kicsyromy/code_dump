@@ -27,7 +27,8 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
 {
     voot::Application application;
 
-    voot::Application::EventCallback cb = [](voot::Event *event, void *user_data) -> bool {
+    voot::Application::EventCallback cb = [](int id, voot::Event *event, void *user_data) -> bool {
+        static_cast<void>(id);
         static_cast<void>(event);
         static_cast<void>(user_data);
         return true;
@@ -36,11 +37,11 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
 
     REQUIRE(application.clients_[std::size_t(voot::EventType::User)].size() == 1);
 
-    auto &[priority, callback, user_data] =
-        application.clients_[std::size_t(voot::EventType::User)][0];
-    REQUIRE(priority == 0);
-    REQUIRE(callback == cb);
-    REQUIRE(user_data == nullptr);
+    auto &client = application.clients_[std::size_t(voot::EventType::User)][0];
+    REQUIRE(client.id == -1);
+    REQUIRE(client.priority == 0);
+    REQUIRE(client.callback == cb);
+    REQUIRE(client.callback_data == nullptr);
 }
 
 TEST_CASE("Application::post_event(Event *)", "[application]")
@@ -61,15 +62,16 @@ TEST_CASE("Application::post_event(Event *)", "[application]")
     voot::Application application;
     auto test_event = new TestEvent();
 
-    voot::Application::EventCallback cb = [](voot::Event *event, void *user_data) -> bool {
+    voot::Application::EventCallback cb = [](int id, voot::Event *event, void *user_data) -> bool {
         auto *context = static_cast<Context *>(user_data);
+        REQUIRE(id == 0);
         REQUIRE(context->ev == event);
         context->app.quit_ = true;
         return true;
     };
 
     Context ctx{ application, test_event };
-    application.register_event_handler(voot::EventType::User, cb, &ctx);
+    application.register_event_handler(voot::EventType::User, cb, &ctx, 0);
     application.post_event(test_event);
 
     application.exec();
