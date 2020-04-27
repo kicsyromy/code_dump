@@ -1,6 +1,13 @@
 #include <catch2/catch.hpp>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #define private public
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #include "core/voot_application.hh"
 #include "voot_application.cc"
@@ -38,10 +45,10 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
     REQUIRE(application.clients_[std::size_t(voot::EventType::User)].size() == 1);
 
     auto &client = application.clients_[std::size_t(voot::EventType::User)][0];
-    REQUIRE(client.id == -1);
-    REQUIRE(client.priority == 0);
-    REQUIRE(client.callback == cb);
-    REQUIRE(client.callback_data == nullptr);
+    REQUIRE(client.id_ == -1);
+    REQUIRE(client.priority_ == 0);
+    REQUIRE(client.callback_ == cb);
+    REQUIRE(client.callback_data_ == nullptr);
 }
 
 TEST_CASE("Application::post_event(Event *)", "[application]")

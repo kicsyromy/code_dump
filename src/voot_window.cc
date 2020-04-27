@@ -70,27 +70,17 @@ Window::Window(std::string_view title) noexcept
     auto *app = VT_APPLICATION();
     assert(app != nullptr);
 
-    app->register_event_handler(EventType::KeyPressed,
-        VT_EVENT_HANDLER(&Window::on_key_press_event),
-        this);
-    app->register_event_handler(EventType::KeyReleased,
-        VT_EVENT_HANDLER(&Window::on_key_release_event),
-        this);
-    app->register_event_handler(EventType::MouseMoved,
-        VT_EVENT_HANDLER(&Window::on_mouse_move_event),
-        this);
+    app->register_event_handler(EventType::KeyPressed, &Window::on_key_press_event, this);
+    app->register_event_handler(EventType::KeyReleased, &Window::on_key_release_event, this);
+    app->register_event_handler(EventType::MouseMoved, &Window::on_mouse_move_event, this);
     app->register_event_handler(EventType::MouseButtonPressed,
-        VT_EVENT_HANDLER(&Window::on_mouse_button_press_event),
+        &Window::on_mouse_button_press_event,
         this);
     app->register_event_handler(EventType::MouseButtonReleased,
-        VT_EVENT_HANDLER(&Window::on_mouse_button_release_event),
+        &Window::on_mouse_button_release_event,
         this);
-    app->register_event_handler(EventType::WindowResized,
-        VT_EVENT_HANDLER(&Window::on_window_resized_event),
-        this);
-    app->register_event_handler(EventType::Render,
-        VT_EVENT_HANDLER(&Window::on_render_event),
-        this);
+    app->register_event_handler(EventType::WindowResized, &Window::on_window_resized_event, this);
+    app->register_event_handler(EventType::Render, &Window::on_render_event, this);
 }
 
 Window::~Window() noexcept
@@ -129,68 +119,91 @@ void *Window::native_window_handle() const noexcept
 #endif
 }
 
-bool Window::on_key_press_event(int window_id, KeyPressEvent *event, Window *self) noexcept
+bool Window::on_key_press_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
+
+    auto *event = static_cast<KeyPressEvent *>(ev);
+    static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] key press");
 
     return true;
 }
 
-bool Window::on_key_release_event(int window_id, KeyReleaseEvent *event, Window *self) noexcept
+bool Window::on_key_release_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
+
+    auto *event = static_cast<KeyReleaseEvent *>(ev);
+    static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] key release");
 
     return true;
 }
 
-bool Window::on_mouse_move_event(int window_id, MouseMoveEvent *event, Window *self) noexcept
+bool Window::on_mouse_move_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
+
+    auto *event = static_cast<MouseMoveEvent *>(ev);
+    static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] mouse move");
 
     return true;
 }
 
-bool Window::on_mouse_button_press_event(int window_id,
-    MouseButtonPressEvent *event,
-    Window *self) noexcept
+bool Window::on_mouse_button_press_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
 
-    VT_LOG_DEBUG("[window] mouse button press");
+    auto *event = static_cast<MouseButtonPressEvent *>(ev);
+
+    VT_LOG_DEBUG("[window] mouse button press B: {} X: {} Y: {}",
+        event->button(),
+        event->coordinates().first,
+        event->coordinates().second);
+    const auto [x, y] = event->coordinates();
+    self->root_item_.handle_mouse_button_pressed(event->button(), x, y);
 
     return true;
 }
 
-bool Window::on_mouse_button_release_event(int window_id,
-    MouseButtonReleaseEvent *event,
-    Window *self) noexcept
+bool Window::on_mouse_button_release_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
+
+    auto *event = static_cast<MouseButtonReleaseEvent *>(ev);
+    static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] mouse button release");
 
     return true;
 }
 
-bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event, Window *self) noexcept
+bool Window::on_window_resized_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
+
+    auto *self = static_cast<Window *>(instance);
+    auto *event = static_cast<WindowResizeEvent *>(ev);
 
     auto [new_width, new_height] = event->size();
     self->width_ = new_width;
@@ -212,27 +225,35 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event, Wi
     return true;
 }
 
-bool Window::on_window_closed_event(int window_id, WindowCloseEvent *event, Window *self) noexcept
+bool Window::on_window_closed_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
-    static_cast<void>(event);
+
+    auto *self = static_cast<Window *>(instance);
     static_cast<void>(self);
+
+    auto *event = static_cast<WindowCloseEvent *>(ev);
+    static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] window closed");
 
     return true;
 }
 
-bool Window::on_render_event(int window_id, RenderEvent *event, Window *self) noexcept
+bool Window::on_render_event(int window_id, Event *ev, void *instance) noexcept
 {
     static_cast<void>(window_id);
+
+    auto *self = static_cast<Window *>(instance);
+
+    auto *event = static_cast<RenderEvent *>(ev);
     static_cast<void>(event);
 
     bgfx::touch(self->view_id_);
     auto *vg = self->drawing_context_.get();
 
     nvgBeginFrame(vg, float(self->width_), float(self->height_), 1.0F);
-    self->root_item_.update();
+    self->root_item_.render();
     nvgEndFrame(vg);
 
     return true;

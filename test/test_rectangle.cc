@@ -1,6 +1,13 @@
 #include <catch2/catch.hpp>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #define private public
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #include "gui/voot_rectangle.hh"
 #include "voot_rectangle.cc"
@@ -14,9 +21,22 @@ TEST_CASE("Rectangle", "[rectangle]")
     Application app;
     voot::Window window{ "Test Window" };
 
+    window.root_item()->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("RootItem mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    });
+
     auto *r = new voot::Rectangle();
+    r->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("Blue Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    });
     auto *r2 = new voot::Rectangle();
+    r2->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("Red Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    });
     auto *r3 = new voot::Rectangle();
+    r3->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("Green Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    });
     r->set_parent_item(window.root_item());
 
     r->set_x(window.root_item()->width() - 140);
@@ -34,6 +54,7 @@ TEST_CASE("Rectangle", "[rectangle]")
 
     r3->set_x(5);
     r3->set_y(5);
+    r3->set_z(4);
     r3->set_width(50);
     r3->set_height(20);
     r3->set_color(0, 255, 0);

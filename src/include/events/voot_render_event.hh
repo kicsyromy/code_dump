@@ -32,12 +32,12 @@ public:
 
     constexpr bool key_pressed(KeyCode key) const noexcept
     {
-        return gsl::at(key_states_, std::size_t(key)) != 0;
+        return gsl::at(key_states_, gsl::index(key)) != 0;
     }
 
     constexpr bool mouse_button_pressed(MouseButton button) const noexcept
     {
-        return gsl::at(mouse_button_states_, std::size_t(button)) != 0;
+        return gsl::at(mouse_button_states_, gsl::index(button)) != 0;
     }
 
 private:

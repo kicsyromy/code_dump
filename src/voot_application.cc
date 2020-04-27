@@ -252,13 +252,13 @@ void Application::register_event_handler(EventType type,
     int user_id,
     int priority) noexcept
 {
-    auto &event_clients = gsl::at(clients_, std::size_t(type));
+    auto &event_clients = gsl::at(clients_, gsl::index(type));
 
-    event_clients.push_back({ user_id, priority, callback, user_data });
+    event_clients.emplace_back(user_id, priority, callback, user_data);
     std::sort(event_clients.begin(),
         event_clients.end(),
         [](const EventClient &c1, const EventClient &c2) noexcept -> bool {
-            return c1.priority < c2.priority;
+            return c1.priority() < c2.priority();
         });
 }
 
@@ -292,7 +292,7 @@ void Application::exec()
 
                     for (auto &client : clients_[static_cast<std::size_t>(EventType::User)])
                     {
-                        if (!client.callback(client.id, e, client.callback_data))
+                        if (!client.callback()(client.id(), e, client.callback_data()))
                             break;
                     }
 
@@ -313,14 +313,16 @@ void Application::exec()
                         VT_LOG_DEBUG("New window event: {}", window_event->event_name());
 
                         auto &window_clients =
-                            gsl::at(clients_, static_cast<std::size_t>(window_event->event_type()));
+                            gsl::at(clients_, gsl::index(window_event->event_type()));
                         for (auto &client : window_clients)
                         {
-                            if (client.callback != nullptr &&
-                                (client.id == -1 ||
-                                    (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                            if (client.callback() != nullptr &&
+                                (client.id() == -1 ||
+                                    (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                             {
-                                if (!client.callback(client.id, window_event, client.callback_data))
+                                if (!client.callback()(client.id(),
+                                        window_event,
+                                        client.callback_data()))
                                     break;
                             }
                         }
@@ -353,13 +355,13 @@ void Application::exec()
                         gsl::at(clients_, static_cast<std::size_t>(MouseMoveEvent::event_type()));
                     for (auto &client : mouse_event_clients)
                     {
-                        if (client.callback != nullptr &&
-                            (client.id == -1 ||
-                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        if (client.callback() != nullptr &&
+                            (client.id() == -1 ||
+                                (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                         {
-                            if (!client.callback(client.id,
+                            if (!client.callback()(client.id(),
                                     &mouse_move_event,
-                                    client.callback_data))
+                                    client.callback_data()))
                                 break;
                         }
                     }
@@ -367,7 +369,7 @@ void Application::exec()
                 }
                 case SDL_MOUSEBUTTONDOWN: {
                     const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
-                    gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 1;
+                    gsl::at(mouse_button_states_, gsl::index(mouse_button)) = 1;
 
                     const auto window_id = event.button.windowID;
 
@@ -379,17 +381,17 @@ void Application::exec()
                         mouse_press_event.coordinates().first,
                         mouse_press_event.coordinates().second);
 
-                    auto &mouse_event_clients = gsl::at(clients_,
-                        static_cast<std::size_t>(MouseButtonPressEvent::event_type()));
+                    auto &mouse_event_clients =
+                        gsl::at(clients_, gsl::index(MouseButtonPressEvent::event_type()));
                     for (auto &client : mouse_event_clients)
                     {
-                        if (client.callback != nullptr &&
-                            (client.id == -1 ||
-                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        if (client.callback() != nullptr &&
+                            (client.id() == -1 ||
+                                (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                         {
-                            if (!client.callback(client.id,
+                            if (!client.callback()(client.id(),
                                     &mouse_press_event,
-                                    client.callback_data))
+                                    client.callback_data()))
                                 break;
                         }
                     }
@@ -398,7 +400,7 @@ void Application::exec()
                 }
                 case SDL_MOUSEBUTTONUP: {
                     const auto mouse_button = static_cast<MouseButton>(event.button.button - 1);
-                    gsl::at(mouse_button_states_, std::size_t(mouse_button)) = 0;
+                    gsl::at(mouse_button_states_, gsl::index(mouse_button)) = 0;
 
                     const auto window_id = event.button.windowID;
 
@@ -410,17 +412,17 @@ void Application::exec()
                         mouse_release_event.coordinates().first,
                         mouse_release_event.coordinates().second);
 
-                    auto &mouse_event_clients = gsl::at(clients_,
-                        static_cast<std::size_t>(MouseButtonReleaseEvent::event_type()));
+                    auto &mouse_event_clients =
+                        gsl::at(clients_, gsl::index(MouseButtonReleaseEvent::event_type()));
                     for (auto &client : mouse_event_clients)
                     {
-                        if (client.callback != nullptr &&
-                            (client.id == -1 ||
-                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        if (client.callback() != nullptr &&
+                            (client.id() == -1 ||
+                                (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                         {
-                            if (!client.callback(client.id,
+                            if (!client.callback()(client.id(),
                                     &mouse_release_event,
-                                    client.callback_data))
+                                    client.callback_data()))
                                 break;
                         }
                     }
@@ -429,7 +431,7 @@ void Application::exec()
                 }
                 case SDL_KEYUP: {
                     const auto key = event.key.keysym.scancode;
-                    gsl::at(key_states_, std::size_t(key)) = 0;
+                    gsl::at(key_states_, gsl::index(key)) = 0;
 
                     const auto window_id = event.key.windowID;
 
@@ -437,14 +439,14 @@ void Application::exec()
                     VT_LOG_DEBUG("Key released: {}", key);
 
                     auto &key_event_clients =
-                        gsl::at(clients_, static_cast<std::size_t>(KeyReleaseEvent::event_type()));
+                        gsl::at(clients_, gsl::index(KeyReleaseEvent::event_type()));
                     for (auto &client : key_event_clients)
                     {
-                        if (client.callback != nullptr &&
-                            (client.id == -1 ||
-                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        if (client.callback() != nullptr &&
+                            (client.id() == -1 ||
+                                (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                         {
-                            if (!client.callback(client.id, &key_event, client.callback_data))
+                            if (!client.callback()(client.id(), &key_event, client.callback_data()))
                                 break;
                         }
                     }
@@ -453,7 +455,7 @@ void Application::exec()
                 }
                 case SDL_KEYDOWN: {
                     const auto key = event.key.keysym.scancode;
-                    gsl::at(key_states_, std::size_t(key)) = 1;
+                    gsl::at(key_states_, gsl::index(key)) = 1;
 
                     const auto window_id = event.key.windowID;
 
@@ -464,11 +466,11 @@ void Application::exec()
                         gsl::at(clients_, static_cast<std::size_t>(KeyPressEvent::event_type()));
                     for (auto &client : key_event_clients)
                     {
-                        if (client.callback != nullptr &&
-                            (client.id == -1 ||
-                                (client.id >= 0 && std::uint32_t(client.id) == window_id)))
+                        if (client.callback() != nullptr &&
+                            (client.id() == -1 ||
+                                (client.id() >= 0 && std::uint32_t(client.id()) == window_id)))
                         {
-                            if (!client.callback(client.id, &key_event, client.callback_data))
+                            if (!client.callback()(client.id(), &key_event, client.callback_data()))
                                 break;
                         }
                     }
@@ -489,7 +491,7 @@ void Application::exec()
         auto &render_clients = gsl::at(clients_, static_cast<std::size_t>(EventType::Render));
         for (auto &client : render_clients)
         {
-            if (!client.callback(-1, &render_event, client.callback_data))
+            if (!client.callback()(-1, &render_event, client.callback_data()))
                 break;
         }
 

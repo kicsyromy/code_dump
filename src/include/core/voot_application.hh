@@ -14,8 +14,6 @@
 #include <vector>
 
 #define VT_APPLICATION() voot::Application::instance()
-#define VT_EVENT_HANDLER(f) \
-    reinterpret_cast<voot::Application::EventCallback>(reinterpret_cast<void *>(f))
 
 using SDL_Window = struct SDL_Window;
 
@@ -48,12 +46,45 @@ public:
     void exec();
 
 private:
-    struct EventClient
+    class EventClient
     {
-        int id;
-        int priority;
-        EventCallback callback;
-        void *callback_data;
+    public:
+        constexpr EventClient(int id,
+            int priority,
+            EventCallback event_cb,
+            void *callback_data) noexcept
+          : id_{ id }
+          , priority_{ priority }
+          , callback_{ event_cb }
+          , callback_data_{ callback_data }
+        {}
+
+    public:
+        constexpr int id() const noexcept
+        {
+            return id_;
+        }
+
+        constexpr int priority() const noexcept
+        {
+            return priority_;
+        }
+
+        constexpr EventCallback callback() const noexcept
+        {
+            return callback_;
+        }
+
+        constexpr void *callback_data() const noexcept
+        {
+            return callback_data_;
+        }
+
+    private:
+        int id_;
+        int priority_;
+        EventCallback callback_;
+        void *callback_data_;
     };
 
 private:

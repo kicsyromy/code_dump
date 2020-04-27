@@ -7,6 +7,8 @@ VOOT_BEGIN_NAMESPACE
 
 class Rectangle : public ItemBase<Rectangle>
 {
+    VT_ITEM
+
 public:
     constexpr void set_color(std::uint8_t r,
         std::uint8_t g,
@@ -17,7 +19,7 @@ public:
     }
 
 public:
-    static void render(NVGcontext *vg, Rectangle *self) noexcept;
+    static void render(NVGcontext *vg, const void *instance) noexcept;
 
 private:
     struct

@@ -2,7 +2,14 @@
 
 #include "voot_global.hh"
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#endif
 #include <spdlog/spdlog.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #include <memory>
 #include <string_view>

@@ -35,10 +35,12 @@ add_subdirectory (GSL-3.0.0)
 # These libraries are not compiled with -fPIC on Linux, and since they are
 # linked into a shared library -fPIC is required
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_compile_options (spdlog PRIVATE -fPIC)
+    target_compile_options (astc PRIVATE -fPIC)
+    target_compile_options (astc-codec PRIVATE -fPIC)
     target_compile_options (bgfx PRIVATE -fPIC)
     target_compile_options (bx PRIVATE -fPIC)
     target_compile_options (bimg PRIVATE -fPIC)
+    target_compile_options (spdlog PRIVATE -fPIC)
 endif ()
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} CACHE PATH "Global project modules" FORCE)

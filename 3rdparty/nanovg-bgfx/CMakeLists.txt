@@ -19,6 +19,10 @@ target_compile_definitions (
     "-D__STDC_FORMAT_MACROS"
 )
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    target_compile_options (nanovg-bgfx PRIVATE -fPIC)
+endif ()
+
 target_link_libraries (
     nanovg-bgfx PUBLIC
     bgfx

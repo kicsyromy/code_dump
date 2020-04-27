@@ -1,16 +1,22 @@
 #pragma once
 
 #include "voot_global.hh"
+#include "core/voot_signal.hh"
+#include "events/voot_mouse_events.hh"
 
 #include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <vector>
 
-#define VT_ITEM_RENDER_FUNCTION(f) \
-    reinterpret_cast<voot::Item::fn_static_render_fn_type>(reinterpret_cast<void *>(f))
-
 struct NVGcontext;
+
+#define VT_ITEM                                                                                  \
+public:                                                                                          \
+    inline void set_parent_item(Item *item) noexcept                                             \
+    {                                                                                            \
+        static_cast<Item *>(this)->set_parent_item<std::remove_pointer_t<decltype(this)>>(item); \
+    }
 
 VOOT_BEGIN_NAMESPACE
 
@@ -31,6 +37,9 @@ public:
     {}
 
     ~Item() noexcept;
+
+public:
+    Signal<MouseButton, int, int> mouse_button_pressed;
 
 public:
     constexpr int x() const
@@ -119,10 +128,24 @@ public:
     }
 
 public:
-    void set_parent_item(Item *parent) noexcept;
     constexpr Item *parent_item() const noexcept
     {
         return parent_;
+    }
+
+    template<typename Child> void set_parent_item(Item *parent, Child * = nullptr) noexcept
+    {
+        static_assert(std::is_base_of_v<Item, Child>);
+
+        drawing_context_ = parent->drawing_context_;
+        parent_ = parent;
+
+        set_x(x_);
+        set_y(y_);
+
+        update_z_ordering(z_, z_, true, [](Item *self) {
+            delete static_cast<Child *>(self);
+        });
     }
 
     /* For now just call render, but might do more in the future */
@@ -139,8 +162,20 @@ protected:
     std::uint16_t height_{ 0 };
 
 private:
+    using ItemDeleter = void (*)(Item *);
+    void update_z_ordering(
+        int new_z,
+        int old_z,
+        bool force = false,
+        ItemDeleter item_deleter = [](Item *i) {
+            delete i;
+        }) noexcept;
+
+private:
+    friend class Window;
+    bool handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept;
+
     void render() const noexcept;
-    void update_z_ordering(int new_z, int old_z, bool force = false) noexcept;
 
 private:
     NVGcontext *drawing_context_{ nullptr };
@@ -149,14 +184,16 @@ private:
 
     int z_min_{ 0 };
     int z_max_{ 0 };
-    std::unordered_map<int, std::vector<std::unique_ptr<Item>>> children_{};
+
+    using ItemPointer = std::unique_ptr<Item, ItemDeleter>;
+    std::unordered_map<int, std::vector<ItemPointer>> children_{};
 };
 
 template<typename ChildItem> class ItemBase : public Item
 {
 public:
     ItemBase() noexcept
-      : Item{ VT_ITEM_RENDER_FUNCTION(&ChildItem::render) }
+      : Item{ &ChildItem::render }
     {}
 };
 
