@@ -2,6 +2,7 @@
 
 #include "voot_global.hh"
 
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -32,37 +33,67 @@ public:
     ~Item() noexcept;
 
 public:
-    constexpr auto x() const
+    constexpr int x() const
     {
+        if (parent_item() != nullptr)
+        {
+            return x_ - parent_item()->x();
+        }
+
         return x_;
     }
 
     template<typename Integer> constexpr void set_x(Integer x) noexcept
     {
         static_assert(std::is_integral_v<Integer>);
-        x_ = static_cast<int>(x);
+        const auto new_x = static_cast<int>(x);
+        if (parent_item() != nullptr)
+        {
+            x_ = parent_item()->x() + new_x;
+        }
+        else
+        {
+            x_ = new_x;
+        }
     }
 
-    constexpr auto y() const
+    constexpr int y() const
     {
+        if (parent_item() != nullptr)
+        {
+            return y_ - parent_item()->y();
+        }
+
         return y_;
     }
 
     template<typename Integer> constexpr void set_y(Integer y) noexcept
     {
         static_assert(std::is_integral_v<Integer>);
-        y_ = static_cast<int>(y);
+        const auto new_y = static_cast<int>(y);
+        if (parent_item() != nullptr)
+        {
+            y_ = parent_item()->y() + new_y;
+        }
+        else
+        {
+            y_ = new_y;
+        }
     }
 
-    constexpr auto z() const
+    constexpr int z() const
     {
         return z_;
     }
 
-    template<typename Integer> constexpr void set_z(Integer z) noexcept
+    template<typename Integer> void set_z(Integer z) noexcept
     {
         static_assert(std::is_integral_v<Integer>);
-        z_ = static_cast<int>(z);
+        const auto old_z = z_;
+        const auto new_z = static_cast<int>(z);
+
+        z_ = new_z;
+        update_z_ordering(new_z, old_z);
     }
 
     constexpr auto width() const
@@ -89,7 +120,7 @@ public:
 
 public:
     void set_parent_item(Item *parent) noexcept;
-    constexpr Item *parent() const noexcept
+    constexpr Item *parent_item() const noexcept
     {
         return parent_;
     }
@@ -109,6 +140,7 @@ protected:
 
 private:
     void render() const noexcept;
+    void update_z_ordering(int new_z, int old_z, bool force = false) noexcept;
 
 private:
     NVGcontext *drawing_context_{ nullptr };
