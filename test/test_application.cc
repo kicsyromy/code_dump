@@ -12,6 +12,31 @@
 #include "core/voot_application.hh"
 #include "voot_application.cc"
 
+class TestEvent : public voot::EventBase<TestEvent>
+{
+    DECLARE_EVENT(User, voot::EventCategory::EventCategoryUser);
+};
+
+struct EventTester
+{
+    bool test_event_handler(int i, TestEvent *ev) noexcept
+    {
+        event_triggered = true;
+
+        id = i;
+        event = ev;
+
+        VT_APPLICATION()->quit();
+
+        return true;
+    }
+
+    bool event_triggered{ false };
+
+    int id{ -1 };
+    voot::Event *event{ nullptr };
+};
+
 TEST_CASE("Application creation and destruction", "[application]")
 {
     {
@@ -34,50 +59,37 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
 {
     voot::Application application;
 
-    voot::Application::EventCallback cb = [](int id, voot::Event *event, void *user_data) -> bool {
-        static_cast<void>(id);
-        static_cast<void>(event);
-        static_cast<void>(user_data);
-        return true;
-    };
-    application.register_event_handler(voot::EventType::User, cb, nullptr);
+    EventTester tester;
+    application.register_event_handler<EventTester, TestEvent, &EventTester::test_event_handler>(
+        &tester);
 
     REQUIRE(application.clients_[std::size_t(voot::EventType::User)].size() == 1);
 
     auto &client = application.clients_[std::size_t(voot::EventType::User)][0];
     REQUIRE(client.id_ == -1);
     REQUIRE(client.priority_ == 0);
-    REQUIRE(client.callback_ == cb);
-    REQUIRE(client.callback_data_ == nullptr);
+    REQUIRE(client.callback_data_ != nullptr);
+
+    TestEvent testEvent;
+    client.callback_(-1, &testEvent, &tester);
+    REQUIRE(tester.event_triggered == true);
 }
 
 TEST_CASE("Application::post_event(Event *)", "[application]")
 {
-    class TestEvent : public voot::EventBase<TestEvent>
-    {
-        DECLARE_EVENT(User, voot::EventCategory::EventCategoryUser);
-    };
-
-    struct Context
-    {
-        voot::Application &app;
-        voot::Event *ev;
-    };
-
     voot::Application application;
-    auto test_event = new TestEvent();
 
-    voot::Application::EventCallback cb = [](int id, voot::Event *event, void *user_data) -> bool {
-        auto *context = static_cast<Context *>(user_data);
-        REQUIRE(id == 0);
-        REQUIRE(context->ev == event);
-        context->app.quit_ = true;
-        return true;
-    };
+    auto *test_event = new TestEvent;
+    EventTester event_tester;
 
-    Context ctx{ application, test_event };
-    application.register_event_handler(voot::EventType::User, cb, &ctx, 0);
+    application.register_event_handler<EventTester, TestEvent, &EventTester::test_event_handler>(
+        &event_tester,
+        0);
     application.post_event(test_event);
 
     application.exec();
+
+    REQUIRE(event_tester.event_triggered == true);
+    REQUIRE(event_tester.id == 0);
+    REQUIRE(event_tester.event == test_event);
 }

@@ -26,24 +26,56 @@ public:
 
 public:
     using EventCallback = bool (*)(int, Event *, void *);
+    template<typename Class, typename EvType>
+    using EventCallbackMethod = bool (Class::*)(int, EvType *);
 
 public:
     Application() noexcept;
     ~Application() noexcept;
 
 public:
-    void post_event(gsl::owner<Event *> event, int receiver_id = -1) noexcept;
+    template<typename EvType>
+    void post_event(gsl::owner<EvType *> event, int receiver_id = -1) noexcept
+    {
+        post_event_owned(event, receiver_id, [](Event *e) {
+            delete static_cast<EvType *>(e);
+        });
+    }
+
     void post_event(const std::shared_ptr<Event> &event, int receiver_id = -1) noexcept;
-    void register_event_handler(EventType,
-        EventCallback,
-        void *user_data,
-        int user_id = -1,
-        int priority = 0) noexcept;
+
+    template<typename Client, typename EvType, EventCallbackMethod<Client, EvType> callback>
+    void register_event_handler(Client *instance, int user_id = -1, int priority = 0) noexcept
+    {
+        auto &event_clients = gsl::at(clients_, gsl::index(EvType::event_type()));
+
+        event_clients.emplace_back(
+            user_id,
+            priority,
+            [](int id, Event *e, void *c) -> bool {
+                auto *client = static_cast<Client *>(c);
+                auto *event = static_cast<EvType *>(e);
+                return (client->*callback)(id, event);
+            },
+            instance);
+
+        std::sort(event_clients.begin(),
+            event_clients.end(),
+            [](const EventClient &c1, const EventClient &c2) noexcept -> bool {
+                return c1.priority() < c2.priority();
+            });
+    }
+
     void quit() noexcept
     {
         quit_ = true;
     }
     void exec();
+
+private:
+    void post_event_owned(gsl::owner<Event *> event,
+        int receiver_id,
+        void (*deleter)(Event *)) noexcept;
 
 private:
     class EventClient

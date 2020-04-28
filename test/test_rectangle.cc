@@ -14,6 +14,19 @@
 
 #include "gui/voot_window.hh"
 
+struct Test
+{
+    void slot(voot::MouseButton button, int x, int y) noexcept
+    {
+        VT_LOG_INFO("RootItem mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    }
+};
+
+void free_function(voot::MouseButton button, int x, int y) noexcept
+{
+    VT_LOG_INFO("Blue Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
+}
+
 TEST_CASE("Rectangle", "[rectangle]")
 {
     using namespace voot;
@@ -21,23 +34,21 @@ TEST_CASE("Rectangle", "[rectangle]")
     Application app;
     voot::Window window{ "Test Window" };
 
-    window.root_item()->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
-        VT_LOG_INFO("RootItem mouse button pressed B: {} X: {} Y: {}", button, x, y);
-    });
+    Test t;
 
+    window.root_item()->mouse_button_pressed.connect<Test, &Test::slot>(t);
     auto *r = new voot::Rectangle();
-    r->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
-        VT_LOG_INFO("Blue Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
-    });
+    r->mouse_button_pressed.connect<&free_function>();
+
     auto *r2 = new voot::Rectangle();
     r2->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
         VT_LOG_INFO("Red Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
     });
+
     auto *r3 = new voot::Rectangle();
     r3->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
         VT_LOG_INFO("Green Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
     });
-    r->set_parent_item(window.root_item());
 
     r->set_x(window.root_item()->width() - 140);
     r->set_y(20);
@@ -54,11 +65,12 @@ TEST_CASE("Rectangle", "[rectangle]")
 
     r3->set_x(5);
     r3->set_y(5);
-    r3->set_z(4);
+    r3->set_z(0);
     r3->set_width(50);
     r3->set_height(20);
     r3->set_color(0, 255, 0);
 
+    r->set_parent_item(window.root_item());
     r2->set_parent_item(r);
     r3->set_parent_item(r);
 

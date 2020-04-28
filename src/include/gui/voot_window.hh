@@ -44,15 +44,15 @@ public:
     void *native_window_handle() const noexcept;
 
 private:
-    static bool on_key_press_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_key_release_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_mouse_move_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_mouse_button_press_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_mouse_button_release_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_mouse_wheel_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_window_resized_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_window_closed_event(int window_id, Event *event, void *instance) noexcept;
-    static bool on_render_event(int window_id, Event *event, void *instance) noexcept;
+    bool on_key_press_event(int window_id, KeyPressEvent *event) noexcept;
+    bool on_key_release_event(int window_id, KeyReleaseEvent *event) noexcept;
+    bool on_mouse_move_event(int window_id, MouseMoveEvent *event) noexcept;
+    bool on_mouse_button_press_event(int window_id, MouseButtonPressEvent *event) noexcept;
+    bool on_mouse_button_release_event(int window_id, MouseButtonReleaseEvent *event) noexcept;
+    //    bool on_mouse_wheel_event(int window_id, MouseWheelEvent *event) noexcept;
+    bool on_window_resized_event(int window_id, WindowResizeEvent *event) noexcept;
+    bool on_window_closed_event(int window_id, WindowCloseEvent *event) noexcept;
+    bool on_render_event(int window_id, RenderEvent *event) noexcept;
 
 private:
     std::size_t width_;

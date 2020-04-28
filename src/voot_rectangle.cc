@@ -4,13 +4,11 @@
 
 VOOT_BEGIN_NAMESPACE
 
-void Rectangle::render(NVGcontext *vg, const void *instance) noexcept
+void Rectangle::render(NVGcontext *vg) const noexcept
 {
-    auto *self = static_cast<const Rectangle *>(instance);
-
     nvgBeginPath(vg);
-    nvgRect(vg, float(self->x_), float(self->y_), self->width(), self->height());
-    auto &c = self->color_;
+    nvgRect(vg, float(x_), float(y_), width(), height());
+    auto &c = color_;
     nvgFillColor(vg, nvgRGBA(c.red, c.green, c.blue, c.alpha));
     nvgFill(vg);
 }

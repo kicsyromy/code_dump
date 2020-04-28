@@ -19,7 +19,7 @@ public:
     }
 
 public:
-    static void render(NVGcontext *vg, const void *instance) noexcept;
+    void render(NVGcontext *vg) const noexcept;
 
 private:
     struct

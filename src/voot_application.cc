@@ -44,8 +44,8 @@ namespace
 
     struct EventWrapper
     {
-        EventWrapper(voot::Event *e) noexcept
-          : event{ std::unique_ptr<voot::Event>(e) }
+        EventWrapper(voot::Event *e, void (*deleter)(voot::Event *)) noexcept
+          : event{ std::unique_ptr<voot::Event, decltype(deleter)>{ e, deleter } }
         {}
 
         EventWrapper(const std::shared_ptr<voot::Event> &e) noexcept
@@ -173,7 +173,7 @@ Application::Application() noexcept
 #ifdef _WIN32
     init.type = bgfx::RendererType::Direct3D11;
 #else
-    init.type = bgfx::RendererType::OpenGL;
+    init.type = bgfx::RendererType::Vulkan;
 #endif
     init.vendorId = BGFX_PCI_ID_NONE;
     init.resolution.width = 1;
@@ -181,26 +181,25 @@ Application::Application() noexcept
     init.resolution.reset = BGFX_RESET_VSYNC;
     bgfx::init(init);
 
-    //    const auto *caps = bgfx::getCaps();
-    //    if ((caps->supported & (BGFX_CAPS_SWAP_CHAIN)) != 0)
-    //    {
-    //        bgfx::shutdown();
+    const auto *caps = bgfx::getCaps();
+    if ((caps->supported & (BGFX_CAPS_SWAP_CHAIN)) == 0)
+    {
+        bgfx::shutdown();
 
-    //#ifdef __linux__
-    //        VT_LOG_WARN("Swap chain extension not present on Vulkan, falling back to OpenGL
-    //        rendering");
+#ifdef __linux__
+        VT_LOG_WARN("Swap chain extension not present on Vulkan, falling back to OpenGL rendering");
 
-    //        init = {};
-    //        init.type = bgfx::RendererType::OpenGL;
-    //        init.vendorId = BGFX_PCI_ID_NONE;
-    //        init.resolution.width = 1;
-    //        init.resolution.height = 1;
-    //        init.resolution.reset = BGFX_RESET_VSYNC;
-    //        bgfx::init(init);
-    //#else
-    //        VT_LOG_FATAL("Swap chain extension not supported, bailing out...");
-    //#endif
-    //    }
+        init = {};
+        init.type = bgfx::RendererType::OpenGL;
+        init.vendorId = BGFX_PCI_ID_NONE;
+        init.resolution.width = 1;
+        init.resolution.height = 1;
+        init.resolution.reset = BGFX_RESET_VSYNC;
+        bgfx::init(init);
+#else
+        VT_LOG_FATAL("Swap chain extension not supported, bailing out...");
+#endif
+    }
 
     g_app_instance = this;
 }
@@ -210,23 +209,6 @@ Application::~Application() noexcept
     g_app_instance = nullptr;
     bgfx::shutdown();
     SDL_Quit();
-}
-
-void Application::post_event(gsl::owner<Event *> event, int receiver_id) noexcept
-{
-    VT_LOG_DEBUG("Pushing owned event to queue: {}", event->event_name());
-
-    static_cast<void>(receiver_id);
-
-    SDL_Event sdl_event;
-    SDL_zero(sdl_event);
-
-    sdl_event.type = USER_EVENT_TYPE;
-    sdl_event.user.code = 0;
-    sdl_event.user.data1 = new EventWrapper{ event };
-    sdl_event.user.data2 = nullptr;
-
-    SDL_PushEvent(&sdl_event);
 }
 
 void Application::post_event(const std::shared_ptr<Event> &event, int receiver_id) noexcept
@@ -244,22 +226,6 @@ void Application::post_event(const std::shared_ptr<Event> &event, int receiver_i
     sdl_event.user.data2 = nullptr;
 
     SDL_PushEvent(&sdl_event);
-}
-
-void Application::register_event_handler(EventType type,
-    EventCallback callback,
-    void *user_data,
-    int user_id,
-    int priority) noexcept
-{
-    auto &event_clients = gsl::at(clients_, gsl::index(type));
-
-    event_clients.emplace_back(user_id, priority, callback, user_data);
-    std::sort(event_clients.begin(),
-        event_clients.end(),
-        [](const EventClient &c1, const EventClient &c2) noexcept -> bool {
-            return c1.priority() < c2.priority();
-        });
 }
 
 void Application::exec()
@@ -352,7 +318,7 @@ void Application::exec()
                     const auto window_id = event.motion.windowID;
 
                     auto &mouse_event_clients =
-                        gsl::at(clients_, static_cast<std::size_t>(MouseMoveEvent::event_type()));
+                        gsl::at(clients_, gsl::index(MouseMoveEvent::event_type()));
                     for (auto &client : mouse_event_clients)
                     {
                         if (client.callback() != nullptr &&
@@ -488,7 +454,7 @@ void Application::exec()
         start = std::chrono::high_resolution_clock::now();
 
         RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
-        auto &render_clients = gsl::at(clients_, static_cast<std::size_t>(EventType::Render));
+        auto &render_clients = gsl::at(clients_, gsl::index(EventType::Render));
         for (auto &client : render_clients)
         {
             if (!client.callback()(-1, &render_event, client.callback_data()))
@@ -497,6 +463,25 @@ void Application::exec()
 
         bgfx::frame();
     }
+}
+
+void Application::post_event_owned(gsl::owner<Event *> event,
+    int receiver_id,
+    void (*deleter)(Event *)) noexcept
+{
+    VT_LOG_DEBUG("Pushing owned event to queue: {}", event->event_name());
+
+    static_cast<void>(receiver_id);
+
+    SDL_Event sdl_event;
+    SDL_zero(sdl_event);
+
+    sdl_event.type = USER_EVENT_TYPE;
+    sdl_event.user.code = 0;
+    sdl_event.user.data1 = new EventWrapper{ event, deleter };
+    sdl_event.user.data2 = nullptr;
+
+    SDL_PushEvent(&sdl_event);
 }
 
 VOOT_END_NAMESPACE

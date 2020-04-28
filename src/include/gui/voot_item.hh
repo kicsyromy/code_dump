@@ -11,11 +11,12 @@
 
 struct NVGcontext;
 
-#define VT_ITEM                                                                                  \
-public:                                                                                          \
-    inline void set_parent_item(Item *item) noexcept                                             \
-    {                                                                                            \
-        static_cast<Item *>(this)->set_parent_item<std::remove_pointer_t<decltype(this)>>(item); \
+#define VT_ITEM                                              \
+public:                                                      \
+    inline void set_parent_item(Item *item) noexcept         \
+    {                                                        \
+        using ThisType = std::decay_t<decltype(*this)>;      \
+        ItemBase<ThisType>::set_parent_item<ThisType>(item); \
     }
 
 VOOT_BEGIN_NAMESPACE
@@ -23,13 +24,16 @@ VOOT_BEGIN_NAMESPACE
 class Item
 {
 public:
-    using fn_static_render_fn_type = void (*)(NVGcontext *, const void *);
+    using RenderFunction = void (*)(NVGcontext *, const void *);
+    template<typename ChildItem> using RenderMethod = void (ChildItem::*)(NVGcontext *) const;
 
 public:
-    Item() noexcept = default;
-
-    explicit Item(fn_static_render_fn_type render_function) noexcept
-      : render_function_{ render_function }
+    template<typename ChildItem>
+    Item(ChildItem *) noexcept
+      : render_function_{ [](NVGcontext *vg, const void *child) {
+          constexpr RenderMethod<ChildItem> render_method = &ChildItem::render;
+          (static_cast<const ChildItem *>(child)->*render_method)(vg);
+      } }
     {}
 
     explicit Item(NVGcontext *context) noexcept
@@ -40,9 +44,11 @@ public:
 
 public:
     Signal<MouseButton, int, int> mouse_button_pressed;
+    Signal<MouseButton, int, int> mouse_button_released;
+    Signal<MouseButton, int, int> mouse_clicked;
 
 public:
-    constexpr int x() const
+    constexpr int x() const noexcept
     {
         if (parent_item() != nullptr)
         {
@@ -66,7 +72,7 @@ public:
         }
     }
 
-    constexpr int y() const
+    constexpr int y() const noexcept
     {
         if (parent_item() != nullptr)
         {
@@ -90,12 +96,12 @@ public:
         }
     }
 
-    constexpr int z() const
+    constexpr int z() const noexcept
     {
         return z_;
     }
 
-    template<typename Integer> void set_z(Integer z) noexcept
+    template<typename Integer> inline void set_z(Integer z) noexcept
     {
         static_assert(std::is_integral_v<Integer>);
         const auto old_z = z_;
@@ -105,7 +111,7 @@ public:
         update_z_ordering(new_z, old_z);
     }
 
-    constexpr auto width() const
+    constexpr auto width() const noexcept
     {
         return width_;
     }
@@ -116,7 +122,7 @@ public:
         width_ = static_cast<std::uint16_t>(width);
     }
 
-    constexpr auto height() const
+    constexpr auto height() const noexcept
     {
         return height_;
     }
@@ -133,6 +139,13 @@ public:
         return parent_;
     }
 
+    /* For now just call render, but might do more in the future */
+    inline void update() const noexcept
+    {
+        render();
+    }
+
+protected:
     template<typename Child> void set_parent_item(Item *parent, Child * = nullptr) noexcept
     {
         static_assert(std::is_base_of_v<Item, Child>);
@@ -148,13 +161,6 @@ public:
         });
     }
 
-    /* For now just call render, but might do more in the future */
-    void update() const noexcept
-    {
-        render();
-    }
-
-protected:
     int x_{ 0 };
     int y_{ 0 };
     int z_{ 0 };
@@ -174,12 +180,12 @@ private:
 private:
     friend class Window;
     bool handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept;
-
+    bool handle_mouse_button_released(MouseButton button, int x, int y) noexcept;
     void render() const noexcept;
 
 private:
     NVGcontext *drawing_context_{ nullptr };
-    fn_static_render_fn_type render_function_{ nullptr };
+    RenderFunction render_function_{ nullptr };
     Item *parent_{ nullptr };
 
     int z_min_{ 0 };
@@ -191,10 +197,17 @@ private:
 
 template<typename ChildItem> class ItemBase : public Item
 {
+    friend ChildItem;
+
 public:
-    ItemBase() noexcept
-      : Item{ &ChildItem::render }
-    {}
+    ItemBase(Item *parent = nullptr) noexcept
+      : Item(static_cast<const ChildItem *>(nullptr))
+    {
+        if (parent != nullptr)
+        {
+            Item::set_parent_item<ChildItem>(parent);
+        }
+    }
 };
 
 VOOT_END_NAMESPACE
