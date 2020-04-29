@@ -6,6 +6,7 @@ add_library (
     voot_application.cc     include/core/voot_application.hh
     voot_logger.cc          include/core/voot_logger.hh
                             include/core/voot_logger.inl
+                            include/core/voot_property.hh
                             include/core/voot_signal.hh
     voot_item.cc            include/gui/voot_item.hh
     voot_rectangle.cc       include/gui/voot_rectangle.hh

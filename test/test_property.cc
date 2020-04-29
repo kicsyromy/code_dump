@@ -1,0 +1,61 @@
+#include <catch2/catch.hpp>
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+#define private public
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+#include "core/voot_property.hh"
+
+class TestClass
+{
+public:
+    const int &get_value() const noexcept
+    {
+        return value_;
+    }
+
+    void set_value(const int &value) noexcept
+    {
+        if (value_ != value)
+        {
+            value_ = value;
+            value_changed.emit(value);
+        }
+    }
+
+public:
+    voot::Signal<int> value_changed;
+    VT_PROPERTY(int, property, TestClass, get_value, set_value, value_changed);
+
+private:
+    int value_;
+};
+
+TEST_CASE("Property get and set", "[property]")
+{
+    TestClass test_class;
+
+    test_class.property = 5;
+    REQUIRE(test_class.value_ == 5);
+
+    int a = test_class.property();
+    REQUIRE(a == test_class.value_);
+}
+
+TEST_CASE("Property signal fire", "[property]")
+{
+    TestClass test_class;
+    static bool event_fired = false;
+    test_class.value_changed.connect([](int v) {
+        REQUIRE(v == 5);
+        event_fired = true;
+    });
+
+    test_class.property = 5;
+    REQUIRE(event_fired == true);
+}

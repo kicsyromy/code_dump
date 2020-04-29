@@ -16,14 +16,15 @@ add_executable (
     test_event.cc
     test_item.cc
     test_logger.cc
+    test_property.cc
     test_rectangle.cc
     test_window.cc
 )
 
 target_include_directories (
     tests PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/src/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/include
 )
 
 target_compile_definitions (
