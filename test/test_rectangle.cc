@@ -36,7 +36,7 @@ TEST_CASE("Rectangle", "[rectangle]")
 
     Test t;
 
-    window.root_item()->mouse_button_pressed.connect<Test, &Test::slot>(t);
+    window.root_item()->mouse_button_pressed.connect<&Test::slot>(t);
     auto *r = new voot::Rectangle();
     r->mouse_button_pressed.connect<&free_function>();
 

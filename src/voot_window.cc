@@ -70,25 +70,22 @@ Window::Window(std::string_view title) noexcept
     auto *app = VT_APPLICATION();
     assert(app != nullptr);
 
-    app->register_event_handler<Window, KeyPressEvent, &Window::on_key_press_event>(this);
+    app->register_event_handler<KeyPressEvent, &Window::on_key_press_event>(this);
 
-    app->register_event_handler<Window, KeyReleaseEvent, &Window::on_key_release_event>(this);
+    app->register_event_handler<KeyReleaseEvent, &Window::on_key_release_event>(this);
 
-    app->register_event_handler<Window, MouseMoveEvent, &Window::on_mouse_move_event>(this);
+    app->register_event_handler<MouseMoveEvent, &Window::on_mouse_move_event>(this);
 
-    app->register_event_handler<Window,
-        MouseButtonPressEvent,
-        &Window::on_mouse_button_press_event>(this);
+    app->register_event_handler<MouseButtonPressEvent, &Window::on_mouse_button_press_event>(this);
 
-    app->register_event_handler<Window,
-        MouseButtonReleaseEvent,
-        &Window::on_mouse_button_release_event>(this);
+    app->register_event_handler<MouseButtonReleaseEvent, &Window::on_mouse_button_release_event>(
+        this);
 
-    app->register_event_handler<Window, WindowResizeEvent, &Window::on_window_resized_event>(this);
+    app->register_event_handler<WindowResizeEvent, &Window::on_window_resized_event>(this);
 
-    app->register_event_handler<Window, WindowCloseEvent, &Window::on_window_closed_event>(this);
+    app->register_event_handler<WindowCloseEvent, &Window::on_window_closed_event>(this);
 
-    app->register_event_handler<Window, RenderEvent, &Window::on_render_event>(this);
+    app->register_event_handler<RenderEvent, &Window::on_render_event>(this);
 }
 
 Window::~Window() noexcept

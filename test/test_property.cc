@@ -19,18 +19,19 @@ public:
         return value_;
     }
 
-    void set_value(const int &value) noexcept
+    bool set_value(const int &value) noexcept
     {
         if (value_ != value)
         {
             value_ = value;
-            value_changed.emit(value);
+            return true;
         }
+
+        return false;
     }
 
 public:
-    voot::Signal<int> value_changed;
-    VT_PROPERTY(int, property, TestClass, get_value, set_value, value_changed);
+    VT_PROPERTY(int, property, &TestClass::get_value, &TestClass::set_value);
 
 private:
     int value_;
@@ -51,7 +52,7 @@ TEST_CASE("Property signal fire", "[property]")
 {
     TestClass test_class;
     static bool event_fired = false;
-    test_class.value_changed.connect([](int v) {
+    test_class.property.changed.connect([](int v) {
         REQUIRE(v == 5);
         event_fired = true;
     });

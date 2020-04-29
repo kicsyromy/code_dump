@@ -29,6 +29,16 @@ public:
     template<typename Class, typename EvType>
     using EventCallbackMethod = bool (Class::*)(int, EvType *);
 
+private:
+    template<typename...> struct GetClassType : std::false_type
+    {
+    };
+    template<typename Class, typename EvType>
+    struct GetClassType<EventCallbackMethod<Class, EvType>>
+    {
+        using Type = Class;
+    };
+
 public:
     Application() noexcept;
     ~Application() noexcept;
@@ -44,7 +54,9 @@ public:
 
     void post_event(const std::shared_ptr<Event> &event, int receiver_id = -1) noexcept;
 
-    template<typename Client, typename EvType, EventCallbackMethod<Client, EvType> callback>
+    template<typename EvType,
+        auto callback,
+        typename Client = typename GetClassType<decltype(callback)>::Type>
     void register_event_handler(Client *instance, int user_id = -1, int priority = 0) noexcept
     {
         auto &event_clients = gsl::at(clients_, gsl::index(EvType::event_type()));

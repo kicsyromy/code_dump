@@ -3,51 +3,90 @@
 #include "voot_global.hh"
 #include "core/voot_signal.hh"
 
-#define VT_PROPERTY(type, name, klass, getter, setter, notify)       \
-    voot::Property<type, klass, &klass::getter, &klass::setter> name \
-    {                                                                \
-        notify, this                                                 \
+#include <type_traits>
+
+#define VT_PROPERTY(type, name, getter, setter)                                                    \
+    voot::                                                                                         \
+        Property<type, voot::property::impl::GetClassType<decltype(getter)>::Type, getter, setter> \
+            name                                                                                   \
+    {                                                                                              \
+        this                                                                                       \
     }
 
-#define VT_CONST_PROPERTY(type, name, klass, getter, setter)
-#define VT_READONLY_PROPERTY(type, name, klass, getter, notify)
-#define VT_READONLY_CONST_PROPERTY(type, name, klass, getter)
+#define VT_READONLY_PROPERTY(type, klass, getter)    \
+    voot::Property<type, klass, &klass::getter> name \
+    {                                                \
+        this                                         \
+    }
 
 VOOT_BEGIN_NAMESPACE
 
-template<typename T, typename Class> using GetMethod = const std::decay_t<T> &(Class::*)() const;
-template<typename T, typename Class> using SetMethod = void (Class::*)(const std::decay_t<T> &);
+namespace property
+{
+    template<typename T, typename Class>
+    using GetMethod = const std::decay_t<T> &(Class::*)() const;
+    template<typename T, typename Class> using SetMethod = bool (Class::*)(const std::decay_t<T> &);
+
+    namespace impl
+    {
+        template<typename...> struct GetClassType : std::false_type
+        {
+        };
+        template<typename R, typename Class> struct GetClassType<R (Class::*)() const>
+        {
+            using Type = Class;
+        };
+        template<typename R, typename Class> struct GetClassType<R (Class::*)() const noexcept>
+        {
+            using Type = Class;
+        };
+    } // namespace impl
+} // namespace property
 
 template<typename T,
     typename MemberOf,
-    GetMethod<T, MemberOf> getter,
-    SetMethod<T, MemberOf> setter>
+    property::GetMethod<T, MemberOf> getter,
+    property::SetMethod<T, MemberOf> setter = nullptr>
 class Property
 {
 public:
     using ValueType = std::decay_t<T>;
 
+private:
+    using GetFunction = const ValueType &(*)(const void *);
+    using SetFunction = bool (*)(const ValueType &, void *);
+
 public:
-    Property(Signal<ValueType> &notify, MemberOf *parent_object)
-      : notify_{ notify }
-      , parent_object_{ parent_object }
+    Property(MemberOf *parent_object)
+      : parent_object_{ parent_object }
       , getter_{ [](const void *obj) noexcept(
                      std::is_nothrow_invocable_v<decltype(getter), void>) -> const ValueType & {
           const auto *object = static_cast<const MemberOf *>(obj);
           return (object->*getter)();
       } }
-      , setter_{ [](const ValueType &v, void *obj) noexcept(
-                     std::is_nothrow_invocable_v<decltype(setter), const ValueType &>) {
-          auto *object = static_cast<MemberOf *>(obj);
-          (object->*setter)(v);
-      } }
-    {}
+      , setter_{ nullptr }
+    {
+        if constexpr (setter != nullptr)
+        {
+            setter_ =
+                [](const ValueType &v, void *obj) noexcept(
+                    std::is_nothrow_invocable_v<decltype(setter), const ValueType &>) -> bool {
+                auto *object = static_cast<MemberOf *>(obj);
+                return (object->*setter)(v);
+            };
+        }
+    }
 
 public:
     Property &operator=(const ValueType &v) noexcept(
         std::is_nothrow_invocable_v<decltype(setter), const ValueType &>)
     {
-        setter_(v, parent_object_);
+        static_assert(setter != nullptr, "Cannot assign to a readonly property");
+        const bool value_set = setter_(v, parent_object_);
+        if (value_set)
+        {
+            changed.emit(v);
+        }
         return *this;
     }
 
@@ -57,15 +96,13 @@ public:
         return getter_(parent_object_);
     }
 
-private:
-    Signal<ValueType> &notify_;
+public:
+    Signal<ValueType> changed;
 
+private:
     void *parent_object_;
 
-    using GetFunction = const ValueType &(*)(const void *);
     GetFunction getter_;
-
-    using SetFunction = void (*)(const ValueType &, void *);
     SetFunction setter_;
 };
 

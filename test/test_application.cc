@@ -60,8 +60,7 @@ TEST_CASE("Application::register_event_handler(EventCallback, void *, int)", "[a
     voot::Application application;
 
     EventTester tester;
-    application.register_event_handler<EventTester, TestEvent, &EventTester::test_event_handler>(
-        &tester);
+    application.register_event_handler<TestEvent, &EventTester::test_event_handler>(&tester);
 
     REQUIRE(application.clients_[std::size_t(voot::EventType::User)].size() == 1);
 
@@ -82,8 +81,7 @@ TEST_CASE("Application::post_event(Event *)", "[application]")
     auto *test_event = new TestEvent;
     EventTester event_tester;
 
-    application.register_event_handler<EventTester, TestEvent, &EventTester::test_event_handler>(
-        &event_tester,
+    application.register_event_handler<TestEvent, &EventTester::test_event_handler>(&event_tester,
         0);
     application.post_event(test_event);
 
