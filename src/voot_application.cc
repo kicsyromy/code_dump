@@ -56,56 +56,57 @@ namespace
     };
 
     /* TODO: Figure out how to make the a function */
-#define CREATE_WINDOW_EVENT(event_data, window_event)                                            \
-    voot::WindowEventVariant window_event_var;                                                   \
-    do                                                                                           \
-    {                                                                                            \
-        using namespace voot;                                                                    \
-        switch ((event_data).event)                                                              \
-        {                                                                                        \
-        default:                                                                                 \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_SHOWN:                                                              \
-        case SDL_WINDOWEVENT_EXPOSED:                                                            \
-            window_event_var = voot::WindowShowEvent{};                                          \
-            (window_event) = &(std::get<voot::WindowShowEvent>(window_event_var));               \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_HIDDEN:                                                             \
-            window_event_var = voot::WindowHideEvent{};                                          \
-            (window_event) = &(std::get<voot::WindowHideEvent>(window_event_var));               \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_MOVED:                                                              \
-            window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 };  \
-            (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));               \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_RESIZED:                                                            \
-        case SDL_WINDOWEVENT_SIZE_CHANGED:                                                       \
-            window_event_var = voot::WindowResizeEvent{ static_cast<size_t>((event_data).data1), \
-                static_cast<size_t>((event_data).data2) };                                       \
-            (window_event) = &(std::get<voot::WindowResizeEvent>(window_event_var));             \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_MINIMIZED:                                                          \
-        case SDL_WINDOWEVENT_MAXIMIZED:                                                          \
-        case SDL_WINDOWEVENT_RESTORED:                                                           \
-        case SDL_WINDOWEVENT_ENTER:                                                              \
-        case SDL_WINDOWEVENT_LEAVE:                                                              \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_FOCUS_GAINED:                                                       \
-            window_event_var = voot::WindowGainFocusEvent{};                                     \
-            (window_event) = &(std::get<voot::WindowGainFocusEvent>(window_event_var));          \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_FOCUS_LOST:                                                         \
-            window_event_var = voot::WindowLooseFocusEvent{};                                    \
-            (window_event) = &(std::get<voot::WindowLooseFocusEvent>(window_event_var));         \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_CLOSE:                                                              \
-            window_event_var = voot::WindowCloseEvent{};                                         \
-            (window_event) = &(std::get<voot::WindowCloseEvent>(window_event_var));              \
-            break;                                                                               \
-        case SDL_WINDOWEVENT_TAKE_FOCUS:                                                         \
-        case SDL_WINDOWEVENT_HIT_TEST:                                                           \
-            break;                                                                               \
-        }                                                                                        \
+#define CREATE_WINDOW_EVENT(event_data, window_event)                                           \
+    voot::WindowEventVariant window_event_var;                                                  \
+    do                                                                                          \
+    {                                                                                           \
+        using namespace voot;                                                                   \
+        switch ((event_data).event)                                                             \
+        {                                                                                       \
+        default:                                                                                \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_SHOWN:                                                             \
+        case SDL_WINDOWEVENT_EXPOSED:                                                           \
+            window_event_var = voot::WindowShowEvent{};                                         \
+            (window_event) = &(std::get<voot::WindowShowEvent>(window_event_var));              \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_HIDDEN:                                                            \
+            window_event_var = voot::WindowHideEvent{};                                         \
+            (window_event) = &(std::get<voot::WindowHideEvent>(window_event_var));              \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_MOVED:                                                             \
+            window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 }; \
+            (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));              \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_RESIZED:                                                           \
+        case SDL_WINDOWEVENT_SIZE_CHANGED:                                                      \
+            window_event_var =                                                                  \
+                voot::WindowResizeEvent{ static_cast<std::uint16_t>((event_data).data1),        \
+                    static_cast<std::uint16_t>((event_data).data2) };                           \
+            (window_event) = &(std::get<voot::WindowResizeEvent>(window_event_var));            \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_MINIMIZED:                                                         \
+        case SDL_WINDOWEVENT_MAXIMIZED:                                                         \
+        case SDL_WINDOWEVENT_RESTORED:                                                          \
+        case SDL_WINDOWEVENT_ENTER:                                                             \
+        case SDL_WINDOWEVENT_LEAVE:                                                             \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_FOCUS_GAINED:                                                      \
+            window_event_var = voot::WindowGainFocusEvent{};                                    \
+            (window_event) = &(std::get<voot::WindowGainFocusEvent>(window_event_var));         \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_FOCUS_LOST:                                                        \
+            window_event_var = voot::WindowLooseFocusEvent{};                                   \
+            (window_event) = &(std::get<voot::WindowLooseFocusEvent>(window_event_var));        \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_CLOSE:                                                             \
+            window_event_var = voot::WindowCloseEvent{};                                        \
+            (window_event) = &(std::get<voot::WindowCloseEvent>(window_event_var));             \
+            break;                                                                              \
+        case SDL_WINDOWEVENT_TAKE_FOCUS:                                                        \
+        case SDL_WINDOWEVENT_HIT_TEST:                                                          \
+            break;                                                                              \
+        }                                                                                       \
     } while (false)
 } // namespace
 

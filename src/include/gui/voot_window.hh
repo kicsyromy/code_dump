@@ -55,8 +55,8 @@ private:
     bool on_render_event(int window_id, RenderEvent *event) noexcept;
 
 private:
-    std::size_t width_;
-    std::size_t height_;
+    std::uint16_t width_;
+    std::uint16_t height_;
 
 private:
     std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> window_handle_{ nullptr, nullptr };

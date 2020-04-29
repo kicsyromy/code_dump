@@ -9,18 +9,8 @@ VOOT_BEGIN_NAMESPACE
 
 template<typename... Args> class Signal
 {
-private:
-    template<typename...> struct GetClassType : std::false_type
-    {
-    };
-
-    template<typename Class> struct GetClassType<void (Class::*)(Args...)>
-    {
-        using Type = Class;
-    };
-
 public:
-    template<auto Slot, typename Receiver = typename GetClassType<decltype(Slot)>::Type>
+    template<auto Slot, typename Receiver = typename utility::GetClassType<decltype(Slot)>::Type>
     void connect(Receiver &object)
     {
         connections_.emplace_back(&object, [](Args... args, void *obj) {

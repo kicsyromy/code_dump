@@ -14,12 +14,12 @@
 class TestClass
 {
 public:
-    const int &get_value() const noexcept
+    int get_value() const noexcept
     {
         return value_;
     }
 
-    bool set_value(const int &value) noexcept
+    bool set_value(int value) noexcept
     {
         if (value_ != value)
         {
@@ -32,6 +32,7 @@ public:
 
 public:
     VT_PROPERTY(int, property, &TestClass::get_value, &TestClass::set_value);
+    VT_READONLY_PROPERTY(int, read_only_property, &TestClass::get_value);
 
 private:
     int value_;

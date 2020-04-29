@@ -29,16 +29,6 @@ public:
     template<typename Class, typename EvType>
     using EventCallbackMethod = bool (Class::*)(int, EvType *);
 
-private:
-    template<typename...> struct GetClassType : std::false_type
-    {
-    };
-    template<typename Class, typename EvType>
-    struct GetClassType<EventCallbackMethod<Class, EvType>>
-    {
-        using Type = Class;
-    };
-
 public:
     Application() noexcept;
     ~Application() noexcept;
@@ -56,9 +46,12 @@ public:
 
     template<typename EvType,
         auto callback,
-        typename Client = typename GetClassType<decltype(callback)>::Type>
+        typename Client = typename utility::GetClassType<decltype(callback)>::Type>
     void register_event_handler(Client *instance, int user_id = -1, int priority = 0) noexcept
     {
+        static_assert(
+            std::is_convertible_v<decltype(callback), EventCallbackMethod<Client, EvType>>);
+
         auto &event_clients = gsl::at(clients_, gsl::index(EvType::event_type()));
 
         event_clients.emplace_back(

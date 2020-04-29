@@ -72,6 +72,50 @@ namespace utility
         return std::uint32_t((red << 24) | (green << 16) | (blue << 8) | alpha);
     }
 
+    template<typename...> struct GetClassType : std::false_type
+    {
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...)>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) const>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) volatile>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) const volatile>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) const noexcept>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) noexcept>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) volatile noexcept>
+    {
+        using Type = Class;
+    };
+    template<typename R, typename Class, typename... Args>
+    struct GetClassType<R (Class::*)(Args...) const volatile noexcept>
+    {
+        using Type = Class;
+    };
+
 } // namespace utility
 
 VOOT_END_NAMESPACE

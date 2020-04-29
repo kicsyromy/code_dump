@@ -27,9 +27,9 @@ void Item::render() const noexcept
     if (children_.empty())
         return;
 
-    for (int z = z_min_; z <= z_max_; ++z)
+    for (int zz = z_min_; zz <= z_max_; ++zz)
     {
-        auto it = children_.find(z);
+        auto it = children_.find(zz);
         if (it != children_.end())
         {
             for (const auto &child : it->second)
@@ -100,26 +100,27 @@ void Item::update_z_ordering(int new_z, int old_z, bool force, ItemDeleter item_
     }
 }
 
-bool Item::handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept
+bool Item::handle_mouse_button_pressed(MouseButton button, int xx, int yy) noexcept
 {
     bool event_handled = false;
     if (!children_.empty())
     {
-        for (int z = z_max_; z >= z_min_; --z)
+        for (int zz = z_max_; zz >= z_min_; --zz)
         {
-            auto it = children_.find(z);
+            auto it = children_.find(zz);
             if (it != children_.end())
             {
                 for (const auto &child : it->second)
                 {
-                    const auto child_handled_event =
-                        rectangle_contains_point(child->x(),
-                            child->y(),
-                            child->width_,
-                            child->height_,
-                            x,
-                            y) &&
-                        child->handle_mouse_button_pressed(button, x - child->x(), y - child->y());
+                    const auto child_handled_event = rectangle_contains_point(child->x(),
+                                                         child->y(),
+                                                         child->width_,
+                                                         child->height_,
+                                                         xx,
+                                                         yy) &&
+                                                     child->handle_mouse_button_pressed(button,
+                                                         xx - child->x(),
+                                                         yy - child->y());
                     if (child_handled_event)
                     {
                         event_handled = true;
@@ -138,7 +139,7 @@ bool Item::handle_mouse_button_pressed(MouseButton button, int x, int y) noexcep
     /*       return true                                                                */
     if (!event_handled) // && parent_ == nullptr)
     {
-        mouse_button_pressed.emit(button, x, y);
+        mouse_button_pressed.emit(button, xx, yy);
     }
 
     return true;

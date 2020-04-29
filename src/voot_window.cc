@@ -47,10 +47,7 @@ Window::Window(std::string_view title) noexcept
                         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE),
       &SDL_DestroyWindow }
   , view_id_{ view_id_last++ }
-  , framebuffer_handle_{ bgfx::createFrameBuffer(native_window_handle(),
-        std::uint16_t(width_),
-        std::uint16_t(height_))
-                             .idx }
+  , framebuffer_handle_{ bgfx::createFrameBuffer(native_window_handle(), width_, height_).idx }
   , drawing_context_{ nvgCreate(true, view_id_), &nvgDelete }
   , root_item_{ drawing_context_.get() }
 {
@@ -59,10 +56,7 @@ Window::Window(std::string_view title) noexcept
         VT_LOG_FATAL("Failed to create window: {}", SDL_GetError());
     }
 
-    update_window_surface(view_id_,
-        framebuffer_handle_,
-        std::uint16_t(width_),
-        std::uint16_t(height_));
+    update_window_surface(view_id_, framebuffer_handle_, width_, height_);
 
     root_item_.set_width(width_);
     root_item_.set_height(height_);
@@ -187,14 +181,9 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event) no
     height_ = new_height;
 
     bgfx::destroy(bgfx::FrameBufferHandle{ framebuffer_handle_ });
-    framebuffer_handle_ = bgfx::createFrameBuffer(native_window_handle(),
-        std::uint16_t(new_width),
-        std::uint16_t(new_height))
-                              .idx;
-    update_window_surface(view_id_,
-        framebuffer_handle_,
-        std::uint16_t(new_width),
-        std::uint16_t(new_height));
+    framebuffer_handle_ =
+        bgfx::createFrameBuffer(native_window_handle(), new_width, new_height).idx;
+    update_window_surface(view_id_, framebuffer_handle_, new_width, new_height);
 
     root_item_.set_width(width_);
     root_item_.set_height(height_);

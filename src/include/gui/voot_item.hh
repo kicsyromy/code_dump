@@ -1,7 +1,7 @@
 #pragma once
 
 #include "voot_global.hh"
-#include "core/voot_signal.hh"
+#include "core/voot_property.hh"
 #include "events/voot_mouse_events.hh"
 
 #include <algorithm>
@@ -43,95 +43,118 @@ public:
     ~Item() noexcept;
 
 public:
-    Signal<MouseButton, int, int> mouse_button_pressed;
-    Signal<MouseButton, int, int> mouse_button_released;
-    Signal<MouseButton, int, int> mouse_clicked;
-
-public:
-    constexpr int x() const noexcept
+    constexpr int get_x() const noexcept
     {
         if (parent_item() != nullptr)
         {
-            return x_ - parent_item()->x();
+            return x_ - parent_item()->get_x();
         }
 
         return x_;
     }
 
-    template<typename Integer> constexpr void set_x(Integer x) noexcept
+    constexpr bool set_x(int value) noexcept
     {
-        static_assert(std::is_integral_v<Integer>);
-        const auto new_x = static_cast<int>(x);
+        auto new_x = value;
         if (parent_item() != nullptr)
         {
-            x_ = parent_item()->x() + new_x;
+            new_x = parent_item()->get_x() + new_x;
         }
-        else
+
+        if (x_ != new_x)
         {
             x_ = new_x;
+            return true;
         }
+
+        return false;
     }
 
-    constexpr int y() const noexcept
+    constexpr int get_y() const noexcept
     {
         if (parent_item() != nullptr)
         {
-            return y_ - parent_item()->y();
+            return y_ - parent_item()->get_y();
         }
 
         return y_;
     }
 
-    template<typename Integer> constexpr void set_y(Integer y) noexcept
+    constexpr bool set_y(int value) noexcept
     {
-        static_assert(std::is_integral_v<Integer>);
-        const auto new_y = static_cast<int>(y);
+        auto new_y = value;
         if (parent_item() != nullptr)
         {
-            y_ = parent_item()->y() + new_y;
+            new_y = parent_item()->get_y() + new_y;
         }
-        else
+
+        if (y_ != new_y)
         {
             y_ = new_y;
+            return true;
         }
+
+        return false;
     }
 
-    constexpr int z() const noexcept
+    constexpr int get_z() const noexcept
     {
         return z_;
     }
 
-    template<typename Integer> inline void set_z(Integer z) noexcept
+    inline bool set_z(int value) noexcept
     {
-        static_assert(std::is_integral_v<Integer>);
         const auto old_z = z_;
-        const auto new_z = static_cast<int>(z);
+        const auto new_z = value;
 
         z_ = new_z;
         update_z_ordering(new_z, old_z);
+
+        return new_z != old_z;
     }
 
-    constexpr auto width() const noexcept
+    constexpr std::uint16_t get_width() const noexcept
     {
         return width_;
     }
 
-    template<typename Integer> constexpr void set_width(Integer width) noexcept
+    constexpr bool set_width(std::uint16_t value) noexcept
     {
-        static_assert(std::is_integral_v<Integer>);
-        width_ = static_cast<std::uint16_t>(width);
+        if (width_ != value)
+        {
+            width_ = value;
+            return true;
+        }
+
+        return false;
     }
 
-    constexpr auto height() const noexcept
+    constexpr std::uint16_t get_height() const noexcept
     {
         return height_;
     }
 
-    template<typename Integer> constexpr void set_height(Integer height) noexcept
+    constexpr bool set_height(std::uint16_t value) noexcept
     {
-        static_assert(std::is_integral_v<Integer>);
-        height_ = static_cast<std::uint16_t>(height);
+        if (height_ != value)
+        {
+            height_ = value;
+            return true;
+        }
+
+        return false;
     }
+
+public:
+    Signal<MouseButton, int, int> mouse_button_pressed;
+    Signal<MouseButton, int, int> mouse_button_released;
+    Signal<MouseButton, int, int> mouse_clicked;
+
+    VT_PROPERTY(int, x, &Item::get_x, &Item::set_x);
+    VT_PROPERTY(int, y, &Item::get_y, &Item::set_y);
+    VT_PROPERTY(int, z, &Item::get_z, &Item::set_z);
+    VT_PROPERTY(std::uint16_t, width, &Item::get_width, &Item::set_width);
+    VT_PROPERTY(std::uint16_t, height, &Item::get_height, &Item::set_height);
 
 public:
     constexpr Item *parent_item() const noexcept

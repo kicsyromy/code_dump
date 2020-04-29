@@ -65,7 +65,7 @@ TEST_CASE("Rectangle", "[rectangle]")
 
     r3->set_x(5);
     r3->set_y(5);
-    r3->set_z(0);
+    r3->set_z(4);
     r3->set_width(50);
     r3->set_height(20);
     r3->set_color(0, 255, 0);

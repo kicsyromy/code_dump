@@ -36,21 +36,21 @@ class WindowResizeEvent : public EventBase<WindowResizeEvent>
     DECLARE_EVENT(WindowResized, EventCategoryWindow);
 
 public:
-    constexpr WindowResizeEvent(std::size_t width, std::size_t height) noexcept
+    constexpr WindowResizeEvent(std::uint16_t width, std::uint16_t height) noexcept
       : EventBase<WindowResizeEvent>{}
       , width_{ width }
       , height_{ height }
     {}
 
 public:
-    constexpr std::pair<std::size_t, std::size_t> size() const noexcept
+    constexpr std::pair<std::uint16_t, std::uint16_t> size() const noexcept
     {
         return { width_, height_ };
     }
 
 private:
-    std::size_t width_;
-    std::size_t height_;
+    std::uint16_t width_;
+    std::uint16_t height_;
 };
 
 class WindowGainFocusEvent : public EventBase<WindowGainFocusEvent>
