@@ -12,10 +12,13 @@
 #include "core/voot_binding.hh"
 #include "voot_binding.cc"
 
+static bool get_s1_called = false;
+
 struct S1
 {
     int get_value() const noexcept
     {
+        get_s1_called = true;
         return value_;
     }
 
@@ -80,6 +83,8 @@ TEST_CASE("Bind property to expression", "[binding]")
 {
     using namespace voot;
 
+    get_s1_called = false;
+
     S1 s1;
     bool binding_called = false;
 
@@ -88,6 +93,35 @@ TEST_CASE("Bind property to expression", "[binding]")
         return 12;
     });
 
+    REQUIRE(get_s1_called == false);
     REQUIRE(s1.property() == 12);
     REQUIRE(binding_called == true);
+}
+
+TEST_CASE("Property const &", "[binding]")
+{
+    class TestClass2
+    {
+    public:
+        const std::vector<int> &get_value() const noexcept
+        {
+            return value_;
+        }
+
+    public:
+        voot::Property<std::vector<int>, &TestClass2::get_value> property{ this };
+
+    private:
+        std::vector<int> value_;
+    };
+
+    TestClass2 test_class;
+
+    std::vector<int> vec{ 1, 2, 3, 4, 5 };
+    voot::bind(test_class.property, [&vec]() -> const std::vector<int> & {
+        return vec;
+    });
+
+    const auto &v = test_class.property();
+    static_cast<void>(v);
 }

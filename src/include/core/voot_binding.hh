@@ -13,14 +13,18 @@ class BindingBase
 {
 public:
     BindingBase(void *target_property,
-        std::function<void(void *)> source_expression = nullptr) noexcept
+        std::function<void(void *)> &&source_expression = nullptr) noexcept
       : target_property_{ target_property }
-      , source_expression_{ source_expression }
-    {}
+    {
+        if (source_expression != nullptr)
+        {
+            static_cast<PropertyBase *>(target_property)
+                ->set_get_expression(std::move(source_expression));
+        }
+    }
 
 protected:
     void *target_property_;
-    std::function<void(void *)> source_expression_;
 };
 
 namespace binding
@@ -64,24 +68,36 @@ template<typename TargetValueType, auto target_get, auto target_set, typename So
 class Binding<Property<TargetValueType, target_get, target_set>, SourceExpressionType>
   : public BindingBase
 {
-    static_assert(std::is_invocable_r_v<TargetValueType, SourceExpressionType>,
-        "Binding source must be invocable without arguments and must result in type contained in "
-        "property");
-
     using PropertyTarget = Property<TargetValueType, target_get, target_set>;
     using ThisType = Binding<PropertyTarget, SourceExpressionType>;
 
+    static_assert(std::is_same_v<typename PropertyTarget::ValueTypeGet,
+                      std::invoke_result_t<SourceExpressionType>>,
+        "Binding source must be invocable without arguments and must result in the return type of "
+        "the get method");
+
 public:
-    Binding(PropertyTarget &target, SourceExpressionType expression)
-      : BindingBase{ &target, [expression](void *result) {
-                        (*static_cast<TargetValueType *>(result)) = expression();
-                    } }
+    Binding(PropertyTarget &target, SourceExpressionType &&expression)
+      : BindingBase{ &target,
+          [expression = std::move(expression)](void *result) {
+              typename PropertyTarget::ValueTypeGet expr_result = expression();
+
+              if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+              {
+                  auto *r =
+                      static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
+                  *r = std::move(expr_result);
+              }
+
+              if constexpr (std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+              {
+                  auto **r =
+                      static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
+                  *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+              }
+          } }
     {
-        target.bound_getter_ = [this] {
-            TargetValueType result;
-            source_expression_(&result);
-            return result;
-        };
+        static_cast<void>(expression);
     }
 };
 
@@ -101,10 +117,11 @@ void bind(Property<TargetValueType, target_get, target_set> &target,
 
 template<typename TargetValueType, auto target_get, auto target_set, typename SourceExpressionType>
 void bind(Property<TargetValueType, target_get, target_set> &target,
-    SourceExpressionType expression)
+    SourceExpressionType &&expression)
 {
     binding::bindings().emplace_back(
-        new Binding<std::decay_t<decltype(target)>, SourceExpressionType>(target, expression));
+        new Binding<std::decay_t<decltype(target)>, SourceExpressionType>(target,
+            std::move(expression)));
 }
 
 VOOT_END_NAMESPACE

@@ -90,9 +90,22 @@ namespace property
     };
 } // namespace property
 
-template<typename T, auto getter, auto setter = nullptr> class Property
+class PropertyBase
 {
-    using MemberOf = typename voot::utility::GetClassType<decltype(getter)>::Type;
+public:
+    template<typename Callable> void set_get_expression(Callable &&callable)
+    {
+        static_assert(std::is_invocable_v<Callable, void *>);
+        get_expression_ = std::move(callable);
+    }
+
+protected:
+    std::function<void(void *)> get_expression_{ nullptr };
+};
+
+template<typename T, auto getter, auto setter = nullptr> class Property : public PropertyBase
+{
+    using MemberOf = typename utility::GetClassType<decltype(getter)>::Type;
 
     static constexpr bool get_simple =
         std::is_convertible_v<decltype(getter), property::GetMethod<T, MemberOf>>;
@@ -111,9 +124,6 @@ template<typename T, auto getter, auto setter = nullptr> class Property
 
     static_assert(get_simple || get_ref || get_const_ref, "Invalid get function");
     static_assert(set_simple || set_ref || set_const_ref || set_null, "Invalid set function");
-
-public:
-    using ValueType = std::decay_t<T>;
 
 public:
     using ValueTypeGet = typename property::GetValueType<decltype(getter)>::Type;
@@ -139,21 +149,35 @@ public:
 
     ValueTypeGet operator()() const noexcept(std::is_nothrow_invocable_v<decltype(getter), void>)
     {
-        if (bound_getter_ != nullptr)
+        if (get_expression_ != nullptr)
         {
-            return bound_getter_();
+            if constexpr (get_simple)
+            {
+                ValueTypeGet result;
+                get_expression_(&result);
+                return result;
+            }
+
+            if constexpr (get_ref)
+            {
+                std::decay_t<ValueTypeGet> *result;
+                get_expression_(&result);
+                return *result;
+            }
+
+            if constexpr (get_const_ref)
+            {
+                const std::decay_t<ValueTypeGet> *result;
+                get_expression_(&result);
+                return *result;
+            }
         }
-        else
-        {
-            return (parent_object_->*getter)();
-        }
+
+        return (parent_object_->*getter)();
     }
 
 public:
-    Signal<std::decay_t<T>> changed;
-
-public:
-    std::function<ValueTypeGet()> bound_getter_{ nullptr };
+    Signal<T> changed;
 
 private:
     MemberOf *parent_object_;

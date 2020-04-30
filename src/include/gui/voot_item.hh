@@ -65,25 +65,14 @@ public:
 private:
     constexpr int get_x() const noexcept
     {
-        if (parent_item() != nullptr)
-        {
-            return x_ - parent_item()->x_;
-        }
-
         return x_;
     }
 
     constexpr bool set_x(int value) noexcept
     {
-        auto new_x = value;
-        if (parent_item() != nullptr)
+        if (x_ != value)
         {
-            new_x = parent_item()->x_ + new_x;
-        }
-
-        if (x_ != new_x)
-        {
-            x_ = new_x;
+            x_ = value;
             return true;
         }
 
@@ -92,25 +81,14 @@ private:
 
     constexpr int get_y() const noexcept
     {
-        if (parent_item() != nullptr)
-        {
-            return y_ - parent_item()->y_;
-        }
-
         return y_;
     }
 
     constexpr bool set_y(int value) noexcept
     {
-        auto new_y = value;
-        if (parent_item() != nullptr)
+        if (y_ != value)
         {
-            new_y = parent_item()->y_ + new_y;
-        }
-
-        if (y_ != new_y)
-        {
-            y_ = new_y;
+            y_ = value;
             return true;
         }
 
