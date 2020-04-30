@@ -6,16 +6,16 @@
 #include <type_traits>
 #include <variant>
 
-#define VT_PROPERTY(type, name, getter, setter)                                                    \
-    voot::Property<type, voot::utility::GetClassType<decltype(getter)>::Type, getter, setter> name \
-    {                                                                                              \
-        this                                                                                       \
+#define VT_PROPERTY(type, name, getter, setter) \
+    voot::Property<type, getter, setter> name   \
+    {                                           \
+        this                                    \
     }
 
-#define VT_READONLY_PROPERTY(type, name, getter)                                           \
-    voot::Property<type, voot::utility::GetClassType<decltype(getter)>::Type, getter> name \
-    {                                                                                      \
-        this                                                                               \
+#define VT_READONLY_PROPERTY(type, name, getter) \
+    voot::Property<type, getter> name            \
+    {                                            \
+        this                                     \
     }
 
 VOOT_BEGIN_NAMESPACE
@@ -90,8 +90,10 @@ namespace property
     };
 } // namespace property
 
-template<typename T, typename MemberOf, auto getter, auto setter = nullptr> class Property
+template<typename T, auto getter, auto setter = nullptr> class Property
 {
+    using MemberOf = typename voot::utility::GetClassType<decltype(getter)>::Type;
+
     static constexpr bool get_simple =
         std::is_convertible_v<decltype(getter), property::GetMethod<T, MemberOf>>;
     static constexpr bool get_ref =
@@ -114,44 +116,17 @@ public:
     using ValueTypeGet = typename property::GetValueType<decltype(getter)>::Type;
     using ValueTypeSet = typename property::SetValueType<decltype(setter)>::Type;
 
-private:
-    using GetFunction = ValueTypeGet (*)(void *);
-    using SetFunction = bool (*)(ValueTypeSet, void *);
-
 public:
     Property(MemberOf *parent_object)
       : parent_object_{ parent_object }
-      , getter_{ [](void *obj) noexcept(
-                     std::is_nothrow_invocable_v<decltype(getter), void>) -> ValueTypeGet {
-          if constexpr (get_ref)
-          {
-              auto *object = static_cast<MemberOf *>(obj);
-              return (object->*getter)();
-          }
-          else
-          {
-              const auto *object = static_cast<const MemberOf *>(obj);
-              return (object->*getter)();
-          }
-      } }
-      , setter_{ nullptr }
-    {
-        if constexpr (setter != nullptr)
-        {
-            setter_ = [](ValueTypeSet v, void *obj) noexcept(
-                          std::is_nothrow_invocable_v<decltype(setter), ValueTypeSet>) -> bool {
-                auto *object = static_cast<MemberOf *>(obj);
-                return (object->*setter)(v);
-            };
-        }
-    }
+    {}
 
 public:
     Property &operator=(ValueTypeSet v) noexcept(
         std::is_nothrow_invocable_v<decltype(setter), ValueTypeSet>)
     {
         static_assert(setter != nullptr, "Cannot assign to a readonly property");
-        const bool value_set = setter_(v, parent_object_);
+        const bool value_set = (parent_object_->*setter)(v);
         if (value_set)
         {
             changed.emit(v);
@@ -161,17 +136,14 @@ public:
 
     ValueTypeGet operator()() const noexcept(std::is_nothrow_invocable_v<decltype(getter), void>)
     {
-        return getter_(parent_object_);
+        return (parent_object_->*getter)();
     }
 
 public:
     Signal<std::decay_t<T>> changed;
 
 private:
-    void *parent_object_;
-
-    GetFunction getter_;
-    SetFunction setter_;
+    MemberOf *parent_object_;
 };
 
 VOOT_END_NAMESPACE

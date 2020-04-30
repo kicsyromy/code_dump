@@ -50,17 +50,21 @@ TEST_CASE("Rectangle", "[rectangle]")
         VT_LOG_INFO("Green Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
     });
 
-    r->set_x(window.root_item()->width() - 140);
-    r->set_y(20);
-    r->set_width(100);
-    r->set_height(50);
+    // voot::bind(property, expression); // macro??
+    // voot::bind(property, property); // method
+    // voot::bind(property, function); // method
+
+    r->x = window.root_item()->width() - 140;
+    r->y = 20;
+    r->width = 100;
+    r->height = 50;
     r->set_color(0, 0, 255);
 
-    r2->set_x(2);
-    r2->set_y(2);
-    r2->set_z(1);
-    r2->set_width(50);
-    r2->set_height(20);
+    r2->x = 2;
+    r2->y = 2;
+    r2->z = 1;
+    r2->width = 50;
+    r2->height = 20;
     r2->set_color(255, 0, 0);
 
     r3->set_x(5);
