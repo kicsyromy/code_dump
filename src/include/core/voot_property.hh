@@ -113,6 +113,9 @@ template<typename T, auto getter, auto setter = nullptr> class Property
     static_assert(set_simple || set_ref || set_const_ref || set_null, "Invalid set function");
 
 public:
+    using ValueType = std::decay_t<T>;
+
+public:
     using ValueTypeGet = typename property::GetValueType<decltype(getter)>::Type;
     using ValueTypeSet = typename property::SetValueType<decltype(setter)>::Type;
 

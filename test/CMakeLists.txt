@@ -13,6 +13,7 @@ target_link_libraries (
 add_executable (
     tests
     test_application.cc
+    test_binding.cc
     test_event.cc
     test_item.cc
     test_logger.cc

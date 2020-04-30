@@ -4,7 +4,7 @@ string (TOLOWER ${BINARY_NAME} BINARY_NAME)
 add_library (
     ${BINARY_NAME} SHARED
     voot_application.cc     include/core/voot_application.hh
-                            include/core/voot_binding.hh
+    voot_binding.cc         include/core/voot_binding.hh
     voot_logger.cc          include/core/voot_logger.hh
                             include/core/voot_logger.inl
                             include/core/voot_property.hh
