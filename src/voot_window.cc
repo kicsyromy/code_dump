@@ -49,7 +49,7 @@ Window::Window(std::string_view title) noexcept
   , view_id_{ view_id_last++ }
   , framebuffer_handle_{ bgfx::createFrameBuffer(native_window_handle(), width_, height_).idx }
   , drawing_context_{ nvgCreate(true, view_id_), &nvgDelete }
-  , root_item_{ drawing_context_.get() }
+  , root_item_{}
 {
     if (window_handle_ == nullptr)
     {
@@ -210,7 +210,7 @@ bool Window::on_render_event(int window_id, RenderEvent *event) noexcept
     auto *vg = drawing_context_.get();
 
     nvgBeginFrame(vg, float(width_), float(height_), 1.0F);
-    root_item_.render();
+    root_item_.render(vg);
     nvgEndFrame(vg);
 
     return true;

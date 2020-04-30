@@ -17,11 +17,11 @@ VOOT_BEGIN_NAMESPACE
 
 Item::~Item() noexcept = default;
 
-void Item::render() const noexcept
+void Item::render(NVGcontext *vg) const noexcept
 {
     if (render_function_ != nullptr)
     {
-        render_function_(drawing_context_, this);
+        render_function_(vg, this);
     }
 
     if (children_.empty())
@@ -34,7 +34,7 @@ void Item::render() const noexcept
         {
             for (const auto &child : it->second)
             {
-                child->render();
+                child->render(vg);
             }
         }
     }

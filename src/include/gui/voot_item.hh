@@ -27,7 +27,7 @@ public:
     using RenderFunction = void (*)(NVGcontext *, const void *);
     template<typename ChildItem> using RenderMethod = void (ChildItem::*)(NVGcontext *) const;
 
-public:
+protected:
     template<typename ChildItem>
     Item(ChildItem *) noexcept
       : render_function_{ [](NVGcontext *vg, const void *child) {
@@ -36,8 +36,8 @@ public:
       } }
     {}
 
-    explicit Item(NVGcontext *context) noexcept
-      : drawing_context_{ context }
+public:
+    Item() noexcept
     {}
 
     ~Item() noexcept;
@@ -163,7 +163,7 @@ public:
     /* For now just call render, but might do more in the future */
     inline void update() const noexcept
     {
-        render();
+        render(nullptr);
     }
 
 protected:
@@ -171,7 +171,6 @@ protected:
     {
         static_assert(std::is_base_of_v<Item, Child>);
 
-        drawing_context_ = parent->drawing_context_;
         parent_ = parent;
 
         set_x(x_);
@@ -202,10 +201,9 @@ private:
     friend class Window;
     bool handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept;
     bool handle_mouse_button_released(MouseButton button, int x, int y) noexcept;
-    void render() const noexcept;
+    void render(NVGcontext *vg) const noexcept;
 
 private:
-    NVGcontext *drawing_context_{ nullptr };
     RenderFunction render_function_{ nullptr };
     Item *parent_{ nullptr };
 
