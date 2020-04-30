@@ -47,31 +47,34 @@ TEST_CASE("Rectangle", "[rectangle]")
     });
 
     auto *r3 = new voot::Rectangle();
-    r3->mouse_button_pressed.connect([](MouseButton button, int x, int y) {
-        VT_LOG_INFO("Green Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
+    r3->mouse_clicked.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("Green Rectangle mouse clicked B: {} X: {} Y: {}", button, x, y);
+    });
+    r3->mouse_double_clicked.connect([](MouseButton button, int x, int y) {
+        VT_LOG_INFO("Green Rectangle mouse double clicked B: {} X: {} Y: {}", button, x, y);
     });
 
     // r->x = window.root_item()->width() - 140;
-    voot::bind(r->x, [&window] {
-        return window.root_item()->width() - 140;
+    voot::bind(r->x, [&window, &r] {
+        return window.root_item()->width() - r->width() + 100;
     });
     r->y = 20;
-    r->width = 100;
-    r->height = 50;
+    r->width = 500;
+    r->height = 200;
     r->set_color(0, 0, 255);
 
-    r2->x = 2;
-    r2->y = 2;
+    r2->x = 20;
+    r2->y = 20;
     r2->z = 1;
-    r2->width = 50;
-    r2->height = 20;
+    r2->width = 300;
+    r2->height = 150;
     r2->set_color(255, 0, 0);
 
-    r3->set_x(5);
-    r3->set_y(5);
+    r3->set_x(40);
+    r3->set_y(40);
     r3->set_z(4);
-    r3->set_width(50);
-    r3->set_height(20);
+    r3->set_width(300);
+    r3->set_height(150);
     r3->set_color(0, 255, 0);
 
     r->set_parent_item(window.root_item());

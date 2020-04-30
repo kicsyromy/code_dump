@@ -5,6 +5,7 @@
 #include "events/voot_mouse_events.hh"
 
 #include <algorithm>
+#include <chrono>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -26,6 +27,16 @@ class Item
 public:
     using RenderFunction = void (*)(NVGcontext *, const void *);
     template<typename ChildItem> using RenderMethod = void (ChildItem::*)(NVGcontext *) const;
+
+public:
+    enum MouseEventFilter : std::uint8_t
+    {
+        MouseEventFilterNone = 0,
+        MouseEventFilterButton = 1 << 0,
+        MouseEventFilterMotion = 1 << 1,
+        MouseEventFilterWheel = 1 << 2,
+        MouseEventFilterDrag = 1 << 3,
+    };
 
 protected:
     template<typename ChildItem>
@@ -147,6 +158,7 @@ public:
     Signal<MouseButton, int, int> mouse_button_pressed;
     Signal<MouseButton, int, int> mouse_button_released;
     Signal<MouseButton, int, int> mouse_clicked;
+    Signal<MouseButton, int, int> mouse_double_clicked;
 
     VT_PROPERTY(int, x, &Item::get_x, &Item::set_x);
     VT_PROPERTY(int, y, &Item::get_y, &Item::set_y);
@@ -187,6 +199,9 @@ protected:
     std::uint16_t width_{ 0 };
     std::uint16_t height_{ 0 };
 
+    /* Mouse handling */
+    std::uint8_t mouse_event_filter_{ MouseEventFilterNone };
+
 private:
     using ItemDeleter = void (*)(Item *);
     void update_z_ordering(
@@ -199,9 +214,15 @@ private:
 
 private:
     friend class Window;
+    void render(NVGcontext *vg) const noexcept;
+
+    /* Mouse handling */
     bool handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept;
     bool handle_mouse_button_released(MouseButton button, int x, int y) noexcept;
-    void render(NVGcontext *vg) const noexcept;
+
+    using TimePoint = std::chrono::high_resolution_clock::time_point;
+    TimePoint mouse_button_press_start_{ std::chrono::high_resolution_clock::now() };
+    TimePoint mouse_button_click_end_{ std::chrono::high_resolution_clock::now() };
 
 private:
     RenderFunction render_function_{ nullptr };
@@ -226,6 +247,12 @@ public:
         {
             Item::set_parent_item<ChildItem>(parent);
         }
+    }
+
+protected:
+    constexpr void set_mouse_event_filter(std::uint8_t flags) noexcept
+    {
+        mouse_event_filter_ = flags;
     }
 };
 

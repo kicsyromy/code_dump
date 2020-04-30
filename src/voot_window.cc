@@ -168,6 +168,8 @@ bool Window::on_mouse_button_release_event(int window_id, MouseButtonReleaseEven
     static_cast<void>(event);
 
     VT_LOG_DEBUG("[window] mouse button release");
+    const auto [x, y] = event->coordinates();
+    root_item_.handle_mouse_button_released(event->button(), x, y);
 
     return true;
 }

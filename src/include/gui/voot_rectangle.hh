@@ -10,6 +10,12 @@ class Rectangle : public ItemBase<Rectangle>
     VT_ITEM
 
 public:
+    Rectangle()
+    {
+        set_mouse_event_filter(MouseEventFilterButton);
+    }
+
+public:
     constexpr void set_color(std::uint8_t r,
         std::uint8_t g,
         std::uint8_t b,

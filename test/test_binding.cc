@@ -109,7 +109,7 @@ TEST_CASE("Property const &", "[binding]")
         }
 
     public:
-        voot::Property<std::vector<int>, &TestClass2::get_value> property{ this };
+        VT_READONLY_PROPERTY(const std::vector<int> &, property, &TestClass2::get_value);
 
     private:
         std::vector<int> value_;
@@ -121,7 +121,6 @@ TEST_CASE("Property const &", "[binding]")
     voot::bind(test_class.property, [&vec]() -> const std::vector<int> & {
         return vec;
     });
-
-    const auto &v = test_class.property();
-    static_cast<void>(v);
+    auto &v = test_class.property();
+    REQUIRE(&vec == &v);
 }

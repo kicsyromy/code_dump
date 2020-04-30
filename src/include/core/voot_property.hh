@@ -138,7 +138,7 @@ public:
     Property &operator=(ValueTypeSet v) noexcept(
         std::is_nothrow_invocable_v<decltype(setter), ValueTypeSet>)
     {
-        static_assert(setter != nullptr, "Cannot assign to a readonly property");
+        static_assert(!set_null, "Cannot assign to a readonly property");
         const bool value_set = (parent_object_->*setter)(v);
         if (value_set)
         {

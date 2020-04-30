@@ -112,15 +112,17 @@ bool Item::handle_mouse_button_pressed(MouseButton button, int xx, int yy) noexc
             {
                 for (const auto &child : it->second)
                 {
-                    const auto child_handled_event = rectangle_contains_point(child->x(),
-                                                         child->y(),
-                                                         child->width_,
-                                                         child->height_,
-                                                         xx,
-                                                         yy) &&
-                                                     child->handle_mouse_button_pressed(button,
-                                                         xx - child->x(),
-                                                         yy - child->y());
+                    const auto child_handled_event =
+                        ((child->mouse_event_filter_ & MouseEventFilterButton) != 0) &&
+                        rectangle_contains_point(child->x(),
+                            child->y(),
+                            child->width_,
+                            child->height_,
+                            xx,
+                            yy) &&
+                        child->handle_mouse_button_pressed(button,
+                            xx - child->x(),
+                            yy - child->y());
                     if (child_handled_event)
                     {
                         event_handled = true;
@@ -134,15 +136,86 @@ bool Item::handle_mouse_button_pressed(MouseButton button, int xx, int yy) noexc
         }
     }
 
-    /* TODO: Every item handles mouse events, no filter is implemented yet, as such     */
-    /*       this item emits the signal if the mouse event occured inbounds and always  */
-    /*       return true                                                                */
-    if (!event_handled) // && parent_ == nullptr)
+    if (!event_handled && ((mouse_event_filter_ & MouseEventFilterButton) != 0))
     {
+        mouse_button_press_start_ = std::chrono::high_resolution_clock::now();
         mouse_button_pressed.emit(button, xx, yy);
+        return true;
     }
 
-    return true;
+    if (event_handled)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Item::handle_mouse_button_released(MouseButton button, int xx, int yy) noexcept
+{
+    bool event_handled = false;
+    if (!children_.empty())
+    {
+        for (int zz = z_max_; zz >= z_min_; --zz)
+        {
+            auto it = children_.find(zz);
+            if (it != children_.end())
+            {
+                for (const auto &child : it->second)
+                {
+                    const auto child_handled_event =
+                        ((child->mouse_event_filter_ & MouseEventFilterButton) != 0) &&
+                        rectangle_contains_point(child->x(),
+                            child->y(),
+                            child->width_,
+                            child->height_,
+                            xx,
+                            yy) &&
+                        child->handle_mouse_button_released(button,
+                            xx - child->x(),
+                            yy - child->y());
+                    if (child_handled_event)
+                    {
+                        event_handled = true;
+                        break;
+                    }
+                }
+
+                if (event_handled)
+                    break;
+            }
+        }
+    }
+
+    if (!event_handled && ((mouse_event_filter_ & MouseEventFilterButton) != 0))
+    {
+        constexpr auto click_delta_time = std::chrono::milliseconds{ 600 };
+        if (std::chrono::high_resolution_clock::now() - mouse_button_press_start_ <=
+            click_delta_time)
+        {
+            if (std::chrono::high_resolution_clock::now() - mouse_button_click_end_ <=
+                click_delta_time)
+            {
+                mouse_double_clicked.emit(button, xx, yy);
+            }
+            else
+            {
+                mouse_clicked.emit(button, xx, yy);
+            }
+
+            mouse_button_click_end_ = std::chrono::high_resolution_clock::now();
+        }
+
+        mouse_button_released.emit(button, xx, yy);
+        return true;
+    }
+
+    if (event_handled)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 VOOT_END_NAMESPACE
