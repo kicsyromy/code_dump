@@ -43,11 +43,31 @@ public:
     ~Item() noexcept;
 
 public:
+    constexpr int x_abs() const noexcept
+    {
+        if (parent_ != nullptr)
+        {
+            return parent_->x_abs() + x();
+        }
+        return x_;
+    }
+
+    constexpr int y_abs() const noexcept
+    {
+        if (parent_ != nullptr)
+        {
+            return parent_->y_abs() + y();
+        }
+
+        return y_;
+    }
+
+private:
     constexpr int get_x() const noexcept
     {
         if (parent_item() != nullptr)
         {
-            return x_ - parent_item()->get_x();
+            return x_ - parent_item()->x_;
         }
 
         return x_;
@@ -58,7 +78,7 @@ public:
         auto new_x = value;
         if (parent_item() != nullptr)
         {
-            new_x = parent_item()->get_x() + new_x;
+            new_x = parent_item()->x_ + new_x;
         }
 
         if (x_ != new_x)
@@ -74,7 +94,7 @@ public:
     {
         if (parent_item() != nullptr)
         {
-            return y_ - parent_item()->get_y();
+            return y_ - parent_item()->y_;
         }
 
         return y_;
@@ -85,7 +105,7 @@ public:
         auto new_y = value;
         if (parent_item() != nullptr)
         {
-            new_y = parent_item()->get_y() + new_y;
+            new_y = parent_item()->y_ + new_y;
         }
 
         if (y_ != new_y)

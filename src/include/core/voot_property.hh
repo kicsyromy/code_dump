@@ -139,11 +139,21 @@ public:
 
     ValueTypeGet operator()() const noexcept(std::is_nothrow_invocable_v<decltype(getter), void>)
     {
-        return (parent_object_->*getter)();
+        if (bound_getter_ != nullptr)
+        {
+            return bound_getter_();
+        }
+        else
+        {
+            return (parent_object_->*getter)();
+        }
     }
 
 public:
     Signal<std::decay_t<T>> changed;
+
+public:
+    std::function<ValueTypeGet()> bound_getter_{ nullptr };
 
 private:
     MemberOf *parent_object_;

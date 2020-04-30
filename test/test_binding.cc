@@ -10,6 +10,7 @@
 #endif
 
 #include "core/voot_binding.hh"
+#include "voot_binding.cc"
 
 struct S1
 {
@@ -68,8 +69,25 @@ TEST_CASE("Bind 2 properties", "[binding]")
     S1 s1;
     S2 s2;
 
-    Binding<decltype(s1.property), decltype(s2.property)> test_binding(s1.property, s2.property);
+    voot::bind(s1.property, s2.property);
     s2.property = 7;
+
     REQUIRE(s1.value_ == 7);
     REQUIRE(s1.property() == 7);
+}
+
+TEST_CASE("Bind property to expression", "[binding]")
+{
+    using namespace voot;
+
+    S1 s1;
+    bool binding_called = false;
+
+    voot::bind(s1.property, [&binding_called] {
+        binding_called = true;
+        return 12;
+    });
+
+    REQUIRE(s1.property() == 12);
+    REQUIRE(binding_called == true);
 }

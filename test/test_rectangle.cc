@@ -9,6 +9,7 @@
 #pragma clang diagnostic pop
 #endif
 
+#include "core/voot_binding.hh"
 #include "gui/voot_rectangle.hh"
 #include "voot_rectangle.cc"
 
@@ -50,11 +51,10 @@ TEST_CASE("Rectangle", "[rectangle]")
         VT_LOG_INFO("Green Rectangle mouse button pressed B: {} X: {} Y: {}", button, x, y);
     });
 
-    // voot::bind(property, expression); // macro??
-    // voot::bind(property, property); // method
-    // voot::bind(property, function); // method
-
-    r->x = window.root_item()->width() - 140;
+    // r->x = window.root_item()->width() - 140;
+    voot::bind(r->x, [&window] {
+        return window.root_item()->width() - 140;
+    });
     r->y = 20;
     r->width = 100;
     r->height = 50;
