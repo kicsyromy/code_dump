@@ -27,7 +27,7 @@ add_subdirectory (SDL2)
 ## spdlog
 add_subdirectory (spdlog-1.5.0)
 
-## GSL (Core Guidelines)
+## GSL (C++ Core Guidelines helper library)
 add_subdirectory (GSL-3.0.0)
 
 ## Additional configuration required for proper linking

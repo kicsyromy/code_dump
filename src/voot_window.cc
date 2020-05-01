@@ -190,6 +190,9 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event) no
     root_item_.set_width(width_);
     root_item_.set_height(height_);
 
+    /* Force a render for this window when resized */
+    on_render_event(window_id, nullptr);
+
     return true;
 }
 
