@@ -50,17 +50,36 @@ class Binding<Property<TargetValueType, target_get, target_set>,
     using PropertySource = Property<SourceValueType, source_get, source_set>;
     using ThisType = Binding<PropertyTarget, PropertySource>;
 
-private:
-    void on_source_property_changed(std::decay_t<SourceValueType> value)
-    {
-        (*static_cast<PropertyTarget *>(target_property_)) = value;
-    }
+    static_assert(std::is_same_v<typename PropertyTarget::ValueTypeGet,
+                      typename PropertySource::ValueTypeGet> ||
+                      (!std::is_reference_v<typename PropertyTarget::ValueTypeGet> &&
+                          std::is_same_v<std::decay_t<typename PropertyTarget::ValueTypeGet>,
+                              std::decay_t<typename PropertySource::ValueTypeGet>> &&
+                          std::is_convertible_v<typename PropertySource::ValueTypeGet,
+                              typename PropertyTarget::ValueTypeGet>),
+        "Binding target and source get methods should return the same thing");
 
 public:
     Binding(PropertyTarget &target, PropertySource &source)
-      : BindingBase{ &target }
+      : BindingBase{ &target,
+          [&source](void *result) {
+              typename PropertyTarget::ValueTypeGet expr_result = source();
+
+              if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+              {
+                  auto *r =
+                      static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
+                  *r = std::move(expr_result);
+              }
+              else
+              {
+                  auto **r =
+                      static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
+                  *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+              }
+          } }
     {
-        source.changed.template connect<&ThisType::on_source_property_changed>(*this);
+        source.changed.connect(target.changed);
     }
 };
 
@@ -79,7 +98,7 @@ class Binding<Property<TargetValueType, target_get, target_set>, SourceExpressio
 public:
     Binding(PropertyTarget &target, SourceExpressionType &&expression)
       : BindingBase{ &target,
-          [expression = std::move(expression)](void *result) {
+          [expression = std::forward<SourceExpressionType>(expression)](void *result) {
               typename PropertyTarget::ValueTypeGet expr_result = expression();
 
               if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
@@ -88,8 +107,7 @@ public:
                       static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
                   *r = std::move(expr_result);
               }
-
-              if constexpr (std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+              else
               {
                   auto **r =
                       static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
@@ -121,7 +139,7 @@ void bind(Property<TargetValueType, target_get, target_set> &target,
 {
     binding::bindings().emplace_back(
         new Binding<std::decay_t<decltype(target)>, SourceExpressionType>(target,
-            std::move(expression)));
+            std::forward<SourceExpressionType>(expression)));
 }
 
 VOOT_END_NAMESPACE

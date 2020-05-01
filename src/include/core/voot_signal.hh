@@ -34,7 +34,14 @@ public:
         });
     }
 
-    void emit(Args... args)
+    void connect(Signal<Args...> &other)
+    {
+        connections_.emplace_back(static_cast<void *>(&other), [](Args... args, void *s) {
+            static_cast<Signal<Args...> *>(s)->emit(std::forward<Args>(args)...);
+        });
+    }
+
+    void emit(Args... args) const
     {
         for (auto &connection : connections_)
         {

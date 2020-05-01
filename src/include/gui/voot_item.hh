@@ -60,7 +60,7 @@ public:
         {
             return parent_->x_abs() + x();
         }
-        return x_;
+        return 0;
     }
 
     constexpr int y_abs() const noexcept
@@ -70,7 +70,7 @@ public:
             return parent_->y_abs() + y();
         }
 
-        return y_;
+        return 0;
     }
 
 private:

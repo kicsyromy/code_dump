@@ -177,7 +177,7 @@ public:
     }
 
 public:
-    Signal<T> changed;
+    Signal<ValueTypeGet> changed;
 
 private:
     MemberOf *parent_object_;

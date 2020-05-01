@@ -69,13 +69,22 @@ TEST_CASE("Bind 2 properties", "[binding]")
 {
     using namespace voot;
 
+    get_s1_called = false;
+
     S1 s1;
     S2 s2;
+
+    static bool s1_change_triggered = false;
+    s1.property.changed.connect([](int value) {
+        s1_change_triggered = true;
+        REQUIRE(value == 7);
+    });
 
     voot::bind(s1.property, s2.property);
     s2.property = 7;
 
-    REQUIRE(s1.value_ == 7);
+    REQUIRE(s1_change_triggered == true);
+    REQUIRE(get_s1_called == false);
     REQUIRE(s1.property() == 7);
 }
 
