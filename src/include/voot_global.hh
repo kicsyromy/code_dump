@@ -21,7 +21,7 @@
 #define VOOT_IMPORT_SYMBOL
 #endif
 
-#ifdef voot_LIB
+#ifdef VOOT_LIB
 #define VOOT_API VOOT_EXPORT_SYMBOL
 #else
 #define VOOT_API VOOT_IMPORT_SYMBOL

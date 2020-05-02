@@ -3,7 +3,7 @@ add_subdirectory (3rdparty)
 include (Catch)
 
 add_executable (
-    tests
+    voot_tests
     catch_main.cc
     test_application.cc
     test_binding.cc
@@ -16,18 +16,18 @@ add_executable (
 )
 
 target_include_directories (
-    tests PRIVATE
+    voot_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../src
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/include
 )
 
 target_compile_definitions (
-    tests PRIVATE
+    voot_tests PRIVATE
     -DVOOT_TESTING
 )
 
 target_link_libraries (
-    tests PRIVATE
+    voot_tests PRIVATE
     project_warnings
     project_options
     Catch2::Catch2
@@ -38,8 +38,10 @@ target_link_libraries (
     spdlog::spdlog
 )
 
+enable_ipo (voot_tests)
+
 catch_discover_tests(
-  tests
+  voot_tests
   TEST_PREFIX "unittests."
   EXTRA_ARGS
       -s

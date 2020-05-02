@@ -1,8 +1,14 @@
 string (REPLACE " " "_" BINARY_NAME ${PROJECT_NAME})
 string (TOLOWER ${BINARY_NAME} BINARY_NAME)
 
-add_library (
-    ${BINARY_NAME} SHARED
+if (VOOT_BUILD_SHARED)
+    add_library (${BINARY_NAME} SHARED)
+else ()
+    add_library (${BINARY_NAME})
+endif ()
+
+target_sources(
+    ${BINARY_NAME} PRIVATE
     voot_application.cc     include/core/voot_application.hh
     voot_binding.cc         include/core/voot_binding.hh
     voot_logger.cc          include/core/voot_logger.hh
@@ -28,7 +34,7 @@ target_include_directories (
 
 target_compile_definitions (
     ${BINARY_NAME} PRIVATE
-    -D${BINARY_NAME}_LIB
+    -D$<UPPER_CASE:${BINARY_NAME}>_LIB
     -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
     -DBINARY_DIR="${PROJECT_BINARY_DIR}"
     -DLIBRARY_NAME="${BINARY_NAME}"
@@ -48,3 +54,5 @@ target_link_libraries (
     Microsoft.GSL::GSL
     spdlog::spdlog
 )
+
+enable_ipo (${BINARY_NAME})
