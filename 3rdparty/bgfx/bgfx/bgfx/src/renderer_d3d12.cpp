@@ -1789,7 +1789,7 @@ namespace bgfx { namespace d3d12
 				BX_FREE(g_allocator, m_uniforms[_handle.idx]);
 			}
 
-			uint32_t size = BX_ALIGN_16(g_uniformTypeSize[_type] * _num);
+			const uint32_t size = bx::alignUp(g_uniformTypeSize[_type] * _num, 16);
 			void* data = BX_ALLOC(g_allocator, size);
 			bx::memSet(data, 0, size);
 			m_uniforms[_handle.idx] = data;
@@ -3481,7 +3481,7 @@ namespace bgfx { namespace d3d12
 		_gpuAddress = m_gpuVA + m_pos;
 		void* data = &m_data[m_pos];
 
-		m_pos += BX_ALIGN_256(_size);
+		m_pos += bx::alignUp(_size, 256);
 
 //		D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 //		desc.BufferLocation = _gpuAddress;
@@ -5107,7 +5107,7 @@ namespace bgfx { namespace d3d12
 
 #if BX_PLATFORM_WINDOWS
 		SwapChainDesc scd;
-		bx::memCopy(&scd, &s_renderD3D12->m_scd, sizeof(DXGI_SWAP_CHAIN_DESC) );
+		bx::memCopy(&scd, &s_renderD3D12->m_scd, sizeof(SwapChainDesc) );
 		scd.format     = TextureFormat::Count == _format ? scd.format : s_textureFormat[_format].m_fmt;
 		scd.width      = _width;
 		scd.height     = _height;

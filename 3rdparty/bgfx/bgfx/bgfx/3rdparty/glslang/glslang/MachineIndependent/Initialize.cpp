@@ -153,6 +153,11 @@ EProfile EDesktopProfile = static_cast<EProfile>(ENoProfile | ECoreProfile | ECo
                                                   { EBadProfile } };
     const Versioning* Es300Desktop130 = &Es300Desktop130Version[0];
 
+    const Versioning Es310Desktop420Version[] = { { EEsProfile,      0, 310, 0, nullptr },
+                                                  { EDesktopProfile, 0, 420, 0, nullptr },
+                                                  { EBadProfile } };
+    const Versioning* Es310Desktop420 = &Es310Desktop420Version[0];
+
     const Versioning Es310Desktop430Version[] = { { EEsProfile,      0, 310, 0, nullptr },
                                                   { EDesktopProfile, 0, 430, 0, nullptr },
                                                   { EBadProfile } };
@@ -256,14 +261,14 @@ const BuiltInFunction BaseFunctions[] = {
     { EOpGreaterThanEqual, "greaterThanEqual", 2,   TypeU,     ClassBNS,     Es300Desktop130 },
     { EOpVectorEqual,      "equal",            2,   TypeU,     ClassBNS,     Es300Desktop130 },
     { EOpVectorNotEqual,   "notEqual",         2,   TypeU,     ClassBNS,     Es300Desktop130 },
-    { EOpAtomicAdd,        "atomicAdd",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicMin,        "atomicMin",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicMax,        "atomicMax",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicAnd,        "atomicAnd",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicOr,         "atomicOr",         2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicXor,        "atomicXor",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicExchange,   "atomicExchange",   2,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
-    { EOpAtomicCompSwap,   "atomicCompSwap",   3,   TypeIU,    ClassV1FIOCV, Es310Desktop430 },
+    { EOpAtomicAdd,        "atomicAdd",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicMin,        "atomicMin",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicMax,        "atomicMax",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicAnd,        "atomicAnd",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicOr,         "atomicOr",         2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicXor,        "atomicXor",        2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicExchange,   "atomicExchange",   2,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
+    { EOpAtomicCompSwap,   "atomicCompSwap",   3,   TypeIU,    ClassV1FIOCV, Es310Desktop420 },
 #ifndef GLSLANG_WEB
     { EOpMix,              "mix",              3,   TypeB,     ClassRegular, Es310Desktop450 },
     { EOpMix,              "mix",              3,   TypeIU,    ClassLB,      Es310Desktop450 },
@@ -1262,7 +1267,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 #endif
 
     if ((profile == EEsProfile && version >= 300) ||
-        (profile != EEsProfile && version >= 330)) {
+        (profile != EEsProfile && version >= 150)) { // GL_ARB_shader_bit_encoding
         commonBuiltins.append(
             "int   floatBitsToInt(highp float value);"
             "ivec2 floatBitsToInt(highp vec2  value);"
@@ -5457,6 +5462,8 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "const uint gl_RayFlagsCullOpaqueEXT = 64U;"
             "const uint gl_RayFlagsCullNoOpaqueNV = 128U;"
             "const uint gl_RayFlagsCullNoOpaqueEXT = 128U;"
+            "const uint gl_RayFlagsSkipTrianglesEXT = 256U;"
+            "const uint gl_RayFlagsSkipAABBEXT = 512U;"
             "const uint gl_HitKindFrontFacingTriangleEXT = 254U;"
             "const uint gl_HitKindBackFacingTriangleEXT = 255U;"
             "\n";
@@ -5803,7 +5810,7 @@ void TBuiltIns::addQueryFunctions(TSampler sampler, const TString& typeName, int
     return;
 #endif
 
-    if (sampler.isImage() && ((profile == EEsProfile && version < 310) || (profile != EEsProfile && version < 430)))
+    if (sampler.isImage() && ((profile == EEsProfile && version < 310) || (profile != EEsProfile && version < 420)))
         return;
 
     if (profile == EEsProfile)
@@ -7572,6 +7579,8 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             symbolTable.setFunctionExtensions("rayQueryGetIntersectionWorldToObjectEXT",                          1, &E_GL_EXT_ray_query);
             symbolTable.setFunctionExtensions("rayQueryGetWorldRayOriginEXT",                                     1, &E_GL_EXT_ray_query);
             symbolTable.setFunctionExtensions("rayQueryGetWorldRayDirectionEXT",                                  1, &E_GL_EXT_ray_query);
+            symbolTable.setVariableExtensions("gl_RayFlagsSkipAABBEXT",                         1, &E_GL_EXT_ray_flags_primitive_culling);
+            symbolTable.setVariableExtensions("gl_RayFlagsSkipTrianglesEXT",                    1, &E_GL_EXT_ray_flags_primitive_culling);
         }
 
         if ((profile != EEsProfile && version >= 130) ||
@@ -7810,6 +7819,29 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             symbolTable.setFunctionExtensions("imageAtomicXor",      1, &E_GL_OES_shader_image_atomic);
             symbolTable.setFunctionExtensions("imageAtomicExchange", 1, &E_GL_OES_shader_image_atomic);
             symbolTable.setFunctionExtensions("imageAtomicCompSwap", 1, &E_GL_OES_shader_image_atomic);
+        }
+
+        if (profile != EEsProfile && version < 330 ) {
+            symbolTable.setFunctionExtensions("floatBitsToInt", 1, &E_GL_ARB_shader_bit_encoding);
+            symbolTable.setFunctionExtensions("floatBitsToUint", 1, &E_GL_ARB_shader_bit_encoding);
+            symbolTable.setFunctionExtensions("intBitsToFloat", 1, &E_GL_ARB_shader_bit_encoding);
+            symbolTable.setFunctionExtensions("uintBitsToFloat", 1, &E_GL_ARB_shader_bit_encoding);
+        }
+
+        if (profile != EEsProfile && version < 430 ) {
+            symbolTable.setFunctionExtensions("imageSize", 1, &E_GL_ARB_shader_image_size);
+        }
+
+        // GL_ARB_shader_storage_buffer_object
+        if (profile != EEsProfile && version < 430 ) {
+            symbolTable.setFunctionExtensions("atomicAdd", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicMin", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicMax", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicAnd", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicOr", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicXor", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicExchange", 1, &E_GL_ARB_shader_storage_buffer_object);
+            symbolTable.setFunctionExtensions("atomicCompSwap", 1, &E_GL_ARB_shader_storage_buffer_object);
         }
 
         symbolTable.setVariableExtensions("gl_DeviceIndex",  1, &E_GL_EXT_device_group);
