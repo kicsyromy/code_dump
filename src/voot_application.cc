@@ -295,6 +295,36 @@ void Application::exec()
                             if (open_windows.count(window_id) == 0)
                             {
                                 open_windows.insert(window_id);
+#ifdef __WIN32__
+                                /* For some reason the Windows Display Manager forgets to update */
+                                /* the window size when first opening a new window, and the      */
+                                /* content is not rendered at the proper coordinates so force a  */
+                                /* resize event                                                  */
+
+                                int window_width;
+                                int window_height;
+                                SDL_GetWindowSize(SDL_GetWindowFromID(window_id),
+                                    &window_width,
+                                    &window_height);
+
+                                WindowResizeEvent fake_resize_event{ std::uint16_t(window_width),
+                                    std::uint16_t(window_height) };
+
+                                auto &window_clients_fake_resize =
+                                    gsl::at(clients_, gsl::index(EventType::WindowResized));
+                                for (auto &client : window_clients_fake_resize)
+                                {
+                                    if (client.callback() != nullptr &&
+                                        (client.id() >= 0 &&
+                                            std::uint32_t(client.id()) == window_id))
+                                    {
+                                        if (!client.callback()(client.id(),
+                                                &fake_resize_event,
+                                                client.callback_data()))
+                                            break;
+                                    }
+                                }
+#endif
                             }
                         }
                         else if (window_event->event_type() == EventType::WindowClosed)
