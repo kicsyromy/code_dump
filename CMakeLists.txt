@@ -30,6 +30,7 @@ if (VOOT_ENABLE_PCH)
 endif ()
 
 add_subdirectory (3rdparty)
+add_subdirectory (src)
 
 if (VOOT_ENABLE_TESTING)
     enable_testing ()
@@ -41,5 +42,3 @@ if (VOOT_ENABLE_FUZZING)
     message (STATUS "[Voot] Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
     add_subdirectory (fuzz_test)
 endif ()
-
-add_subdirectory (src)

@@ -6,14 +6,12 @@ set (OpenGL_GL_PREFERENCE "GLVND" CACHE STRING "Set OpenGL to GL Vendor Neutral 
 
 add_subdirectory (bgfx)
 
-# This library and its dependencies are not compiled with -fPIC on Linux,
-# and since it is linked into a shared library -fPIC is required
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_compile_options (astc PRIVATE -fPIC)
-    target_compile_options (astc-codec PRIVATE -fPIC)
-    target_compile_options (bgfx PRIVATE -fPIC)
-    target_compile_options (bx PRIVATE -fPIC)
-    target_compile_options (bimg PRIVATE -fPIC)
+if (VOOT_BUILD_SHARED)
+    set_property (TARGET astc PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_property (TARGET astc-codec PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_property (TARGET bgfx PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_property (TARGET bx PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_property (TARGET bimg PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif ()
 
 add_library (bgfx::bgfx ALIAS bgfx)

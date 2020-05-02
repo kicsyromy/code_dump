@@ -8,7 +8,7 @@ endif()
 
 add_subdirectory (spdlog-1.5.0)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_compile_options (spdlog PRIVATE -fPIC)
+if (VOOT_BUILD_SHARED)
+    set_property (TARGET spdlog PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif ()
 
