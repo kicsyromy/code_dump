@@ -7,10 +7,7 @@ target_compile_definitions (SDL2-static PRIVATE -DSDL_STATIC_LIB)
 # This library is not compiled with -fPIC on Linux, and since it is
 # linked into a shared library -fPIC is required
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_compile_options (
-        SDL2-static PRIVATE
-        -fPIC
-    )
+    target_compile_options (SDL2-static PRIVATE -fPIC)
 endif ()
 
 set (CMAKE_CONFIG_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/SDL2-2.0.12/include/SDL_config.h")

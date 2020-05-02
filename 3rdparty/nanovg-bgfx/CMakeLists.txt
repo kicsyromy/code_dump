@@ -25,6 +25,9 @@ endif ()
 
 target_link_libraries (
     nanovg-bgfx PUBLIC
-    bgfx
+    bgfx::bgfx
     stb-nanovg
 )
+
+add_library (bgfx::nanovg ALIAS nanovg-bgfx)
+

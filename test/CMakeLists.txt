@@ -1,17 +1,10 @@
+add_subdirectory (3rdparty)
+
 include (Catch)
-
-add_library (
-    catch_main STATIC
-    catch_main.cc
-)
-
-target_link_libraries (
-    catch_main PUBLIC
-    Catch2::Catch2
-)
 
 add_executable (
     tests
+    catch_main.cc
     test_application.cc
     test_binding.cc
     test_event.cc
@@ -37,10 +30,10 @@ target_link_libraries (
     tests PRIVATE
     project_warnings
     project_options
-    catch_main
+    Catch2::Catch2
     Microsoft.GSL::GSL
-    bgfx
-    nanovg-bgfx
+    bgfx::bgfx
+    bgfx::nanovg
     SDL2::SDL2
     spdlog::spdlog
 )

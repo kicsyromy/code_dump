@@ -38,8 +38,8 @@ target_link_libraries (
     ${BINARY_NAME} PRIVATE
     project_options
     project_warnings
-    bgfx
-    nanovg-bgfx
+    bgfx::bgfx
+    bgfx::nanovg
     SDL2::SDL2
 )
 
