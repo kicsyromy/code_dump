@@ -179,7 +179,7 @@ Application::Application() noexcept
 #ifdef _WIN32
     init.type = bgfx::RendererType::Direct3D11;
 #elif __linux__
-    init.type = bgfx::RendererType::Vulkan;
+    init.type = bgfx::RendererType::OpenGL;
 #else
     init.type = bgfx::RendererType::Metal;
 #endif
@@ -192,21 +192,10 @@ Application::Application() noexcept
     const auto *caps = bgfx::getCaps();
     if ((caps->supported & (BGFX_CAPS_SWAP_CHAIN)) == 0)
     {
+        g_app_instance = nullptr;
         bgfx::shutdown();
-
-#ifdef __linux__
-        VT_LOG_WARN("Swap chain extension not present on Vulkan, falling back to OpenGL rendering");
-
-        init = {};
-        init.type = bgfx::RendererType::OpenGL;
-        init.vendorId = BGFX_PCI_ID_NONE;
-        init.resolution.width = 1;
-        init.resolution.height = 1;
-        init.resolution.reset = BGFX_RESET_VSYNC;
-        bgfx::init(init);
-#else
+        SDL_Quit();
         VT_LOG_FATAL("Swap chain extension not supported, bailing out...");
-#endif
     }
 
     g_app_instance = this;
