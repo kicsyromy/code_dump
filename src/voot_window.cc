@@ -110,11 +110,13 @@ void *Window::native_window_handle() const noexcept
 
 #ifdef _WIN32
     return reinterpret_cast<void *>(wmi.info.win.window);
-#else
+#elif __linux__
     if (!VT_WAYLAND_DISPLAY.empty())
         return wmi.info.wl.surface;
 
     return reinterpret_cast<void *>(wmi.info.x11.window);
+#else
+    return reinterpret_cast<void *>(wmi.info.cocoa.window);
 #endif
 }
 

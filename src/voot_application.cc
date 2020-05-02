@@ -38,7 +38,6 @@ namespace
 
     /* TODO: Figure out if we want a separate rendering thread, disable for now */
     //    const auto NO_OFFSCREEN_RENDERER = []() -> int {
-    //        bgfx::renderFrame(0);
     //        return 0;
     //    }();
 
@@ -143,11 +142,15 @@ Application::Application() noexcept
         VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
     }
 
+#if defined(__APPLE__) || !defined(VOOT_TESTING)
+    bgfx::renderFrame(0);
+#endif
+
     SDL_SysWMinfo wmi;
     SDL_VERSION(&wmi.version);
     if (!SDL_GetWindowWMInfo(bgfx_platfrom_window_.get(), &wmi))
     {
-        std::exit(EXIT_FAILURE);
+        VT_LOG_FATAL("Failed to get native window information: {}", SDL_GetError());
     }
 
     bgfx::PlatformData pd;
@@ -155,7 +158,7 @@ Application::Application() noexcept
 #ifdef _WIN32
     pd.ndt = wmi.info.win.hdc;
     pd.nwh = reinterpret_cast<void *>(wmi.info.win.window);
-#else
+#elif __linux__
     if (!VT_WAYLAND_DISPLAY.empty())
     {
         pd.ndt = wmi.info.wl.display;
@@ -166,6 +169,8 @@ Application::Application() noexcept
         pd.ndt = wmi.info.x11.display;
         pd.nwh = reinterpret_cast<void *>(wmi.info.x11.window);
     }
+#else
+    pd.nwh = reinterpret_cast<void *>(wmi.info.cocoa.window);
 #endif
 
     bgfx::setPlatformData(pd);
@@ -173,8 +178,10 @@ Application::Application() noexcept
     bgfx::Init init;
 #ifdef _WIN32
     init.type = bgfx::RendererType::Direct3D11;
-#else
+#elif __linux__
     init.type = bgfx::RendererType::Vulkan;
+#else
+    init.type = bgfx::RendererType::Metal;
 #endif
     init.vendorId = BGFX_PCI_ID_NONE;
     init.resolution.width = 1;

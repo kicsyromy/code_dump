@@ -147,7 +147,7 @@ public:
         return *this;
     }
 
-    ValueTypeGet operator()() const noexcept(std::is_nothrow_invocable_v<decltype(getter), void>)
+    ValueTypeGet operator()() const
     {
         if (get_expression_ != nullptr)
         {
