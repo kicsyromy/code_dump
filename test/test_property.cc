@@ -31,6 +31,7 @@ public:
     }
 
 public:
+    VT_SIMPLE_PROPERTY(int *, simple_property);
     VT_PROPERTY(int, property, &TestClass::get_value, &TestClass::set_value);
     VT_READONLY_PROPERTY(int, read_only_property, &TestClass::get_value);
 
@@ -60,4 +61,19 @@ TEST_CASE("Property signal fire", "[property]")
 
     test_class.property = 5;
     REQUIRE(event_fired == true);
+}
+
+TEST_CASE("Simple property", "[property]")
+{
+    TestClass test_class;
+    static bool event_fired_simple = false;
+    test_class.simple_property.changed.connect([](int *v) {
+        REQUIRE(*v == 9);
+        event_fired_simple = true;
+    });
+
+    int simple_value = 9;
+    test_class.simple_property = &simple_value;
+    REQUIRE(test_class.simple_property() == &simple_value);
+    REQUIRE(event_fired_simple == true);
 }

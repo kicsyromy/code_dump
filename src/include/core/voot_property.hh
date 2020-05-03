@@ -2,6 +2,7 @@
 
 #include "voot_global.hh"
 #include "core/voot_signal.hh"
+#include "core/voot_logger.hh"
 
 #include <type_traits>
 #include <variant>
@@ -12,8 +13,10 @@
         this                                    \
     }
 
+#define VT_SIMPLE_PROPERTY(type, name) voot::Property<type> name
+
 #define VT_READONLY_PROPERTY(type, name, getter) \
-    voot::Property<type, getter> name            \
+    voot::Property<type, getter, nullptr> name   \
     {                                            \
         this                                     \
     }
@@ -103,7 +106,12 @@ protected:
     std::function<void(void *)> get_expression_{ nullptr };
 };
 
-template<typename T, auto getter, auto setter = nullptr> class Property : public PropertyBase
+template<typename T, auto...> class Property : std::false_type
+{
+};
+
+template<typename T, auto getter, auto setter>
+class Property<T, getter, setter> : public PropertyBase
 {
     using MemberOf = typename utility::GetClassType<decltype(getter)>::Type;
 
@@ -139,6 +147,11 @@ public:
         std::is_nothrow_invocable_v<decltype(setter), ValueTypeSet>)
     {
         static_assert(!set_null, "Cannot assign to a readonly property");
+        if (get_expression_ != nullptr)
+        {
+            VT_LOG_WARN("Breaking property binding...");
+            get_expression_ = nullptr;
+        }
         const bool value_set = (parent_object_->*setter)(v);
         if (value_set)
         {
@@ -181,6 +194,57 @@ public:
 
 private:
     MemberOf *parent_object_;
+};
+
+template<typename T> class Property<T> : public PropertyBase
+{
+public:
+    using ValueType = std::remove_const_t<std::remove_reference_t<T>>;
+
+public:
+    Property &operator=(const ValueType &v) noexcept
+    {
+        if (get_expression_ != nullptr)
+        {
+            VT_LOG_WARN("Breaking property binding...");
+            get_expression_ = nullptr;
+        }
+
+        if (v != value_)
+        {
+            value_ = v;
+            changed.emit(v);
+        }
+
+        return *this;
+    }
+
+    T operator()() const
+    {
+        if (get_expression_ != nullptr)
+        {
+            if constexpr (!std::is_reference_v<T>)
+            {
+                T result;
+                get_expression_(&result);
+                return result;
+            }
+            else
+            {
+                std::decay_t<T> *result;
+                get_expression_(&result);
+                return *result;
+            }
+        }
+
+        return value_;
+    }
+
+public:
+    Signal<T> changed;
+
+private:
+    ValueType value_{};
 };
 
 VOOT_END_NAMESPACE
