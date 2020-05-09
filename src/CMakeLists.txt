@@ -11,6 +11,7 @@ target_sources(
     ${BINARY_NAME} PRIVATE
     voot_application.cc     include/core/voot_application.hh
     voot_binding.cc         include/core/voot_binding.hh
+    voot_lifeline.cc        include/core/voot_lifeline.hh
     voot_logger.cc          include/core/voot_logger.hh
                             include/core/voot_logger.inl
                             include/core/voot_property.hh

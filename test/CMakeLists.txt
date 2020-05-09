@@ -9,6 +9,7 @@ add_executable (
     test_binding.cc
     test_event.cc
     test_item.cc
+    test_lifeline.cc
     test_logger.cc
     test_property.cc
     test_rectangle.cc
