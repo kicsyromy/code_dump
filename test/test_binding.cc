@@ -133,3 +133,84 @@ TEST_CASE("Property const &", "[binding]")
     auto &v = test_class.property();
     REQUIRE(&vec == &v);
 }
+
+TEST_CASE("Simple property with explicit property", "[binding]")
+{
+    class TestClass2
+    {
+    public:
+        VT_SIMPLE_PROPERTY(int, property);
+    };
+
+    S1 s1;
+    TestClass2 test_class;
+    test_class.property = 7;
+
+    static bool property_change_called = false;
+    test_class.property.changed.connect([](int v) noexcept {
+        REQUIRE(v == 5);
+        property_change_called = true;
+    });
+
+    voot::bind(test_class.property, s1.property);
+    s1.property = 5;
+
+    REQUIRE(property_change_called == true);
+    REQUIRE(test_class.property() == 5);
+}
+
+TEST_CASE("Explicit property with simple property", "[binding]")
+{
+    class TestClass2
+    {
+    public:
+        VT_SIMPLE_PROPERTY(int, property);
+    };
+
+    TestClass2 test_class;
+    S1 s1;
+    s1.property = 7;
+
+    static bool property_change_called = false;
+    s1.property.changed.connect([](int v) noexcept {
+        REQUIRE(v == 5);
+        property_change_called = true;
+    });
+
+    voot::bind(s1.property, test_class.property);
+    test_class.property = 5;
+
+    REQUIRE(property_change_called == true);
+    REQUIRE(s1.property() == 5);
+}
+
+TEST_CASE("Simple property with simple property", "[binding]")
+{
+    class TestClass1
+    {
+    public:
+        VT_SIMPLE_PROPERTY(int, property);
+    };
+
+    class TestClass2
+    {
+    public:
+        VT_SIMPLE_PROPERTY(int, property);
+    };
+
+    TestClass1 test_class1;
+    test_class1.property = 7;
+    TestClass2 test_class2;
+
+    static bool property_change_called = false;
+    test_class1.property.changed.connect([](int v) noexcept {
+        REQUIRE(v == 5);
+        property_change_called = true;
+    });
+
+    voot::bind(test_class1.property, test_class2.property);
+    test_class2.property = 5;
+
+    REQUIRE(property_change_called == true);
+    REQUIRE(test_class1.property() == 5);
+}
