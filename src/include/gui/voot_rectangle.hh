@@ -3,7 +3,7 @@
 #include "voot_global.hh"
 #include "gui/voot_item.hh"
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class Rectangle : public ItemBase<Rectangle>
 {
@@ -37,4 +37,4 @@ private:
     } color_;
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

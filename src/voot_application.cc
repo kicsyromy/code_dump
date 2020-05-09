@@ -109,7 +109,7 @@ namespace
     } while (false)
 } // namespace
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 Application *Application::instance() noexcept
 {
@@ -511,4 +511,4 @@ void Application::post_event_owned(gsl::owner<Event *> event,
     SDL_PushEvent(&sdl_event);
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

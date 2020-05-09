@@ -34,7 +34,7 @@ namespace
 
 } // namespace
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 Window::Window(std::string_view title) noexcept
   : width_{ w_width }
@@ -58,8 +58,8 @@ Window::Window(std::string_view title) noexcept
 
     update_window_surface(view_id_, framebuffer_handle_, width_, height_);
 
-    root_item_.set_width(width_);
-    root_item_.set_height(height_);
+    root_item_.width = width_;
+    root_item_.height = height_;
 
     auto *app = VT_APPLICATION();
     assert(app != nullptr);
@@ -189,8 +189,8 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event) no
         bgfx::createFrameBuffer(native_window_handle(), new_width, new_height).idx;
     update_window_surface(view_id_, framebuffer_handle_, new_width, new_height);
 
-    root_item_.set_width(width_);
-    root_item_.set_height(height_);
+    root_item_.width = width_;
+    root_item_.height = height_;
 
     /* Force a render for this window when resized */
     on_render_event(window_id, nullptr);
@@ -223,4 +223,4 @@ bool Window::on_render_event(int window_id, RenderEvent *event) noexcept
     return true;
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

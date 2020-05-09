@@ -5,11 +5,11 @@
 
 #include <variant>
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class WindowShowEvent : public EventBase<WindowShowEvent>
 {
-    DECLARE_EVENT(WindowShown, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowShown, EventCategoryWindow);
 
 public:
     constexpr WindowShowEvent() noexcept = default;
@@ -17,7 +17,7 @@ public:
 
 class WindowHideEvent : public EventBase<WindowHideEvent>
 {
-    DECLARE_EVENT(WindowHidden, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowHidden, EventCategoryWindow);
 
 public:
     constexpr WindowHideEvent() noexcept = default;
@@ -25,7 +25,7 @@ public:
 
 class WindowCloseEvent : public EventBase<WindowCloseEvent>
 {
-    DECLARE_EVENT(WindowClosed, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowClosed, EventCategoryWindow);
 
 public:
     constexpr WindowCloseEvent() noexcept = default;
@@ -33,7 +33,7 @@ public:
 
 class WindowResizeEvent : public EventBase<WindowResizeEvent>
 {
-    DECLARE_EVENT(WindowResized, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowResized, EventCategoryWindow);
 
 public:
     constexpr WindowResizeEvent(std::uint16_t width, std::uint16_t height) noexcept
@@ -55,7 +55,7 @@ private:
 
 class WindowGainFocusEvent : public EventBase<WindowGainFocusEvent>
 {
-    DECLARE_EVENT(WindowGainedFocus, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowGainedFocus, EventCategoryWindow);
 
 public:
     constexpr WindowGainFocusEvent() noexcept = default;
@@ -63,7 +63,7 @@ public:
 
 class WindowLooseFocusEvent : public EventBase<WindowLooseFocusEvent>
 {
-    DECLARE_EVENT(WindowLostFocus, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowLostFocus, EventCategoryWindow);
 
 public:
     constexpr WindowLooseFocusEvent() noexcept = default;
@@ -71,7 +71,7 @@ public:
 
 class WindowMoveEvent : public EventBase<WindowMoveEvent>
 {
-    DECLARE_EVENT(WindowMoved, EventCategoryWindow);
+    VT_DECLARE_EVENT(WindowMoved, EventCategoryWindow);
 
 public:
     constexpr WindowMoveEvent(std::int32_t x, std::int32_t y) noexcept
@@ -100,4 +100,4 @@ using WindowEventVariant = std::variant<std::monostate,
     WindowLooseFocusEvent,
     WindowMoveEvent>;
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

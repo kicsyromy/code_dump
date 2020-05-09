@@ -3,7 +3,7 @@
 #include "voot_global.hh"
 #include "events/voot_event.hh"
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 enum class KeyCode
 {
@@ -304,7 +304,7 @@ class KeyPressEvent
   : public KeyEvent
   , public EventBase<KeyPressEvent>
 {
-    DECLARE_EVENT(KeyPressed, KeyEvent::EVENT_CATEGORIES);
+    VT_DECLARE_EVENT(KeyPressed, KeyEvent::EVENT_CATEGORIES);
 
 public:
     constexpr KeyPressEvent(KeyCode key) noexcept
@@ -317,7 +317,7 @@ class KeyReleaseEvent
   : public KeyEvent
   , public EventBase<KeyReleaseEvent>
 {
-    DECLARE_EVENT(KeyReleased, KeyEvent::EVENT_CATEGORIES);
+    VT_DECLARE_EVENT(KeyReleased, KeyEvent::EVENT_CATEGORIES);
 
 public:
     constexpr KeyReleaseEvent(KeyCode key) noexcept
@@ -326,4 +326,4 @@ public:
     {}
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

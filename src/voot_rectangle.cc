@@ -2,7 +2,7 @@
 
 #include <nanovg/nanovg.h>
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 void Rectangle::render(NVGcontext *vg) const noexcept
 {
@@ -17,4 +17,4 @@ void Rectangle::render(NVGcontext *vg) const noexcept
     nvgFill(vg);
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

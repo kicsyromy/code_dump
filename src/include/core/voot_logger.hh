@@ -54,7 +54,7 @@
         voot::Logger::fatal(std::string{ prefix.data() } + __VA_ARGS__);          \
     } while (false)
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4251)
@@ -102,7 +102,6 @@ public:
     }
 
 private:
-private:
     std::unique_ptr<Logger> instance_{ nullptr };
     std::unique_ptr<spdlog::logger> logger_{ nullptr };
 
@@ -116,6 +115,6 @@ private:
 #pragma warning(default : 4251)
 #endif
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE
 
 #include "voot_logger.inl"

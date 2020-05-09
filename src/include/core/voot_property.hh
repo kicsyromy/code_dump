@@ -21,7 +21,7 @@
         this                                     \
     }
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 namespace property
 {
@@ -247,4 +247,4 @@ private:
     ValueType value_{};
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

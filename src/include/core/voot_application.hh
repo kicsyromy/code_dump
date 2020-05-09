@@ -17,9 +17,9 @@
 
 using SDL_Window = struct SDL_Window;
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
-class Application
+class VOOT_API Application
 {
 public:
     static Application *instance() noexcept;
@@ -135,4 +135,4 @@ private:
     Logger logger_{};
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

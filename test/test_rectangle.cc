@@ -55,7 +55,7 @@ TEST_CASE("Rectangle", "[rectangle]")
     });
 
     // r->x = window.root_item()->width() - 140;
-    voot::bind(r->x, [&window, &r] {
+    voot::bind(r->x, [&window, &r]() -> int {
         return window.root_item()->width() - r->width() + 100;
     });
     r->y = 20;
@@ -70,11 +70,11 @@ TEST_CASE("Rectangle", "[rectangle]")
     r2->height = 150;
     r2->set_color(255, 0, 0);
 
-    r3->set_x(40);
-    r3->set_y(40);
+    r3->x = 40;
+    r3->y = 40;
     r3->set_z(4);
-    r3->set_width(300);
-    r3->set_height(150);
+    r3->width = 300;
+    r3->height = 150;
     r3->set_color(0, 255, 0);
 
     r->set_parent_item(window.root_item());

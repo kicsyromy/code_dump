@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 template<typename... Args> class Signal
 {
@@ -79,4 +79,4 @@ private:
     std::vector<Connection> connections_;
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

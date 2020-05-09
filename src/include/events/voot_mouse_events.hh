@@ -3,7 +3,7 @@
 #include "voot_global.hh"
 #include "events/voot_event.hh"
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class MouseEvent
 {
@@ -31,7 +31,7 @@ class MouseMoveEvent
   : public MouseEvent
   , public EventBase<MouseMoveEvent>
 {
-    DECLARE_EVENT(MouseMoved, MouseEvent::EVENT_CATEGORIES);
+    VT_DECLARE_EVENT(MouseMoved, MouseEvent::EVENT_CATEGORIES);
 
 public:
     constexpr MouseMoveEvent(int x, int y) noexcept
@@ -82,7 +82,7 @@ class MouseButtonPressEvent
   : public MouseButtonEvent
   , public EventBase<MouseButtonPressEvent>
 {
-    DECLARE_EVENT(MouseButtonPressed, MouseButtonEvent::EVENT_CATEGORIES);
+    VT_DECLARE_EVENT(MouseButtonPressed, MouseButtonEvent::EVENT_CATEGORIES);
 
 public:
     constexpr MouseButtonPressEvent(int x, int y, MouseButton button) noexcept
@@ -95,7 +95,7 @@ class MouseButtonReleaseEvent
   : public MouseButtonEvent
   , public EventBase<MouseButtonPressEvent>
 {
-    DECLARE_EVENT(MouseButtonReleased, MouseButtonEvent::EVENT_CATEGORIES);
+    VT_DECLARE_EVENT(MouseButtonReleased, MouseButtonEvent::EVENT_CATEGORIES);
 
 public:
     constexpr MouseButtonReleaseEvent(int x, int y, MouseButton button) noexcept
@@ -104,4 +104,4 @@ public:
     {}
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

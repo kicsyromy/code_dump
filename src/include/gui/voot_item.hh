@@ -20,7 +20,7 @@ public:                                                      \
         ItemBase<ThisType>::set_parent_item<ThisType>(item); \
     }
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class Item
 {
@@ -74,38 +74,6 @@ public:
     }
 
 private:
-    constexpr int get_x() const noexcept
-    {
-        return x_;
-    }
-
-    constexpr bool set_x(int value) noexcept
-    {
-        if (x_ != value)
-        {
-            x_ = value;
-            return true;
-        }
-
-        return false;
-    }
-
-    constexpr int get_y() const noexcept
-    {
-        return y_;
-    }
-
-    constexpr bool set_y(int value) noexcept
-    {
-        if (y_ != value)
-        {
-            y_ = value;
-            return true;
-        }
-
-        return false;
-    }
-
     constexpr int get_z() const noexcept
     {
         return z_;
@@ -122,49 +90,18 @@ private:
         return new_z != old_z;
     }
 
-    constexpr std::uint16_t get_width() const noexcept
-    {
-        return width_;
-    }
-
-    constexpr bool set_width(std::uint16_t value) noexcept
-    {
-        if (width_ != value)
-        {
-            width_ = value;
-            return true;
-        }
-
-        return false;
-    }
-
-    constexpr std::uint16_t get_height() const noexcept
-    {
-        return height_;
-    }
-
-    constexpr bool set_height(std::uint16_t value) noexcept
-    {
-        if (height_ != value)
-        {
-            height_ = value;
-            return true;
-        }
-
-        return false;
-    }
-
 public:
     Signal<MouseButton, int, int> mouse_button_pressed;
     Signal<MouseButton, int, int> mouse_button_released;
     Signal<MouseButton, int, int> mouse_clicked;
     Signal<MouseButton, int, int> mouse_double_clicked;
 
-    VT_PROPERTY(int, x, &Item::get_x, &Item::set_x);
-    VT_PROPERTY(int, y, &Item::get_y, &Item::set_y);
+    VT_SIMPLE_PROPERTY(int, x);
+    VT_SIMPLE_PROPERTY(int, y);
     VT_PROPERTY(int, z, &Item::get_z, &Item::set_z);
-    VT_PROPERTY(std::uint16_t, width, &Item::get_width, &Item::set_width);
-    VT_PROPERTY(std::uint16_t, height, &Item::get_height, &Item::set_height);
+
+    VT_SIMPLE_PROPERTY(std::uint16_t, width);
+    VT_SIMPLE_PROPERTY(std::uint16_t, height);
 
 public:
     constexpr Item *parent_item() const noexcept
@@ -185,19 +122,15 @@ protected:
 
         parent_ = parent;
 
-        set_x(x_);
-        set_y(y_);
+        //        set_x(x_);
+        //        set_y(y_);
 
         update_z_ordering(z_, z_, true, [](Item *self) {
             delete static_cast<Child *>(self);
         });
     }
 
-    int x_{ 0 };
-    int y_{ 0 };
     int z_{ 0 };
-    std::uint16_t width_{ 0 };
-    std::uint16_t height_{ 0 };
 
     /* Mouse handling */
     std::uint8_t mouse_event_filter_{ MouseEventFilterNone };
@@ -256,4 +189,4 @@ protected:
     }
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

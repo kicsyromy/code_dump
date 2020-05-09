@@ -1,6 +1,6 @@
 #pragma once
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 template<typename... Args> void Logger::debug(std::string_view format, const Args &... args)
 {
@@ -41,4 +41,4 @@ template<typename... Args> void Logger::fatal(std::string_view format, const Arg
 #endif
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

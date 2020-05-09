@@ -9,11 +9,11 @@
 
 #include <array>
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class RenderEvent : public EventBase<RenderEvent>
 {
-    DECLARE_EVENT(Render, EventCategoryRender);
+    VT_DECLARE_EVENT(Render, EventCategoryRender);
 
 public:
     constexpr RenderEvent(float elapsed_seconds,
@@ -46,4 +46,4 @@ private:
     const std::array<std::uint8_t, MOUSE_BUTTON_COUNT> &mouse_button_states_;
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

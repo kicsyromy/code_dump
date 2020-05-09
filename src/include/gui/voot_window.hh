@@ -25,7 +25,7 @@ namespace bgfx
     struct FrameBufferHandle;
 }
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class Window
 {
@@ -66,4 +66,4 @@ private:
     Item root_item_;
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

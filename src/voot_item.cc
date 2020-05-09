@@ -13,7 +13,7 @@ namespace
     }
 } // namespace
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 Item::~Item() noexcept = default;
 
@@ -116,8 +116,8 @@ bool Item::handle_mouse_button_pressed(MouseButton button, int xx, int yy) noexc
                         ((child->mouse_event_filter_ & MouseEventFilterButton) != 0) &&
                         rectangle_contains_point(child->x(),
                             child->y(),
-                            child->width_,
-                            child->height_,
+                            child->width(),
+                            child->height(),
                             xx,
                             yy) &&
                         child->handle_mouse_button_pressed(button,
@@ -167,8 +167,8 @@ bool Item::handle_mouse_button_released(MouseButton button, int xx, int yy) noex
                         ((child->mouse_event_filter_ & MouseEventFilterButton) != 0) &&
                         rectangle_contains_point(child->x(),
                             child->y(),
-                            child->width_,
-                            child->height_,
+                            child->width(),
+                            child->height(),
                             xx,
                             yy) &&
                         child->handle_mouse_button_released(button,
@@ -218,4 +218,4 @@ bool Item::handle_mouse_button_released(MouseButton button, int xx, int yy) noex
     return false;
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

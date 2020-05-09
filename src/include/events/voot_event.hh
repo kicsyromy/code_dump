@@ -5,7 +5,7 @@
 #include <string_view>
 #include <type_traits>
 
-#define DECLARE_EVENT(name, categories)                        \
+#define VT_DECLARE_EVENT(name, categories)                     \
 public:                                                        \
     constexpr static voot::EventType event_type() noexcept     \
     {                                                          \
@@ -21,7 +21,7 @@ public:                                                        \
     }                                                          \
     static_assert(true)
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 enum class EventType
 {
@@ -107,4 +107,4 @@ public:
     {}
 };
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

@@ -27,10 +27,10 @@
 #define VOOT_API VOOT_IMPORT_SYMBOL
 #endif
 
-#define VOOT_BEGIN_NAMESPACE \
+#define VT_BEGIN_NAMESPACE \
     namespace voot           \
     {
-#define VOOT_END_NAMESPACE }
+#define VT_END_NAMESPACE }
 
 #define VOOT_SINGLETON(klass) klass() = delete;
 
@@ -48,7 +48,7 @@
 extern const std::string VT_WAYLAND_DISPLAY;
 #endif
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 namespace utility
 {
@@ -118,4 +118,4 @@ namespace utility
 
 } // namespace utility
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE

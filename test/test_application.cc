@@ -14,7 +14,7 @@
 
 class TestEvent : public voot::EventBase<TestEvent>
 {
-    DECLARE_EVENT(User, voot::EventCategory::EventCategoryUser);
+    VT_DECLARE_EVENT(User, voot::EventCategory::EventCategoryUser);
 };
 
 struct EventTester

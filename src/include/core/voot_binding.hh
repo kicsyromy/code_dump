@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 class BindingBase
 {
@@ -30,7 +30,7 @@ protected:
 namespace binding
 {
     using BindingList = std::vector<std::unique_ptr<BindingBase>>;
-    BindingList &bindings() noexcept;
+    VOOT_API BindingList &bindings() noexcept;
 } // namespace binding
 
 template<typename...> class Binding : std::false_type
@@ -119,6 +119,36 @@ public:
     }
 };
 
+template<typename TargetValueType, typename SourceExpressionType>
+class Binding<Property<TargetValueType>, SourceExpressionType> : public BindingBase
+{
+    using PropertyTarget = Property<TargetValueType>;
+    using ThisType = Binding<PropertyTarget, SourceExpressionType>;
+
+    static_assert(std::is_same_v<TargetValueType, std::invoke_result_t<SourceExpressionType>>,
+        "Binding source must be invocable without arguments and must result in the return type of "
+        "the get method");
+
+public:
+    Binding(PropertyTarget &target, SourceExpressionType &&expression)
+      : BindingBase{ &target,
+          [expression = std::forward<SourceExpressionType>(expression)](void *result) {
+              TargetValueType expr_result = expression();
+
+              if constexpr (!std::is_reference_v<TargetValueType>)
+              {
+                  auto *r = static_cast<std::decay_t<TargetValueType> *>(result);
+                  *r = std::move(expr_result);
+              }
+              else
+              {
+                  auto **r = static_cast<std::decay_t<TargetValueType> **>(result);
+                  *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+              }
+          } }
+    {}
+};
+
 template<typename TargetValueType,
     auto target_get,
     auto target_set,
@@ -127,6 +157,32 @@ template<typename TargetValueType,
     auto source_set>
 void bind(Property<TargetValueType, target_get, target_set> &target,
     Property<SourceValueType, source_get, source_set> &source)
+{
+    binding::bindings().emplace_back(
+        new Binding<std::decay_t<decltype(target)>, std::decay_t<decltype(source)>>(target,
+            source));
+}
+
+template<typename TargetValueType, typename SourceValueType, auto source_get, auto source_set>
+void bind(Property<TargetValueType> &target,
+    Property<SourceValueType, source_get, source_set> &source)
+{
+    binding::bindings().emplace_back(
+        new Binding<std::decay_t<decltype(target)>, std::decay_t<decltype(source)>>(target,
+            source));
+}
+
+template<typename TargetValueType, auto target_get, auto target_set, typename SourceValueType>
+void bind(Property<TargetValueType, target_get, target_set> &target,
+    Property<SourceValueType> &source)
+{
+    binding::bindings().emplace_back(
+        new Binding<std::decay_t<decltype(target)>, std::decay_t<decltype(source)>>(target,
+            source));
+}
+
+template<typename TargetValueType, typename SourceValueType>
+void bind(Property<TargetValueType> &target, Property<SourceValueType> &source)
 {
     binding::bindings().emplace_back(
         new Binding<std::decay_t<decltype(target)>, std::decay_t<decltype(source)>>(target,
@@ -142,4 +198,12 @@ void bind(Property<TargetValueType, target_get, target_set> &target,
             std::forward<SourceExpressionType>(expression)));
 }
 
-VOOT_END_NAMESPACE
+template<typename TargetValueType, typename SourceExpressionType>
+void bind(Property<TargetValueType> &target, SourceExpressionType &&expression)
+{
+    binding::bindings().emplace_back(
+        new Binding<std::decay_t<decltype(target)>, SourceExpressionType>(target,
+            std::forward<SourceExpressionType>(expression)));
+}
+
+VT_END_NAMESPACE

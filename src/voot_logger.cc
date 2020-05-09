@@ -9,7 +9,7 @@ namespace
     voot::Logger *g_logger_instance;
 }
 
-VOOT_BEGIN_NAMESPACE
+VT_BEGIN_NAMESPACE
 
 Logger *Logger::instance()
 {
@@ -35,4 +35,4 @@ voot::Logger::~Logger() noexcept
     g_logger_instance = nullptr;
 }
 
-VOOT_END_NAMESPACE
+VT_END_NAMESPACE
