@@ -50,20 +50,29 @@ void bind(Property<TargetValueType, target_get, target_set> &target,
         return;
     }
 
-    static_cast<PropertyBase *>(&target)->set_get_expression([&source](void *result) {
-        typename PropertyTarget::ValueTypeGet expr_result = source();
+    static_cast<PropertyBase *>(&target)->set_get_expression(
+        [&source, lifeline = source.get_lifeline()](void *result) {
+            if (lifeline.expired())
+            {
+                VT_LOG_ERROR("Binding source property destroyed, undefined behaviour ahead...");
+                return;
+            }
 
-        if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
-        {
-            auto *r = static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
-            *r = std::move(expr_result);
-        }
-        else
-        {
-            auto **r = static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
-            *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
-        }
-    });
+            typename PropertyTarget::ValueTypeGet expr_result = source();
+
+            if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+            {
+                auto *r =
+                    static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
+                *r = std::move(expr_result);
+            }
+            else
+            {
+                auto **r =
+                    static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
+                *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+            }
+        });
     source.changed.connect(target.changed);
 }
 
@@ -87,20 +96,27 @@ void bind(Property<TargetValueType> &target,
         return;
     }
 
-    static_cast<PropertyBase *>(&target)->set_get_expression([&source](void *result) {
-        TargetValueType expr_result = source();
+    static_cast<PropertyBase *>(&target)->set_get_expression(
+        [&source, lifeline = source.get_lifeline()](void *result) {
+            if (lifeline.expired())
+            {
+                VT_LOG_ERROR("Binding source property destroyed, undefined behaviour ahead...");
+                return;
+            }
 
-        if constexpr (!std::is_reference_v<TargetValueType>)
-        {
-            auto *r = static_cast<std::decay_t<TargetValueType> *>(result);
-            *r = std::move(expr_result);
-        }
-        else
-        {
-            auto **r = static_cast<std::decay_t<TargetValueType> **>(result);
-            *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
-        }
-    });
+            TargetValueType expr_result = source();
+
+            if constexpr (!std::is_reference_v<TargetValueType>)
+            {
+                auto *r = static_cast<std::decay_t<TargetValueType> *>(result);
+                *r = std::move(expr_result);
+            }
+            else
+            {
+                auto **r = static_cast<std::decay_t<TargetValueType> **>(result);
+                *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+            }
+        });
     source.changed.connect(target.changed);
 }
 
@@ -124,20 +140,29 @@ void bind(Property<TargetValueType, target_get, target_set> &target,
         return;
     }
 
-    static_cast<PropertyBase *>(&target)->set_get_expression([&source](void *result) {
-        typename PropertyTarget::ValueTypeGet expr_result = source();
+    static_cast<PropertyBase *>(&target)->set_get_expression(
+        [&source, lifeline = source.get_lifeline()](void *result) {
+            if (lifeline.expired())
+            {
+                VT_LOG_ERROR("Binding source property destroyed, undefined behaviour ahead...");
+                return;
+            }
 
-        if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
-        {
-            auto *r = static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
-            *r = std::move(expr_result);
-        }
-        else
-        {
-            auto **r = static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
-            *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
-        }
-    });
+            typename PropertyTarget::ValueTypeGet expr_result = source();
+
+            if constexpr (!std::is_reference_v<typename PropertyTarget::ValueTypeGet>)
+            {
+                auto *r =
+                    static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> *>(result);
+                *r = std::move(expr_result);
+            }
+            else
+            {
+                auto **r =
+                    static_cast<std::decay_t<typename PropertyTarget::ValueTypeGet> **>(result);
+                *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+            }
+        });
     source.changed.connect(target.changed);
 }
 
@@ -157,20 +182,27 @@ void bind(Property<TargetValueType> &target, Property<SourceValueType> &source)
         return;
     }
 
-    static_cast<PropertyBase *>(&target)->set_get_expression([&source](void *result) {
-        TargetValueType expr_result = source();
+    static_cast<PropertyBase *>(&target)->set_get_expression(
+        [&source, lifeline = source.get_lifeline()](void *result) {
+            if (lifeline.expired())
+            {
+                VT_LOG_ERROR("Binding source property destroyed, undefined behaviour ahead...");
+                return;
+            }
 
-        if constexpr (!std::is_reference_v<TargetValueType>)
-        {
-            auto *r = static_cast<std::decay_t<TargetValueType> *>(result);
-            *r = std::move(expr_result);
-        }
-        else
-        {
-            auto **r = static_cast<std::decay_t<TargetValueType> **>(result);
-            *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
-        }
-    });
+            TargetValueType expr_result = source();
+
+            if constexpr (!std::is_reference_v<TargetValueType>)
+            {
+                auto *r = static_cast<std::decay_t<TargetValueType> *>(result);
+                *r = std::move(expr_result);
+            }
+            else
+            {
+                auto **r = static_cast<std::decay_t<TargetValueType> **>(result);
+                *r = const_cast<std::decay_t<decltype(*r)>>(&expr_result);
+            }
+        });
 
     source.changed.connect(target.changed);
 }
