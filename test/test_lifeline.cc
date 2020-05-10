@@ -17,10 +17,16 @@ class WithLifeline
     VT_ADD_LIFELINE
 };
 
+class WithoutLifeline
+{
+};
+
 TEST_CASE("Basic setup", "[lifeline]")
 {
     WithLifeline test;
 
+    REQUIRE(voot::has_lifeline<WithLifeline>() == true);
+    REQUIRE(voot::has_lifeline<WithoutLifeline>() == false);
     REQUIRE(test.lifeline_.get() != nullptr);
     REQUIRE(test.lifeline_.get() == &voot::lifeline_data);
 }

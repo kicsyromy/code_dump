@@ -131,7 +131,13 @@ private:
     std::array<std::vector<EventClient>, EVENT_TYPE_COUNT> clients_;
 
 private:
+#ifdef _MSC_VER
+#pragma warning(disable : 4251)
+#endif
     std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> bgfx_platfrom_window_{ nullptr, nullptr };
+#ifdef _MSC_VER
+#pragma warning(default : 4251)
+#endif
     Logger logger_{};
 };
 
