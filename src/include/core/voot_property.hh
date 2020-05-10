@@ -2,6 +2,7 @@
 
 #include "voot_global.hh"
 #include "core/voot_signal.hh"
+#include "core/voot_lifeline.hh"
 #include "core/voot_logger.hh"
 
 #include <type_traits>
@@ -95,6 +96,8 @@ namespace property
 
 class PropertyBase
 {
+    VT_ADD_LIFELINE
+
 public:
     template<typename Callable> void set_get_expression(Callable &&callable)
     {
