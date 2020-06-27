@@ -1,6 +1,7 @@
 set (BGFX_BUILD_EXAMPLES OFF CACHE BOOL "Build bgfx examples." FORCE)
 set (BGFX_INSTALL OFF CACHE BOOL "Create installation target." FORCE)
 set (BGFX_CUSTOM_TARGETS OFF CACHE BOOL "Include convenience custom targets." FORCE)
+set (BGFX_BUILD_TOOLS OFF CACHE BOOL "Build bgfx tools." FORCE)
 
 set (OpenGL_GL_PREFERENCE "GLVND" CACHE STRING "Set OpenGL to GL Vendor Neutral library" FORCE)
 

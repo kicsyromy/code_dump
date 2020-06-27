@@ -37,6 +37,7 @@ target_link_libraries (
     bgfx::nanovg
     SDL2::SDL2
     spdlog::spdlog
+    hedley::hedley
 )
 
 enable_ipo (voot_tests)

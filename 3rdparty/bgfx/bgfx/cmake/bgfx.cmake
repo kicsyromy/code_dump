@@ -40,7 +40,17 @@ else()
 endif()
 
 # Create the bgfx target
-add_library( bgfx ${BGFX_SOURCES} )
+add_library( bgfx ${BGFX_LIBRARY_TYPE} ${BGFX_SOURCES} )
+
+if(BGFX_CONFIG_RENDERER_WEBGPU)
+    include(cmake/3rdparty/webgpu.cmake)
+    target_compile_definitions( bgfx PRIVATE BGFX_CONFIG_RENDERER_WEBGPU=1)
+    if (EMSCRIPTEN)
+        target_link_options(bgfx PRIVATE "-s USE_WEBGPU=1")
+    else()
+        target_link_libraries(bgfx PRIVATE webgpu)
+    endif()
+endif()
 
 # Enable BGFX_CONFIG_DEBUG in Debug configuration
 target_compile_definitions( bgfx PRIVATE "$<$<CONFIG:Debug>:BGFX_CONFIG_DEBUG=1>" )
@@ -49,7 +59,11 @@ if(BGFX_CONFIG_DEBUG)
 endif()
 
 if( NOT ${BGFX_OPENGL_VERSION} STREQUAL "" )
-	target_compile_definitions( bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGL=${BGFX_OPENGL_VERSION})
+	target_compile_definitions( bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION=${BGFX_OPENGL_VERSION} )
+endif()
+
+if( NOT ${BGFX_OPENGLES_VERSION} STREQUAL "" )
+	target_compile_definitions( bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGLES_MIN_VERSION=${BGFX_OPENGLES_VERSION} )
 endif()
 
 # Special Visual Studio Flags
@@ -112,11 +126,6 @@ endif()
 
 # Put in a "bgfx" folder in Visual Studio
 set_target_properties( bgfx PROPERTIES FOLDER "bgfx" )
-
-# Export debug build as "bgfxd"
-if( BGFX_USE_DEBUG_SUFFIX )
-	set_target_properties( bgfx PROPERTIES OUTPUT_NAME_DEBUG "bgfxd" )
-endif()
 
 # in Xcode we need to specify this file as objective-c++ (instead of renaming to .mm)
 if (XCODE)

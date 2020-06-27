@@ -45,11 +45,17 @@ protected:
           constexpr RenderMethod<ChildItem> render_method = &ChildItem::render;
           (static_cast<const ChildItem *>(child)->*render_method)(vg);
       } }
-    {}
+    {
+        focus = false;
+        can_focus = true;
+    }
 
 public:
     Item() noexcept
-    {}
+    {
+        focus = false;
+        can_focus = true;
+    }
 
     ~Item() noexcept;
 
@@ -90,6 +96,22 @@ private:
         return new_z != old_z;
     }
 
+    constexpr bool has_focus() const noexcept
+    {
+        return has_focus_;
+    }
+
+    inline bool set_focus(bool value) noexcept
+    {
+        if (has_focus_ != value)
+        {
+            has_focus_ = value;
+            return true;
+        }
+
+        return false;
+    }
+
 public:
     Signal<MouseButton, int, int> mouse_button_pressed;
     Signal<MouseButton, int, int> mouse_button_released;
@@ -102,6 +124,9 @@ public:
 
     VT_SIMPLE_PROPERTY(std::uint16_t, width);
     VT_SIMPLE_PROPERTY(std::uint16_t, height);
+
+    VT_SIMPLE_PROPERTY(bool, can_focus);
+    VT_PROPERTY(bool, focus, &Item::has_focus, &Item::set_focus);
 
 public:
     constexpr Item *parent_item() const noexcept
@@ -122,9 +147,6 @@ protected:
 
         parent_ = parent;
 
-        //        set_x(x_);
-        //        set_y(y_);
-
         update_z_ordering(z_, z_, true, [](Item *self) {
             delete static_cast<Child *>(self);
         });
@@ -132,11 +154,18 @@ protected:
 
     int z_{ 0 };
 
+    using ItemDeleter = void (*)(Item *);
+    using ItemPointer = std::unique_ptr<Item, ItemDeleter>;
+
+    bool has_focus_{ false };
+    Item *focused_child_{ nullptr };
+    std::vector<ItemPointer>::iterator focused_child_it_{};
+    int focused_child_z_{ 0 };
+
     /* Mouse handling */
     std::uint8_t mouse_event_filter_{ MouseEventFilterNone };
 
 private:
-    using ItemDeleter = void (*)(Item *);
     void update_z_ordering(
         int new_z,
         int old_z,
@@ -144,6 +173,8 @@ private:
         ItemDeleter item_deleter = [](Item *i) {
             delete i;
         }) noexcept;
+
+    bool update_focus();
 
 private:
     friend class Window;
@@ -164,7 +195,6 @@ private:
     int z_min_{ 0 };
     int z_max_{ 0 };
 
-    using ItemPointer = std::unique_ptr<Item, ItemDeleter>;
     std::unordered_map<int, std::vector<ItemPointer>> children_{};
 };
 

@@ -111,8 +111,8 @@ void *Window::native_window_handle() const noexcept
 #ifdef _WIN32
     return reinterpret_cast<void *>(wmi.info.win.window);
 #elif __linux__
-    if (!VT_WAYLAND_DISPLAY.empty())
-        return wmi.info.wl.surface;
+//    if (!VT_WAYLAND_DISPLAY.empty())
+//        return wmi.info.wl.surface;
 
     return reinterpret_cast<void *>(wmi.info.x11.window);
 #else
@@ -125,7 +125,10 @@ bool Window::on_key_press_event(int window_id, KeyPressEvent *event) noexcept
     static_cast<void>(window_id);
     static_cast<void>(event);
 
-    VT_LOG_DEBUG("[window] key press");
+    if (event->key() == KeyCode::Tab)
+    {
+        root_item_.update_focus();
+    }
 
     return true;
 }

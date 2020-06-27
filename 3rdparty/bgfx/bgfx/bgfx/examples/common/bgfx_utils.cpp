@@ -114,9 +114,10 @@ static bgfx::ShaderHandle loadShader(bx::FileReaderI* _reader, const char* _name
 	case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
 	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
 	case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
+	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
 
 	case bgfx::RendererType::Count:
-		BX_CHECK(false, "You should not be here!");
+		BX_ASSERT(false, "You should not be here!");
 		break;
 	}
 

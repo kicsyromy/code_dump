@@ -13,3 +13,5 @@ add_subdirectory (spdlog)
 ## GSL (C++ Core Guidelines helper library)
 add_subdirectory (GSL)
 
+## C/C++ a header file designed to smooth over some platform-specific annoyances
+add_subdirectory (hedley)

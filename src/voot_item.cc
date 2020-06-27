@@ -100,6 +100,85 @@ void Item::update_z_ordering(int new_z, int old_z, bool force, ItemDeleter item_
     }
 }
 
+bool Item::update_focus()
+{
+    if (!can_focus())
+    {
+        return false;
+    }
+    else if (children_.empty())
+    {
+        focus = true;
+        return true;
+    }
+
+    bool focus_handled = false;
+    int start_z = z_max_;
+
+    /* If one of the child items already has focus then switch it to the next one */
+    if (focused_child_ != nullptr)
+    {
+        focused_child_->focus = false;
+        start_z = focused_child_z_;
+
+        auto it = children_.find(focused_child_z_);
+        for (auto child_it = (focused_child_it_ + 1); child_it != it->second.end(); ++child_it)
+        {
+            auto &child = *child_it;
+            if (child->can_focus())
+            {
+                focus_handled = child->update_focus();
+                if (focus_handled)
+                {
+                    focus = false;
+                    focused_child_ = child.get();
+                    focused_child_it_ = child_it;
+                    break;
+                }
+            }
+        }
+    }
+
+    /* If there are no more children at the same Z that can handle focus then cycle through the   */
+    /* next ones                                                                                  */
+    if (!focus_handled)
+    {
+        for (int zz = start_z; zz >= z_min_; --zz)
+        {
+            auto it = children_.find(zz);
+            if (it != children_.end())
+            {
+                for (auto child_it = it->second.begin(); child_it != it->second.end(); ++child_it)
+                {
+                    auto &child = *child_it;
+                    if (child->can_focus())
+                    {
+                        focus_handled = child->update_focus();
+                        if (focus_handled)
+                        {
+                            focus = false;
+                            focused_child_ = child.get();
+                            focused_child_it_ = child_it;
+                            focused_child_z_ = zz;
+                            break;
+                        }
+                    }
+                }
+
+                if (focus_handled)
+                    break;
+            }
+        }
+    }
+
+    /* And if no other child can handle focus then just set the focus on self */
+    if (!focus_handled)
+    {
+        focus = true;
+    }
+    return true;
+}
+
 bool Item::handle_mouse_button_pressed(MouseButton button, int xx, int yy) noexcept
 {
     bool event_handled = false;

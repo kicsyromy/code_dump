@@ -54,6 +54,7 @@ target_link_libraries (
     ${BINARY_NAME} PUBLIC
     Microsoft.GSL::GSL
     spdlog::spdlog
+    hedley::hedley
 )
 
 enable_ipo (${BINARY_NAME})

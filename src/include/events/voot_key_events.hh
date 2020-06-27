@@ -293,11 +293,19 @@ public:
 public:
     constexpr KeyCode key() const
     {
+        /* FIXME: Clear Linux's build of GCC complains about a potential null dereference *shrug* */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+#endif
         return key_;
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
     }
 
 protected:
-    KeyCode key_;
+    KeyCode key_{ KeyCode::UNKNOWN };
 };
 
 class KeyPressEvent

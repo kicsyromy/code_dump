@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <string>
 
+#include "hedley/hedley.h"
+
 #ifndef VOOT_TESTING
 #if defined(_MSC_VER)
 #define VOOT_EXPORT_SYMBOL __declspec(dllexport)
@@ -28,7 +30,7 @@
 #endif
 
 #define VT_BEGIN_NAMESPACE \
-    namespace voot           \
+    namespace voot         \
     {
 #define VT_END_NAMESPACE }
 

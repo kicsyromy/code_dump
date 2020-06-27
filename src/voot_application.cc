@@ -38,6 +38,7 @@ namespace
 
     /* TODO: Figure out if we want a separate rendering thread, disable for now */
     //    const auto NO_OFFSCREEN_RENDERER = []() -> int {
+    //        bgfx::renderFrame(0);
     //        return 0;
     //    }();
 
@@ -54,59 +55,61 @@ namespace
         std::variant<std::unique_ptr<voot::Event>, std::shared_ptr<voot::Event>> event;
     };
 
-    /* TODO: Figure out how to make the a function */
-#define CREATE_WINDOW_EVENT(event_data, window_event)                                           \
-    voot::WindowEventVariant window_event_var;                                                  \
-    do                                                                                          \
-    {                                                                                           \
-        using namespace voot;                                                                   \
-        switch ((event_data).event)                                                             \
-        {                                                                                       \
-        default:                                                                                \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_SHOWN:                                                             \
-        case SDL_WINDOWEVENT_EXPOSED:                                                           \
-            window_event_var = voot::WindowShowEvent{};                                         \
-            (window_event) = &(std::get<voot::WindowShowEvent>(window_event_var));              \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_HIDDEN:                                                            \
-            window_event_var = voot::WindowHideEvent{};                                         \
-            (window_event) = &(std::get<voot::WindowHideEvent>(window_event_var));              \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_MOVED:                                                             \
-            window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 }; \
-            (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));              \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_RESIZED:                                                           \
-        case SDL_WINDOWEVENT_SIZE_CHANGED:                                                      \
-            window_event_var =                                                                  \
-                voot::WindowResizeEvent{ static_cast<std::uint16_t>((event_data).data1),        \
-                    static_cast<std::uint16_t>((event_data).data2) };                           \
-            (window_event) = &(std::get<voot::WindowResizeEvent>(window_event_var));            \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_MINIMIZED:                                                         \
-        case SDL_WINDOWEVENT_MAXIMIZED:                                                         \
-        case SDL_WINDOWEVENT_RESTORED:                                                          \
-        case SDL_WINDOWEVENT_ENTER:                                                             \
-        case SDL_WINDOWEVENT_LEAVE:                                                             \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_FOCUS_GAINED:                                                      \
-            window_event_var = voot::WindowGainFocusEvent{};                                    \
-            (window_event) = &(std::get<voot::WindowGainFocusEvent>(window_event_var));         \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_FOCUS_LOST:                                                        \
-            window_event_var = voot::WindowLooseFocusEvent{};                                   \
-            (window_event) = &(std::get<voot::WindowLooseFocusEvent>(window_event_var));        \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_CLOSE:                                                             \
-            window_event_var = voot::WindowCloseEvent{};                                        \
-            (window_event) = &(std::get<voot::WindowCloseEvent>(window_event_var));             \
-            break;                                                                              \
-        case SDL_WINDOWEVENT_TAKE_FOCUS:                                                        \
-        case SDL_WINDOWEVENT_HIT_TEST:                                                          \
-            break;                                                                              \
-        }                                                                                       \
-    } while (false)
+    voot::Event *get_window_event(const SDL_WindowEvent &event_data,
+        voot::WindowEventVariant &window_event_var)
+    {
+        using namespace voot;
+
+        Event *window_event{ nullptr };
+        switch ((event_data).event)
+        {
+        default:
+            break;
+        case SDL_WINDOWEVENT_SHOWN:
+        case SDL_WINDOWEVENT_EXPOSED:
+            window_event_var = voot::WindowShowEvent{};
+            (window_event) = &(std::get<voot::WindowShowEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_HIDDEN:
+            window_event_var = voot::WindowHideEvent{};
+            (window_event) = &(std::get<voot::WindowHideEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            window_event_var = voot::WindowMoveEvent{ (event_data).data1, (event_data).data2 };
+            (window_event) = &(std::get<voot::WindowMoveEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+            window_event_var =
+                voot::WindowResizeEvent{ static_cast<std::uint16_t>((event_data).data1),
+                    static_cast<std::uint16_t>((event_data).data2) };
+            (window_event) = &(std::get<voot::WindowResizeEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_MINIMIZED:
+        case SDL_WINDOWEVENT_MAXIMIZED:
+        case SDL_WINDOWEVENT_RESTORED:
+        case SDL_WINDOWEVENT_ENTER:
+        case SDL_WINDOWEVENT_LEAVE:
+            break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            window_event_var = voot::WindowGainFocusEvent{};
+            (window_event) = &(std::get<voot::WindowGainFocusEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            window_event_var = voot::WindowLooseFocusEvent{};
+            (window_event) = &(std::get<voot::WindowLooseFocusEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_CLOSE:
+            window_event_var = voot::WindowCloseEvent{};
+            (window_event) = &(std::get<voot::WindowCloseEvent>(window_event_var));
+            break;
+        case SDL_WINDOWEVENT_TAKE_FOCUS:
+        case SDL_WINDOWEVENT_HIT_TEST:
+            break;
+        }
+
+        return window_event;
+    }
 } // namespace
 
 VT_BEGIN_NAMESPACE
@@ -142,9 +145,9 @@ Application::Application() noexcept
         VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
     }
 
-#if defined(__APPLE__) || !defined(VOOT_TESTING)
-    bgfx::renderFrame(0);
-#endif
+    //#if defined(__APPLE__) || !defined(VOOT_TESTING)
+    // bgfx::renderFrame(0);
+    //#endif
 
     SDL_SysWMinfo wmi;
     SDL_VERSION(&wmi.version);
@@ -159,12 +162,12 @@ Application::Application() noexcept
     pd.ndt = wmi.info.win.hdc;
     pd.nwh = reinterpret_cast<void *>(wmi.info.win.window);
 #elif __linux__
-    if (!VT_WAYLAND_DISPLAY.empty())
-    {
-        pd.ndt = wmi.info.wl.display;
-        pd.nwh = wmi.info.wl.surface;
-    }
-    else /* X11 */
+    //    if (!VT_WAYLAND_DISPLAY.empty())
+    //    {
+    //        pd.ndt = wmi.info.wl.display;
+    //        pd.nwh = wmi.info.wl.surface;
+    //    }
+    //    else /* X11 */
     {
         pd.ndt = wmi.info.x11.display;
         pd.nwh = reinterpret_cast<void *>(wmi.info.x11.window);
@@ -179,7 +182,7 @@ Application::Application() noexcept
 #ifdef _WIN32
     init.type = bgfx::RendererType::Direct3D11;
 #elif __linux__
-    init.type = bgfx::RendererType::OpenGL;
+    init.type = bgfx::RendererType::OpenGLES;
 #else
     init.type = bgfx::RendererType::Metal;
 #endif
@@ -267,8 +270,8 @@ void Application::exec()
                 switch (event.type)
                 {
                 case SDL_WINDOWEVENT: {
-                    voot::Event *window_event = nullptr;
-                    CREATE_WINDOW_EVENT(event.window, window_event);
+                    voot::WindowEventVariant window_event_var;
+                    auto *window_event = get_window_event(event.window, window_event_var);
 
                     if (window_event != nullptr)
                     {
