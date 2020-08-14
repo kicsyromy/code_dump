@@ -1,4 +1,5 @@
 #include <voot_global.hh>
+
 #include <core/voot_application.hh>
 #include <core/voot_binding.hh>
 #include <core/voot_logger.hh>

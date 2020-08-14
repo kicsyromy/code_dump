@@ -7,7 +7,7 @@ else ()
     add_library (${BINARY_NAME})
 endif ()
 
-target_sources(
+target_sources (
     ${BINARY_NAME} PRIVATE
     voot_application.cc     include/core/voot_application.hh
     voot_binding.cc         include/core/voot_binding.hh
@@ -26,11 +26,19 @@ target_sources(
                             include/events/voot_window_events.hh
     voot.cc                 include/voot.hh
                             include/voot_global.hh
+
+    # Private sources
+    private/voot_graphics_context_opengl.cc private/voot_graphics_context.hh
 )
 
 target_include_directories (
     ${BINARY_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_include_directories (
+    ${BINARY_NAME} PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/private"
 )
 
 target_compile_definitions (

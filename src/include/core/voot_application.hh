@@ -1,10 +1,13 @@
 #pragma once
 
+#include "voot_global.hh"
+
 #include "core/voot_logger.hh"
 #include "events/voot_event.hh"
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"
-#include "voot_global.hh"
+
+#include "private/voot_graphics_context.hh"
 
 #include <gsl/gsl>
 
@@ -14,9 +17,6 @@
 #include <vector>
 
 #define VT_APPLICATION() voot::Application::instance()
-
-using SDL_Window = struct SDL_Window;
-class GrDirectContext;
 
 VT_BEGIN_NAMESPACE
 
@@ -88,7 +88,7 @@ public:
 public:
     GraphicsContext graphics_context() const noexcept
     {
-        return { *(skia_context_.get()), main_gl_context_.get() };
+        return { graphics_context_.skia_context(), graphics_context_.platform_context() };
     }
 
 private:
@@ -145,15 +145,7 @@ private:
     std::array<std::vector<EventClient>, EVENT_TYPE_COUNT> clients_;
 
 private:
-#ifdef _MSC_VER
-#pragma warning(disable : 4251)
-#endif
-    std::unique_ptr<void, void (*)(void *)> main_gl_context_{ nullptr, nullptr };
-    std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> default_window_{ nullptr, nullptr };
-    std::unique_ptr<GrDirectContext> skia_context_{ nullptr };
-#ifdef _MSC_VER
-#pragma warning(disable : 4251)
-#endif
+    priv::GraphicsContext graphics_context_;
     Logger logger_{};
 };
 

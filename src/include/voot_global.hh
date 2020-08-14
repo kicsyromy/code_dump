@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 #include <string>
 
 #include "hedley/hedley.h"
@@ -33,6 +33,11 @@
     namespace voot         \
     {
 #define VT_END_NAMESPACE }
+
+#define VT_BEGIN_PRIVATE_NAMESPACE \
+    namespace voot::priv           \
+    {
+#define VT_END_PRIVATE_NAMESPACE }
 
 #define VOOT_SINGLETON(klass) klass() = delete;
 

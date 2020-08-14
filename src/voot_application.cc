@@ -104,62 +104,12 @@ Application::Application() noexcept
         VT_LOG_FATAL("Cannot create multiple instances of Application in one process");
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-    {
-        VT_LOG_FATAL("Failed to initialize SDL: {}", SDL_GetError());
-    }
-
-    default_window_ = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{
-        SDL_CreateWindow("",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            0,
-            0,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN),
-        &SDL_DestroyWindow
-    };
-
-    if (default_window_ == nullptr)
-    {
-        VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
-    }
-
-    main_gl_context_ = std::unique_ptr<void, decltype(&SDL_GL_DeleteContext)>{
-        SDL_GL_CreateContext(default_window_.get()),
-        &SDL_GL_DeleteContext
-    };
-
-    if (main_gl_context_ == nullptr)
-    {
-        VT_LOG_FATAL("Failed to create OpenGL context: {}", SDL_GetError());
-    }
-
-    auto interface = GrGLMakeNativeInterface();
-    auto gr_context = GrDirectContext::MakeGL();
-    skia_context_ = std::unique_ptr<GrDirectContext>{ gr_context.release() };
-    if (skia_context_ == nullptr)
-    {
-        VT_LOG_FATAL("Failed to create Skia graphics context");
-    }
-
     g_app_instance = this;
 }
 
 Application::~Application() noexcept
 {
     g_app_instance = nullptr;
-    SDL_Quit();
 }
 
 void Application::post_event(const std::shared_ptr<Event> &event, int receiver_id) noexcept
@@ -434,10 +384,7 @@ void Application::exec()
                              1000.F;
         start = std::chrono::high_resolution_clock::now();
 
-        RenderEvent render_event{ elapsed,
-            key_states_,
-            mouse_button_states_
-        };
+        RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
         auto &render_clients = gsl::at(clients_, gsl::index(EventType::Render));
         for (auto &client : render_clients)
         {
