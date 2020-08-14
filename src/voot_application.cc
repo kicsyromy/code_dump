@@ -6,27 +6,11 @@
 #include "events/voot_window_events.hh"
 
 #include <SDL2.h>
-#include <SDL_syswm.h>
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
+#include <gpu/GrDirectContext.h>
+#include <gpu/gl/GrGLInterface.h>
 
-#include <variant>
 #include <unordered_set>
-
-#ifdef __linux__
-#ifdef SDL_VIDEO_DRIVER_WAYLAND
-const std::string VT_WAYLAND_DISPLAY = [] {
-    const char *env = std::getenv("WAYLAND_DISPLAY");
-
-    if (env == nullptr)
-        return "";
-
-    return env;
-}();
-#else
-const std::string VT_WAYLAND_DISPLAY{ "" };
-#endif
-#endif
+#include <variant>
 
 namespace
 {
@@ -35,12 +19,6 @@ namespace
     const std::uint32_t USER_EVENT_TYPE{ [] {
         return SDL_RegisterEvents(1);
     }() };
-
-    /* TODO: Figure out if we want a separate rendering thread, disable for now */
-    //    const auto NO_OFFSCREEN_RENDERER = []() -> int {
-    //        bgfx::renderFrame(0);
-    //        return 0;
-    //    }();
 
     struct EventWrapper
     {
@@ -126,79 +104,53 @@ Application::Application() noexcept
         VT_LOG_FATAL("Cannot create multiple instances of Application in one process");
     }
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         VT_LOG_FATAL("Failed to initialize SDL: {}", SDL_GetError());
     }
 
-    bgfx_platfrom_window_ =
-        std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{ SDL_CreateWindow("",
-                                                                       SDL_WINDOWPOS_UNDEFINED,
-                                                                       SDL_WINDOWPOS_UNDEFINED,
-                                                                       0,
-                                                                       0,
-                                                                       SDL_WINDOW_HIDDEN),
-            &SDL_DestroyWindow };
+    default_window_ = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{
+        SDL_CreateWindow("",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            0,
+            0,
+            SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN),
+        &SDL_DestroyWindow
+    };
 
-    if (bgfx_platfrom_window_ == nullptr)
+    if (default_window_ == nullptr)
     {
         VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
     }
 
-    //#if defined(__APPLE__) || !defined(VOOT_TESTING)
-    // bgfx::renderFrame(0);
-    //#endif
+    main_gl_context_ = std::unique_ptr<void, decltype(&SDL_GL_DeleteContext)>{
+        SDL_GL_CreateContext(default_window_.get()),
+        &SDL_GL_DeleteContext
+    };
 
-    SDL_SysWMinfo wmi;
-    SDL_VERSION(&wmi.version);
-    if (!SDL_GetWindowWMInfo(bgfx_platfrom_window_.get(), &wmi))
+    if (main_gl_context_ == nullptr)
     {
-        VT_LOG_FATAL("Failed to get native window information: {}", SDL_GetError());
+        VT_LOG_FATAL("Failed to create OpenGL context: {}", SDL_GetError());
     }
 
-    bgfx::PlatformData pd;
-    std::memset(static_cast<void *>(&pd), 0, sizeof(pd));
-#ifdef _WIN32
-    pd.ndt = wmi.info.win.hdc;
-    pd.nwh = reinterpret_cast<void *>(wmi.info.win.window);
-#elif __linux__
-    //    if (!VT_WAYLAND_DISPLAY.empty())
-    //    {
-    //        pd.ndt = wmi.info.wl.display;
-    //        pd.nwh = wmi.info.wl.surface;
-    //    }
-    //    else /* X11 */
+    auto interface = GrGLMakeNativeInterface();
+    auto gr_context = GrDirectContext::MakeGL();
+    skia_context_ = std::unique_ptr<GrDirectContext>{ gr_context.release() };
+    if (skia_context_ == nullptr)
     {
-        pd.ndt = wmi.info.x11.display;
-        pd.nwh = reinterpret_cast<void *>(wmi.info.x11.window);
-    }
-#else
-    pd.nwh = reinterpret_cast<void *>(wmi.info.cocoa.window);
-#endif
-
-    bgfx::setPlatformData(pd);
-
-    bgfx::Init init;
-#ifdef _WIN32
-    init.type = bgfx::RendererType::Direct3D11;
-#elif __linux__
-    init.type = bgfx::RendererType::OpenGLES;
-#else
-    init.type = bgfx::RendererType::Metal;
-#endif
-    init.vendorId = BGFX_PCI_ID_NONE;
-    init.resolution.width = 1;
-    init.resolution.height = 1;
-    init.resolution.reset = BGFX_RESET_VSYNC;
-    bgfx::init(init);
-
-    const auto *caps = bgfx::getCaps();
-    if ((caps->supported & (BGFX_CAPS_SWAP_CHAIN)) == 0)
-    {
-        g_app_instance = nullptr;
-        bgfx::shutdown();
-        SDL_Quit();
-        VT_LOG_FATAL("Swap chain extension not supported, bailing out...");
+        VT_LOG_FATAL("Failed to create Skia graphics context");
     }
 
     g_app_instance = this;
@@ -207,7 +159,6 @@ Application::Application() noexcept
 Application::~Application() noexcept
 {
     g_app_instance = nullptr;
-    bgfx::shutdown();
     SDL_Quit();
 }
 
@@ -483,15 +434,16 @@ void Application::exec()
                              1000.F;
         start = std::chrono::high_resolution_clock::now();
 
-        RenderEvent render_event{ elapsed, key_states_, mouse_button_states_ };
+        RenderEvent render_event{ elapsed,
+            key_states_,
+            mouse_button_states_
+        };
         auto &render_clients = gsl::at(clients_, gsl::index(EventType::Render));
         for (auto &client : render_clients)
         {
             if (!client.callback()(-1, &render_event, client.callback_data()))
                 break;
         }
-
-        bgfx::frame();
     }
 }
 

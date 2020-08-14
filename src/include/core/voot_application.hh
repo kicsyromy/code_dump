@@ -1,10 +1,10 @@
 #pragma once
 
-#include "voot_global.hh"
 #include "core/voot_logger.hh"
 #include "events/voot_event.hh"
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"
+#include "voot_global.hh"
 
 #include <gsl/gsl>
 
@@ -16,8 +16,15 @@
 #define VT_APPLICATION() voot::Application::instance()
 
 using SDL_Window = struct SDL_Window;
+class GrDirectContext;
 
 VT_BEGIN_NAMESPACE
+
+struct VOOT_API GraphicsContext
+{
+    GrDirectContext &skia_context;
+    void *graphics_api_context;
+};
 
 class VOOT_API Application
 {
@@ -75,7 +82,14 @@ public:
     {
         quit_ = true;
     }
+
     void exec();
+
+public:
+    GraphicsContext graphics_context() const noexcept
+    {
+        return { *(skia_context_.get()), main_gl_context_.get() };
+    }
 
 private:
     void post_event_owned(gsl::owner<Event *> event,
@@ -134,9 +148,11 @@ private:
 #ifdef _MSC_VER
 #pragma warning(disable : 4251)
 #endif
-    std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> bgfx_platfrom_window_{ nullptr, nullptr };
+    std::unique_ptr<void, void (*)(void *)> main_gl_context_{ nullptr, nullptr };
+    std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> default_window_{ nullptr, nullptr };
+    std::unique_ptr<GrDirectContext> skia_context_{ nullptr };
 #ifdef _MSC_VER
-#pragma warning(default : 4251)
+#pragma warning(disable : 4251)
 #endif
     Logger logger_{};
 };

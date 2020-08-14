@@ -1,23 +1,27 @@
 #include "gui/voot_rectangle.hh"
 
-#include <nanovg/nanovg.h>
+#include <core/SkCanvas.h>
 
 VT_BEGIN_NAMESPACE
 
-void Rectangle::render(NVGcontext *vg) const noexcept
+void Rectangle::render(SkCanvas *canvas) const noexcept
 {
-    nvgBeginPath(vg);
-    nvgRect(vg, float(x_abs()), float(y_abs()), width(), height());
+    canvas->save();
+
+    const auto rectangle = SkRect::MakeXYWH(SkIntToScalar(x_abs()),
+        SkIntToScalar(y_abs()),
+        SkIntToScalar(width()),
+        SkIntToScalar(height()));
+
     auto &c = color_;
-    if (focus())
-    {
-        nvgFillColor(vg, nvgRGBA(c.red / 2, c.green / 2, c.blue / 2, c.alpha / 2));
-    }
-    else
-    {
-        nvgFillColor(vg, nvgRGBA(c.red, c.green, c.blue, c.alpha));
-    }
-    nvgFill(vg);
+    const auto paint = SkPaint(SkColor4f{ float(c.red) / 255,
+        float(c.green) / 255,
+        float(c.blue) / 255,
+        float(c.alpha) / 255 });
+
+    canvas->drawRect(rectangle, paint);
+
+    canvas->restore();
 }
 
 VT_END_NAMESPACE

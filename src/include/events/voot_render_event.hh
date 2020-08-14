@@ -1,6 +1,7 @@
 #pragma once
 
 #include "voot_global.hh"
+
 #include "events/voot_event.hh"
 #include "events/voot_key_events.hh"
 #include "events/voot_mouse_events.hh"

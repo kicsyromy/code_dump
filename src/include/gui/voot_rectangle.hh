@@ -25,7 +25,7 @@ public:
     }
 
 public:
-    void render(NVGcontext *vg) const noexcept;
+    void render(SkCanvas *canvas) const noexcept;
 
 private:
     struct

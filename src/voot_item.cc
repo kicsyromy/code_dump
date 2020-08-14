@@ -17,11 +17,11 @@ VT_BEGIN_NAMESPACE
 
 Item::~Item() noexcept = default;
 
-void Item::render(NVGcontext *vg) const noexcept
+void Item::render(SkCanvas *canvas) const noexcept
 {
     if (render_function_ != nullptr)
     {
-        render_function_(vg, this);
+        render_function_(canvas, this);
     }
 
     if (children_.empty())
@@ -34,7 +34,7 @@ void Item::render(NVGcontext *vg) const noexcept
         {
             for (const auto &child : it->second)
             {
-                child->render(vg);
+                child->render(canvas);
             }
         }
     }

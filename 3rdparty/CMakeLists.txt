@@ -1,8 +1,5 @@
-# Cross-platform, graphics API agnostic rendering library
-add_subdirectory (bgfx)
-
-# Antialiased 2D vector drawing library (using bgfx as a backend)
-add_subdirectory (nanovg-bgfx)
+# Cross-platform, open source 2D graphics library by Google
+add_subdirectory (skia)
 
 # Cross-platform hardware abstraction layer for computer multimedia hardware components
 add_subdirectory (SDL2)

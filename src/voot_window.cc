@@ -1,37 +1,20 @@
-#include "voot_global.hh"
-#include "core/voot_logger.hh"
 #include "gui/voot_window.hh"
+#include "core/voot_logger.hh"
+#include "voot_global.hh"
+
+#include <GL/gl.h>
 
 #include <SDL2.h>
 #include <SDL_syswm.h>
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-#include <nanovg/nanovg.h>
+#include <core/SkCanvas.h>
+#include <core/SkSurface.h>
+#include <gpu/GrDirectContext.h>
+#include <gpu/gl/GrGLInterface.h>
 
 namespace
 {
-    /* FIXME: Clarify is this needs to be thread safe or not */
-    /* FIXME: Clarify is this is the right way to keep track is view indices */
-    std::uint16_t view_id_last = 1;
-
     constexpr auto w_width{ 800 };
     constexpr auto w_height{ 800 };
-
-    void update_window_surface(std::uint16_t view_id,
-        std::uint16_t framebuffer_handle,
-        std::uint16_t width,
-        std::uint16_t height) noexcept
-    {
-        bgfx::setViewFrameBuffer(view_id, bgfx::FrameBufferHandle{ framebuffer_handle });
-        bgfx::setViewRect(view_id, 0, 0, width, height);
-        bgfx::setViewClear(view_id,
-            BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-            voot::utility::rgba(0, 0, 0),
-            1.0F,
-            0);
-        bgfx::touch(view_id);
-    }
-
 } // namespace
 
 VT_BEGIN_NAMESPACE
@@ -44,11 +27,8 @@ Window::Window(std::string_view title) noexcept
                         SDL_WINDOWPOS_UNDEFINED,
                         int(width_),
                         int(height_),
-                        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE),
+                        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE),
       &SDL_DestroyWindow }
-  , view_id_{ view_id_last++ }
-  , framebuffer_handle_{ bgfx::createFrameBuffer(native_window_handle(), width_, height_).idx }
-  , drawing_context_{ nvgCreate(true, view_id_), &nvgDelete }
   , root_item_{}
 {
     if (window_handle_ == nullptr)
@@ -56,10 +36,7 @@ Window::Window(std::string_view title) noexcept
         VT_LOG_FATAL("Failed to create window: {}", SDL_GetError());
     }
 
-    update_window_surface(view_id_, framebuffer_handle_, width_, height_);
-
-    root_item_.width = width_;
-    root_item_.height = height_;
+    update_window_surface(width_, height_);
 
     auto *app = VT_APPLICATION();
     assert(app != nullptr);
@@ -82,15 +59,7 @@ Window::Window(std::string_view title) noexcept
     app->register_event_handler<RenderEvent, &Window::on_render_event>(this);
 }
 
-Window::~Window() noexcept
-{
-    bgfx::destroy(bgfx::FrameBufferHandle{ framebuffer_handle_ });
-    framebuffer_handle_ = bgfx::kInvalidHandle;
-    bgfx::setViewFrameBuffer(view_id_, bgfx::FrameBufferHandle{ bgfx::kInvalidHandle });
-
-    bgfx::frame();
-    bgfx::frame();
-}
+Window::~Window() noexcept = default;
 
 std::pair<std::size_t, std::size_t> voot::Window::viewport_size() const noexcept
 {
@@ -111,9 +80,6 @@ void *Window::native_window_handle() const noexcept
 #ifdef _WIN32
     return reinterpret_cast<void *>(wmi.info.win.window);
 #elif __linux__
-//    if (!VT_WAYLAND_DISPLAY.empty())
-//        return wmi.info.wl.surface;
-
     return reinterpret_cast<void *>(wmi.info.x11.window);
 #else
     return reinterpret_cast<void *>(wmi.info.cocoa.window);
@@ -184,19 +150,7 @@ bool Window::on_window_resized_event(int window_id, WindowResizeEvent *event) no
     static_cast<void>(window_id);
 
     auto [new_width, new_height] = event->size();
-    width_ = new_width;
-    height_ = new_height;
-
-    bgfx::destroy(bgfx::FrameBufferHandle{ framebuffer_handle_ });
-    framebuffer_handle_ =
-        bgfx::createFrameBuffer(native_window_handle(), new_width, new_height).idx;
-    update_window_surface(view_id_, framebuffer_handle_, new_width, new_height);
-
-    root_item_.width = width_;
-    root_item_.height = height_;
-
-    /* Force a render for this window when resized */
-    on_render_event(window_id, nullptr);
+    update_window_surface(new_width, new_height);
 
     return true;
 }
@@ -216,14 +170,77 @@ bool Window::on_render_event(int window_id, RenderEvent *event) noexcept
     static_cast<void>(window_id);
     static_cast<void>(event);
 
-    bgfx::touch(view_id_);
-    auto *vg = drawing_context_.get();
+    SDL_GL_MakeCurrent(window_handle_.get(),
+        VT_APPLICATION()->graphics_context().graphics_api_context);
 
-    nvgBeginFrame(vg, float(width_), float(height_), 1.0F);
-    root_item_.render(vg);
-    nvgEndFrame(vg);
+    glViewport(0, 0, width_, height_);
+    glClearColor(1, 1, 1, 1);
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    auto *canvas = surface_->getCanvas();
+    root_item_.render(canvas);
+    canvas->flush();
+
+    SDL_GL_SwapWindow(window_handle_.get());
 
     return true;
+}
+
+void Window::update_window_surface(std::uint16_t width, std::uint16_t height) noexcept
+{
+    width_ = width;
+    height_ = height;
+
+    root_item_.width = width;
+    root_item_.height = height;
+
+    auto &skia_context = VT_APPLICATION()->graphics_context().skia_context;
+
+    auto window_format = SDL_GetWindowPixelFormat(window_handle_.get());
+    int contextType;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
+
+    auto interface = GrGLMakeNativeInterface();
+
+    GrGLint buffer;
+    interface->fFunctions.fGetIntegerv(GL_FRAMEBUFFER_BINDING, &buffer);
+    GrGLFramebufferInfo info;
+    info.fFBOID = GrGLuint(buffer);
+    SkColorType color_type;
+    if (SDL_PIXELFORMAT_RGBA8888 == window_format)
+    {
+        info.fFormat = GL_RGBA8;
+        color_type = kRGBA_8888_SkColorType;
+    }
+    else
+    {
+        color_type = kBGRA_8888_SkColorType;
+        if (SDL_GL_CONTEXT_PROFILE_ES == contextType)
+        {
+            info.fFormat = 0; // GL_BGRA8;
+        }
+        else
+        {
+            // We assume the internal format is RGBA8 on desktop GL
+            info.fFormat = GL_RGBA8;
+        }
+    }
+
+    GrBackendRenderTarget target(width, height, 0, 8, info);
+    // setup SkSurface
+    // To use distance field text, use commented out SkSurfaceProps instead
+    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
+    //                      SkSurfaceProps::kLegacyFontHost_InitType);
+    SkSurfaceProps surface_properties(SkSurfaceProps::kLegacyFontHost_InitType);
+    sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(&skia_context,
+        target,
+        kBottomLeft_GrSurfaceOrigin,
+        color_type,
+        nullptr,
+        &surface_properties));
+
+    surface_ = std::unique_ptr<SkSurface>{ surface.release() };
 }
 
 VT_END_NAMESPACE

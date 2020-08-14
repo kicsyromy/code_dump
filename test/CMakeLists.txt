@@ -33,8 +33,7 @@ target_link_libraries (
     project_options
     Catch2::Catch2
     Microsoft.GSL::GSL
-    bgfx::bgfx
-    bgfx::nanovg
+    google::skia
     SDL2::SDL2
     spdlog::spdlog
     hedley::hedley

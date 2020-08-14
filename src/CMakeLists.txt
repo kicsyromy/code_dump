@@ -45,9 +45,8 @@ target_link_libraries (
     ${BINARY_NAME} PRIVATE
     project_options
     project_warnings
-    bgfx::bgfx
-    bgfx::nanovg
     SDL2::SDL2
+    google::skia
 )
 
 target_link_libraries (

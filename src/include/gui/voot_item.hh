@@ -1,8 +1,8 @@
 #pragma once
 
-#include "voot_global.hh"
 #include "core/voot_property.hh"
 #include "events/voot_mouse_events.hh"
+#include "voot_global.hh"
 
 #include <algorithm>
 #include <chrono>
@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-struct NVGcontext;
+class SkCanvas;
 
 #define VT_ITEM                                              \
 public:                                                      \
@@ -25,8 +25,8 @@ VT_BEGIN_NAMESPACE
 class Item
 {
 public:
-    using RenderFunction = void (*)(NVGcontext *, const void *);
-    template<typename ChildItem> using RenderMethod = void (ChildItem::*)(NVGcontext *) const;
+    using RenderFunction = void (*)(SkCanvas*, const void *);
+    template<typename ChildItem> using RenderMethod = void (ChildItem::*)(SkCanvas *) const;
 
 public:
     enum MouseEventFilter : std::uint8_t
@@ -41,9 +41,9 @@ public:
 protected:
     template<typename ChildItem>
     Item(ChildItem *) noexcept
-      : render_function_{ [](NVGcontext *vg, const void *child) {
+      : render_function_{ [](SkCanvas *canvas, const void *child) {
           constexpr RenderMethod<ChildItem> render_method = &ChildItem::render;
-          (static_cast<const ChildItem *>(child)->*render_method)(vg);
+          (static_cast<const ChildItem *>(child)->*render_method)(canvas);
       } }
     {
         focus = false;
@@ -178,7 +178,7 @@ private:
 
 private:
     friend class Window;
-    void render(NVGcontext *vg) const noexcept;
+    void render(SkCanvas *canvas) const noexcept;
 
     /* Mouse handling */
     bool handle_mouse_button_pressed(MouseButton button, int x, int y) noexcept;

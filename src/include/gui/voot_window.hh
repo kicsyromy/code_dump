@@ -18,12 +18,7 @@
 #include <type_traits>
 
 using SDL_Window = struct SDL_Window;
-struct NVGcontext;
-
-namespace bgfx
-{
-    struct FrameBufferHandle;
-}
+class SkSurface;
 
 VT_BEGIN_NAMESPACE
 
@@ -55,14 +50,15 @@ private:
     bool on_render_event(int window_id, RenderEvent *event) noexcept;
 
 private:
+    void update_window_surface(std::uint16_t width, std::uint16_t height) noexcept;
+
+private:
     std::uint16_t width_;
     std::uint16_t height_;
 
 private:
     std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> window_handle_{ nullptr, nullptr };
-    std::uint16_t view_id_;
-    std::uint16_t framebuffer_handle_;
-    std::unique_ptr<NVGcontext, void (*)(NVGcontext *)> drawing_context_{ nullptr, nullptr };
+    std::unique_ptr<SkSurface> surface_{ nullptr };
     Item root_item_;
 };
 
