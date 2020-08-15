@@ -11,6 +11,7 @@
 #include "include/gpu/GrContext.h"
 
 class GrAtlasManager;
+class GrSmallPathAtlasMgr;
 
 class SK_API GrDirectContext : public GrContext {
 public:
@@ -58,7 +59,8 @@ public:
 #endif
 
 #ifdef SK_DAWN
-    static sk_sp<GrDirectContext> MakeDawn(const wgpu::Device&, const GrContextOptions&);
+    static sk_sp<GrDirectContext> MakeDawn(const wgpu::Device&,
+                                           const GrContextOptions&);
     static sk_sp<GrDirectContext> MakeDawn(const wgpu::Device&);
 #endif
 
@@ -79,13 +81,17 @@ protected:
     bool init() override;
 
     GrAtlasManager* onGetAtlasManager() override { return fAtlasManager.get(); }
+    GrSmallPathAtlasMgr* onGetSmallPathAtlasMgr() override;
 
     GrDirectContext* asDirectContext() override { return this; }
 
 private:
     std::unique_ptr<GrAtlasManager> fAtlasManager;
 
+    std::unique_ptr<GrSmallPathAtlasMgr> fSmallPathAtlasMgr;
+
     typedef GrContext INHERITED;
 };
+
 
 #endif

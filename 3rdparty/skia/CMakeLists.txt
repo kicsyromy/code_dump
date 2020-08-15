@@ -1,24 +1,44 @@
-set (SKIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/skia")
+set(SKIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/skia")
 
-add_library (
+add_library(
     skia INTERFACE
 )
 
-target_include_directories (
+target_include_directories(
     skia SYSTEM INTERFACE
     ${SKIA_ROOT_DIR}
     ${SKIA_ROOT_DIR}/include
 )
 
-include (LinuxConfig.cmake)
+if ((NOT EXISTS "${SKIA_ROOT_DIR}/bin/gn") OR (NOT EXISTS "${SKIA_ROOT_DIR}/bin/gn.exe"))
+    find_program(
+        PYTHON python REQUIRED
+        NAMES python python2 python3
+        DOC "Python executable"
+    )
 
-find_program (
+    execute_process(
+        COMMAND ${PYTHON} fetch-gn
+        WORKING_DIRECTORY ${SKIA_ROOT_DIR}/bin
+        RESULT_VARIABLE GN_GET_FAILED
+        OUTPUT_VARIABLE GN_GET_OUTPUT
+        ERROR_VARIABLE GN_GET_OUTPUT
+    )
+
+    if (GN_GET_FAILED)
+        message(FATAL_ERROR ${GN_GET_OUTPUT})
+    endif ()
+endif ()
+
+include(LinuxConfig.cmake)
+
+find_program(
     GN gn REQUIRED
     HINTS ${SKIA_ROOT_DIR}/bin
     DOC "Skia native build system generator"
 )
 
-set (
+set(
     GN_ARGS
     cc=\"${CMAKE_C_COMPILER}\"
     cxx=\"${CMAKE_CXX_COMPILER}\"
@@ -26,17 +46,17 @@ set (
     is_official_build=true
 )
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set (
+    set(
         GN_ARGS
         ${GN_ARGS}
         is_debug=true
     )
 endif ()
 
-string (REPLACE ";" " " GN_ARGS "${GN_ARGS}")
-file (RELATIVE_PATH SKIA_GEN_DIR ${SKIA_ROOT_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+string(REPLACE ";" " " GN_ARGS "${GN_ARGS}")
+file(RELATIVE_PATH SKIA_GEN_DIR ${SKIA_ROOT_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-execute_process (
+execute_process(
     COMMAND ${GN} gen ${SKIA_GEN_DIR} --args=${GN_ARGS}
     WORKING_DIRECTORY ${SKIA_ROOT_DIR}
     RESULT_VARIABLE GENERATE_FAILED
@@ -45,25 +65,25 @@ execute_process (
 )
 
 if (GENERATE_FAILED)
-    message (FATAL_ERROR ${GN_OUTPUT})
+    message(FATAL_ERROR ${GN_OUTPUT})
 endif ()
 
-find_program (
+find_program(
     NINJA ninja REQUIRED
     DOC "Ninja build system required for skia"
 )
 
-add_custom_target (
+add_custom_target(
     skia_gn
     ${CMAKE_COMMAND} -E env ${NINJA} -C ${CMAKE_CURRENT_BINARY_DIR}
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${SKIA_LIB_PREFIX}skia${SKIA_LIB_SUFFIX}
 )
 
-target_link_libraries (
+target_link_libraries(
     skia INTERFACE
     ${CMAKE_CURRENT_BINARY_DIR}/${SKIA_LIB_PREFIX}skia${SKIA_LIB_SUFFIX}
 )
 
 add_dependencies(skia skia_gn)
 
-add_library (google::skia ALIAS skia)
+add_library(google::skia ALIAS skia)

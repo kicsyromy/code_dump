@@ -334,17 +334,17 @@ bool HCodeGenerator::generateCode() {
     this->writef(kFragmentProcessorHeader, fFullName.c_str());
     this->writef("#ifndef %s_DEFINED\n"
                  "#define %s_DEFINED\n"
+                 "\n"
+                 "#include \"include/core/SkM44.h\"\n"
+                 "#include \"include/core/SkTypes.h\"\n"
                  "\n",
                  fFullName.c_str(),
                  fFullName.c_str());
-    this->writef("#include \"include/core/SkM44.h\"\n"
-                 "#include \"include/core/SkTypes.h\"\n"
-                 "\n");
     this->writeSection(kHeaderSection);
     this->writef("\n"
                  "#include \"src/gpu/GrFragmentProcessor.h\"\n"
-                 "\n");
-    this->writef("class %s : public GrFragmentProcessor {\n"
+                 "\n"
+                 "class %s : public GrFragmentProcessor {\n"
                  "public:\n",
                  fFullName.c_str());
     for (const auto& p : fProgram) {
@@ -362,7 +362,7 @@ bool HCodeGenerator::generateCode() {
     this->writef("private:\n");
     this->writeConstructor();
     this->writef("    GrGLSLFragmentProcessor* onCreateGLSLInstance() const override;\n"
-                 "    void onGetGLSLProcessorKey(const GrShaderCaps&,"
+                 "    void onGetGLSLProcessorKey(const GrShaderCaps&, "
                                                 "GrProcessorKeyBuilder*) const override;\n"
                  "    bool onIsEqual(const GrFragmentProcessor&) const override;\n");
     for (const auto& param : fSectionAndParameterHelper.getParameters()) {
@@ -371,9 +371,12 @@ bool HCodeGenerator::generateCode() {
             break;
         }
     }
-    this->writef("    GR_DECLARE_FRAGMENT_PROCESSOR_TEST\n");
-    this->writef("    typedef GrFragmentProcessor INHERITED;\n"
-                "};\n");
+    this->writef("#if GR_TEST_UTILS\n"
+                 "    SkString onDumpInfo() const override;\n"
+                 "#endif\n"
+                 "    GR_DECLARE_FRAGMENT_PROCESSOR_TEST\n"
+                 "    typedef GrFragmentProcessor INHERITED;\n"
+                 "};\n");
     this->writeSection(kHeaderEndSection);
     this->writef("#endif\n");
     return 0 == fErrors.errorCount();

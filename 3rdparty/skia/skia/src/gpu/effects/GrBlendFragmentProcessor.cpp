@@ -51,14 +51,6 @@ public:
 
     const char* name() const override { return "Blend"; }
 
-#ifdef SK_DEBUG
-    SkString dumpInfo() const override {
-        SkString str;
-        str.appendf("Mode: %s", SkBlendMode_Name(fMode));
-        return str;
-    }
-#endif
-
     std::unique_ptr<GrFragmentProcessor> clone() const override;
 
     SkBlendMode getMode() const { return fMode; }
@@ -85,6 +77,12 @@ private:
             , fBlendBehavior(that.fBlendBehavior) {
         this->cloneAndRegisterAllChildProcessors(that);
     }
+
+#if GR_TEST_UTILS
+    SkString onDumpInfo() const override {
+        return SkStringPrintf("(fMode=%s)", SkBlendMode_Name(fMode));
+    }
+#endif
 
     static OptimizationFlags OptFlags(const GrFragmentProcessor* src,
                                       const GrFragmentProcessor* dst, SkBlendMode mode) {
