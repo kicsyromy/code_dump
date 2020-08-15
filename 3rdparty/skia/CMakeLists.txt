@@ -1,4 +1,12 @@
-set(SKIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/skia")
+set(VOOT_SKIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/skia")
+
+option(VOOT_SKIA_USE_SYSTEM_EXPAT "Use system-wide installation of Expat instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_HARFBUZZ "Use system-wide installation of HarfBuzz instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_ICU "Use system-wide installation of ICU instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_JPEG "Use system-wide installation of libjpeg-turbo instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_PNG "Use system-wide installation of libpng instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_WEBP "Use system-wide installation of WebP instead of bundled version" OFF)
+option(VOOT_SKIA_USE_SYSTEM_ZLIB "Use system-wide installation of zlib instead of bundled version" OFF)
 
 add_library(
     skia INTERFACE
@@ -6,84 +14,126 @@ add_library(
 
 target_include_directories(
     skia SYSTEM INTERFACE
-    ${SKIA_ROOT_DIR}
-    ${SKIA_ROOT_DIR}/include
-)
-
-if ((NOT EXISTS "${SKIA_ROOT_DIR}/bin/gn") OR (NOT EXISTS "${SKIA_ROOT_DIR}/bin/gn.exe"))
-    find_program(
-        PYTHON python REQUIRED
-        NAMES python python2 python3
-        DOC "Python executable"
-    )
-
-    execute_process(
-        COMMAND ${PYTHON} fetch-gn
-        WORKING_DIRECTORY ${SKIA_ROOT_DIR}/bin
-        RESULT_VARIABLE GN_GET_FAILED
-        OUTPUT_VARIABLE GN_GET_OUTPUT
-        ERROR_VARIABLE GN_GET_OUTPUT
-    )
-
-    if (GN_GET_FAILED)
-        message(FATAL_ERROR ${GN_GET_OUTPUT})
-    endif ()
-endif ()
-
-include(LinuxConfig.cmake)
-
-find_program(
-    GN gn REQUIRED
-    HINTS ${SKIA_ROOT_DIR}/bin
-    DOC "Skia native build system generator"
+    ${VOOT_SKIA_ROOT_DIR}
+    ${VOOT_SKIA_ROOT_DIR}/include
 )
 
 set(
-    GN_ARGS
+    SKIA_GN_ARGS
     cc=\"${CMAKE_C_COMPILER}\"
     cxx=\"${CMAKE_CXX_COMPILER}\"
+    extra_cflags_c=[\"${CMAKE_C_FLAGS}\"]
+    extra_cflags_cc=[\"${CMAKE_CXX_FLAGS}\"]
     # This only works in debug builds because line 37 is commented out from ${SKIA_BUILD_ROOT}/gn/BUILDCONFIG.gn
     is_official_build=true
 )
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(
-        GN_ARGS
-        ${GN_ARGS}
+        SKIA_GN_ARGS
+        ${SKIA_GN_ARGS}
         is_debug=true
     )
 endif ()
 
-string(REPLACE ";" " " GN_ARGS "${GN_ARGS}")
-file(RELATIVE_PATH SKIA_GEN_DIR ${SKIA_ROOT_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include(LinuxConfig.cmake)
+include(WindowsConfig.cmake)
 
-execute_process(
-    COMMAND ${GN} gen ${SKIA_GEN_DIR} --args=${GN_ARGS}
-    WORKING_DIRECTORY ${SKIA_ROOT_DIR}
-    RESULT_VARIABLE GENERATE_FAILED
-    OUTPUT_VARIABLE GN_OUTPUT
-    ERROR_VARIABLE GN_OUTPUT
+include(Dependencies.cmake)
+
+voot_skia_add_dependency(
+    PACKAGE_NAME EXPAT
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_EXPAT}
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_expat
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
 )
 
-if (GENERATE_FAILED)
-    message(FATAL_ERROR ${GN_OUTPUT})
-endif ()
-
-find_program(
-    NINJA ninja REQUIRED
-    DOC "Ninja build system required for skia"
+voot_skia_add_dependency(
+    PACKAGE_NAME harfbuzz
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_HARFBUZZ}
+    USE_PKG_CONFIG
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_harfbuzz
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
 )
 
-add_custom_target(
-    skia_gn
-    ${CMAKE_COMMAND} -E env ${NINJA} -C ${CMAKE_CURRENT_BINARY_DIR}
-    BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${SKIA_LIB_PREFIX}skia${SKIA_LIB_SUFFIX}
+voot_skia_add_dependency(
+    PACKAGE_NAME ICU
+    PACKAGE_COMPONENTS uc
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_ICU}
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_icu
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
+)
+
+voot_skia_add_dependency(
+    PACKAGE_NAME JPEG
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_JPEG}
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_libjpeg_turbo
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
+)
+
+voot_skia_add_dependency(
+    PACKAGE_NAME PNG
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_PNG}
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_libpng
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
+)
+
+voot_skia_add_dependency(
+    PACKAGE_NAME libwebp
+    PACKAGE_COMPONENTS mux demux
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_WEBP}
+    USE_PKG_CONFIG
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_libwebp
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
+)
+
+voot_skia_add_dependency(
+    PACKAGE_NAME ZLIB
+    USE_SYSTEM_LIB ${VOOT_SKIA_USE_SYSTEM_ZLIB}
+    TARGET skia
+    GN_ARGS_VARIABLE SKIA_GN_ARGS
+    GN_ARGUMENT_NAME skia_use_system_zlib
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
+)
+
+include(GNBuild.cmake)
+
+gn_fetch_gn(
+    ROOT_DIR ${VOOT_SKIA_ROOT_DIR}
+)
+
+gn_generate_build_files(
+    ROOT_DIR ${VOOT_SKIA_ROOT_DIR}
+    GN_ARGS ${SKIA_GN_ARGS}
+)
+
+gn_generate_target(
+    NAME gn_skia
+    LIB_PREFIX ${VOOT_SKIA_LIB_PREFIX}
+    LIB_SUFFIX ${VOOT_SKIA_LIB_SUFFIX}
 )
 
 target_link_libraries(
     skia INTERFACE
-    ${CMAKE_CURRENT_BINARY_DIR}/${SKIA_LIB_PREFIX}skia${SKIA_LIB_SUFFIX}
+    gn_skia
 )
-
-add_dependencies(skia skia_gn)
 
 add_library(google::skia ALIAS skia)

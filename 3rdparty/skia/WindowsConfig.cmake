@@ -1,69 +1,18 @@
 if (WIN32)
-    set (WINDOWS ON)
-    set_property (GLOBAL PROPERTY USE_FOLDERS ON)
-    enable_language (RC)
+set (OpenGL_GL_PREFERENCE "GLVND" CACHE STRING "Set OpenGL to GL Vendor Neutral library" FORCE)
 
-    if (MSVC)
-        # Statically link the runtime libraries
-        set (
-            MSVC_COMPILE_FLAGS
-            CMAKE_CXX_FLAGS
-            CMAKE_CXX_FLAGS_DEBUG
-            CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_C_FLAGS
-            CMAKE_C_FLAGS_DEBUG
-            CMAKE_C_FLAGS_RELEASE
-        )
-        foreach (FLAG ${MSVC_COMPILE_FLAGS})
-            string(REPLACE "/MD" "/MT" ${FLAG} "${${FLAG}}")
-        endforeach ()
-    endif ()
+find_package (OpenGL REQUIRED)
 
-    add_library (
-        platform_dependencies INTERFACE
-    )
+set (VOOT_SKIA_LIB_PREFIX "")
+set (VOOT_SKIA_LIB_SUFFIX ".lib")
 
-    target_compile_definitions (
-        platform_dependencies INTERFACE
-        -DUNICODE
-        -D_UNICODE
-        -DNOMINMAX
-        -DWIN32_LEAN_AND_MEAN
-        -D_CRT_SECURE_NO_WARNINGS
-    )
+target_compile_definitions (
+    skia INTERFACE
+    -DSK_GL
+)
 
-    target_link_libraries (
-        platform_dependencies INTERFACE
-        wsock32
-        wininet
-        ws2_32
-        comctl32
-    )
-
-    add_library (Platform::Dependencies ALIAS platform_dependencies)
-
-    install (
-        DIRECTORY ${PROJECT_SOURCE_DIR}/dist/GyroConfigs
-        DESTINATION bin
-    )
-
-    install (
-        FILES ${PROJECT_SOURCE_DIR}/CHANGELOG.md
-        DESTINATION bin
-    )
-
-    install (
-        FILES ${PROJECT_SOURCE_DIR}/LICENSE.md
-        DESTINATION bin
-    )
-
-    install (
-        FILES ${PROJECT_SOURCE_DIR}/README.md
-        DESTINATION bin
-    )
-
-    install (
-        FILES ${PROJECT_SOURCE_DIR}/README_CN.md
-        DESTINATION bin
-    )
+target_link_libraries (
+    skia INTERFACE
+    OpenGL::OpenGL
+)
 endif ()
