@@ -29,7 +29,7 @@ GraphicsContext::GraphicsContext() noexcept
         VT_LOG_FATAL("Failed to initialize SDL: {}", SDL_GetError());
     }
 
-    platform_window_ = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{
+    window_ = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>{
         SDL_CreateWindow("",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -39,17 +39,17 @@ GraphicsContext::GraphicsContext() noexcept
         &SDL_DestroyWindow
     };
 
-    if (platform_window_ == nullptr)
+    if (window_ == nullptr)
     {
         VT_LOG_FATAL("Failed to create platform render window: {}", SDL_GetError());
     }
 
-    platform_context_ = std::unique_ptr<void, decltype(&SDL_GL_DeleteContext)>{
-        SDL_GL_CreateContext(platform_window_.get()),
+    native_context_ = std::unique_ptr<void, decltype(&SDL_GL_DeleteContext)>{
+        SDL_GL_CreateContext(window_.get()),
         &SDL_GL_DeleteContext
     };
 
-    if (platform_context_ == nullptr)
+    if (native_context_ == nullptr)
     {
         VT_LOG_FATAL("Failed to create OpenGL context: {}", SDL_GetError());
     }

@@ -88,7 +88,7 @@ public:
 public:
     GraphicsContext graphics_context() const noexcept
     {
-        return { graphics_context_.skia_context(), graphics_context_.platform_context() };
+        return { graphics_context_.skia_context(), graphics_context_.native_context() };
     }
 
 private:
