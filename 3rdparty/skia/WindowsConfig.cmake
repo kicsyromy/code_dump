@@ -4,12 +4,12 @@ if (WIN32)
 
     target_compile_definitions (
         skia INTERFACE
-        -DSK_GL
-        -DGL_FRAMEBUFFER_BINDING=0x8CA6
+        -DSK_DIRECT3D
     )
 
     target_link_libraries (
         skia INTERFACE
-        Opengl32.lib
+        D3D12.lib
+        DXGI.lib
     )
 endif ()

@@ -49,13 +49,29 @@ function (gn_generate_build_files)
     string (REPLACE ";" " " VOOT_SKIA_GN_ARGS "${VOOT_SKIA_GN_ARGS}")
     file (RELATIVE_PATH SKIA_GEN_DIR ${VOOT_SKIA_ROOT_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-    execute_process (
-        COMMAND ${GN} gen ${SKIA_GEN_DIR} --args=${VOOT_SKIA_GN_ARGS}
-        WORKING_DIRECTORY ${VOOT_SKIA_ROOT_DIR}
-        RESULT_VARIABLE GENERATE_FAILED
-        OUTPUT_VARIABLE GN_OUTPUT
-        ERROR_VARIABLE GN_OUTPUT
-    )
+    if (UNIX AND (NOT APPLE))
+        find_program (
+            PYTHON2 python2 REQUIRED
+            NAMES python2 python2.7
+            DOC "Pyhton2 needed for Skia :|"
+        )
+
+        execute_process (
+            COMMAND ${GN} gen ${SKIA_GEN_DIR} --script-executable=${PYTHON2} --args=${VOOT_SKIA_GN_ARGS}
+            WORKING_DIRECTORY ${VOOT_SKIA_ROOT_DIR}
+            RESULT_VARIABLE GENERATE_FAILED
+            OUTPUT_VARIABLE GN_OUTPUT
+            ERROR_VARIABLE GN_OUTPUT
+        )
+    else ()
+        execute_process (
+            COMMAND ${GN} gen ${SKIA_GEN_DIR} --args=${VOOT_SKIA_GN_ARGS}
+            WORKING_DIRECTORY ${VOOT_SKIA_ROOT_DIR}
+            RESULT_VARIABLE GENERATE_FAILED
+            OUTPUT_VARIABLE GN_OUTPUT
+            ERROR_VARIABLE GN_OUTPUT
+        )
+    endif ()
 
     if (GENERATE_FAILED)
         message (FATAL_ERROR ${GN_OUTPUT})
@@ -77,26 +93,9 @@ function (gn_generate_target)
         DOC "Ninja build system required for Skia"
     )
 
-    if (UNIX AND (NOT APPLE))
-
-        find_program (
-            PYTHON2 python2 REQUIRED
-            NAMES python2 python2.7
-            DOC "Pyhton2 needed for Skia :|"
-        )
-
-        execute_process (
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/python2
-        )
-
-        execute_process (
-            COMMAND ${CMAKE_COMMAND} -E create_symlink ${PYTHON2} ${CMAKE_CURRENT_BINARY_DIR}/python2/python
-        )
-    endif ()
-
     add_custom_target (
         ${VOOT_SKIA_NAME}_helper
-        ${CMAKE_COMMAND} -E env "PATH=${CMAKE_CURRENT_BINARY_DIR}/python2:$ENV{PATH}" ${NINJA} -C ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_COMMAND} -E env ${NINJA} -C ${CMAKE_CURRENT_BINARY_DIR}
         BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${VOOT_SKIA_LIB_PREFIX}skia${VOOT_SKIA_LIB_SUFFIX}
     )
 

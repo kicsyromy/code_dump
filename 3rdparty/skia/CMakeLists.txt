@@ -8,6 +8,15 @@ option (VOOT_SKIA_USE_SYSTEM_PNG "Use system-wide installation of libpng instead
 option (VOOT_SKIA_USE_SYSTEM_WEBP "Use system-wide installation of WebP instead of bundled version" OFF)
 option (VOOT_SKIA_USE_SYSTEM_ZLIB "Use system-wide installation of zlib instead of bundled version" OFF)
 
+function (cmake_to_gn_list OUTPUT_ INPUT_)
+    if (NOT INPUT_)
+        set (${OUTPUT_} "[]" PARENT_SCOPE)
+    else ()
+        string (REPLACE ";" "\",\"" TEMP "${INPUT_}")
+        set (${OUTPUT_} "[\"${TEMP}\"]" PARENT_SCOPE)
+    endif ()
+endfunction()
+
 add_library (
     skia INTERFACE
 )
@@ -19,19 +28,39 @@ target_include_directories (
 )
 
 set (
+    SKIA_C_FLAGS
+    ${CMAKE_C_FLAGS}
+)
+cmake_to_gn_list (SKIA_C_FLAGS "${SKIA_C_FLAGS}")
+
+set (
+    SKIA_CXX_FLAGS
+    ${CMAKE_CXX_FLAGS}
+)
+cmake_to_gn_list (SKIA_CXX_FLAGS "${SKIA_CXX_FLAGS}")
+
+set (
     SKIA_GN_ARGS
     cc=\"${CMAKE_C_COMPILER}\"
     cxx=\"${CMAKE_CXX_COMPILER}\"
-    extra_cflags_c=[\"${CMAKE_C_FLAGS}\"]
-    extra_cflags_cc=[\"${CMAKE_CXX_FLAGS}\"]
-    # This only works in debug builds because line 37 is commented out from ${SKIA_BUILD_ROOT}/gn/BUILDCONFIG.gn
-    is_official_build=true
+    extra_cflags_c=${SKIA_C_FLAGS}
+    extra_cflags_cc=${SKIA_CXX_FLAGS}
+    skia_enable_gpu=true
+    skia_use_lua=false
+    skia_enable_tools=false
+    skia_enable_spirv_validation=false
 )
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(
         SKIA_GN_ARGS
         ${SKIA_GN_ARGS}
         is_debug=true
+    )
+else ()
+    set(
+        SKIA_GN_ARGS
+        ${SKIA_GN_ARGS}
+        is_debug=false
     )
 endif ()
 

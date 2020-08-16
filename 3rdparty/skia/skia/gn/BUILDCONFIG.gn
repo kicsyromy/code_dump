@@ -34,7 +34,7 @@ declare_args() {
   is_debug = !is_official_build
 }
 
-#assert(!(is_debug && is_official_build))
+assert(!(is_debug && is_official_build))
 
 if (target_cpu == "wasm") {
   target_os = "wasm"
