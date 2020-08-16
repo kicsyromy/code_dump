@@ -1,18 +1,15 @@
 if (WIN32)
-set (OpenGL_GL_PREFERENCE "GLVND" CACHE STRING "Set OpenGL to GL Vendor Neutral library" FORCE)
+    set (VOOT_SKIA_LIB_PREFIX "")
+    set (VOOT_SKIA_LIB_SUFFIX ".lib")
 
-find_package (OpenGL REQUIRED)
+    target_compile_definitions (
+        skia INTERFACE
+        -DSK_GL
+        -DGL_FRAMEBUFFER_BINDING=0x8CA6
+    )
 
-set (VOOT_SKIA_LIB_PREFIX "")
-set (VOOT_SKIA_LIB_SUFFIX ".lib")
-
-target_compile_definitions (
-    skia INTERFACE
-    -DSK_GL
-)
-
-target_link_libraries (
-    skia INTERFACE
-    OpenGL::OpenGL
-)
+    target_link_libraries (
+        skia INTERFACE
+        Opengl32.lib
+    )
 endif ()

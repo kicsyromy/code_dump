@@ -1,5 +1,3 @@
-#ifdef __linux__
-
 #include "voot_graphics_context.hh"
 
 #include "core/voot_logger.hh"
@@ -68,5 +66,3 @@ GraphicsContext::~GraphicsContext() noexcept
 }
 
 VT_END_PRIVATE_NAMESPACE
-
-#endif /* __linux__ */
